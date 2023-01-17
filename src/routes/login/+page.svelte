@@ -16,16 +16,16 @@
 		<form method="POST" action="?/login">
             <h1>Login</h1>
 
-			<input type="email" name="email" use:validators={[required, email]} />
-			<HintGroup for="email">
-				<Hint on="required">This is a mandatory field</Hint>
-				<Hint on="email" hideWhenRequired>Email is not valid</Hint>
-			</HintGroup>
+            <input type="email" name="email" use:validators={[required, email]} />
+            <HintGroup for="email">
+                <Hint on="required">This is a mandatory field</Hint>
+                <Hint on="email" hideWhenRequired>Email is not valid</Hint>
+            </HintGroup>
 
-			<input type="password" name="password" use:validators={[required]} />
-			<Hint for="password" on="required">This is a mandatory field</Hint>
+            <input type="password" name="password" use:validators={[required]} />
+            <Hint for="password" on="required">This is a mandatory field</Hint>
 
-			<button disabled={!$form.valid}>Login</button> -->
+			<button disabled={!$form.valid}>Login</button> 
 		</form>
 	</main>
 </body>
