@@ -18,5 +18,8 @@
 		"svelte-use-form": "^2.6.1",
 		"vite": "^4.0.0"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"pocketbase": "^0.10.0"
+	}
 }
