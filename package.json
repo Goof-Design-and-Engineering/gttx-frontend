@@ -20,6 +20,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"bootstrap-icons": "^1.10.3",
 		"pocketbase": "^0.10.0"
 	}
 }
