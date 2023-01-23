@@ -1,0 +1,7 @@
+#!/bin/bash
+echo -n Email:  
+read EMAIL
+echo -n password:  
+read -s PASSWORD
+echo $EMAIL $PASSSWORD
+npx pocketbase-typegen --url https://api.gttx.app --email '$EMAIL' --password '$PASSWORD' --out ./src/lib/pocketbase-types.ts
