@@ -22,5 +22,5 @@ _actual*.*
 _output
 /types
 .eslintcache
-.svelte-kit/generated/*
+.svelte-kit/generated/
 .svelte-kit/ambient.d.ts
