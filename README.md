@@ -7,5 +7,5 @@ The frontend for GTTX.
 ```
 npm install
 npm fund
-npm build dev
+npm run dev
 ```
