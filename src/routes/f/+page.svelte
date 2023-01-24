@@ -1,6 +1,5 @@
 <script>
-	import Fac from '$lib/Fac.svelte';
-
+	import Fac from '$lib/facilitator/Fac.svelte';
 </script>
 
 <head>
@@ -11,10 +10,9 @@
 	<title>Hello, world!</title>
 </head>
 
-
 <body>
 	<main class="container">
-		<Fac />
+		<Fac/>
 	</main>
 </body>
 

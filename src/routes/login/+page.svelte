@@ -1,7 +1,7 @@
 <script>
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import 'bootstrap-icons/font/bootstrap-icons.css';
-	import Login from '$lib/Login.svelte';
+	import Login from '$lib/auth/Login.svelte';
 	const form = useForm();
 </script>
 
@@ -21,9 +21,6 @@
 
 <pre />
 
-<style>
-	:global(.touched:invalid) {
-		border-color: red;
-		outline-color: red;
-	}
+<style href="$lib/style/main">
+
 </style>
