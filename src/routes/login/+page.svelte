@@ -1,6 +1,7 @@
 <script>
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import 'bootstrap-icons/font/bootstrap-icons.css';
+	import '$lib/style/main.css'
 	import Login from '$lib/auth/Login.svelte';
 	const form = useForm();
 </script>
@@ -15,12 +16,10 @@
 
 <body>
 	<main class="container">
+		<img class="gttx-logo" src='../svg/gttx_white.svg' alt="gttx!"/>
+		<!-- <h1 class="gttx-logo-main">gttx</h1> -->
 		<Login />
 	</main>
 </body>
 
 <pre />
-
-<style href="$lib/style/main">
-
-</style>

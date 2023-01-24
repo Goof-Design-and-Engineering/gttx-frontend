@@ -23,9 +23,8 @@
 	</p>
 	<button on:click={signout}> logout</button>
 {:else}
-	<form on:submit|preventDefault>
-		<h1>Login</h1>
-
+	<h1 class="page-name-header">Login</h1>
+	<form use:form on:submit|preventDefault>
 		<label for="email">Email Address</label>
 		<input
 			type="email"
@@ -53,9 +52,10 @@
 
 		<button disabled={!$form.valid} on:click={login}>Login</button>
 	</form>
+	<center><p>Or login with:</p></center>
 	<div class="grid">
-		<button class="secondary"><i class="bi bi-google" /></button>
-		<button class="secondary"><i class="bi bi-discord" /></button>
-		<button class="secondary"><i class="bi bi-github" /></button>
+		<button class="secondary" id="google-oauth"><i class="bi bi-google" /></button>
+		<button class="secondary" id="discord-oauth"><i class="bi bi-discord" /></button>
+		<button class="secondary" id="github-oauth"><i class="bi bi-github" /></button>
 	</div>
 {/if}

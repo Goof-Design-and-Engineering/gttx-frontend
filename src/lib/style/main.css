@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;900');
+
+.gttx-logo {
+    margin-bottom: 1%;
+}
+
+.page-name-header {
+    margin-bottom: calc(var(--typography-spacing-vertical) / 3) !important; /* lololololololol */
+}
+
+#google-oauth {
+    font-size: larger;
+    background-color: #ea4335;
+}
+
+#github-oauth {
+    font-size: larger;
+    background-color: #171515;
+}
+
+#discord-oauth {
+    font-size: larger;
+    background-color: #5865f2;
+}
