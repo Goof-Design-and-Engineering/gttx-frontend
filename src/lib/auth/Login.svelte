@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { currentRole, currentUser, currentOrganization, pb } from '../pocketbase';
+	import { currentRole, currentUser, currentOrganization, currentProfilePic, pb } from '../pocketbase';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import 'bootstrap-icons/font/bootstrap-icons.css';
+	import { escape_attribute_value } from 'svelte/internal';
 	const form = useForm();
 
 	var emailaddr = '';
@@ -17,7 +18,8 @@
 
 {#if $currentUser}
 	<p>
-		Signed in as {$currentUser.username}, {$currentRole},{$currentUser.org},{$currentOrganization}
+		<img src='https://api.gttx.app/api/files/_pb_users_auth_/{$currentUser.id}/{$currentUser.avatar}?thumb=100x100' alt={$currentUser.username}/>
+		Signed in as {$currentUser.username}, {$currentRole},{$currentUser.org},{$currentOrganization},{$currentUser.avatar}
 	</p>
 	<button on:click={signout}> logout</button>
 {:else}
