@@ -25,3 +25,4 @@ _output
 .svelte-kit/
 db.json
 vite.config.js.timestamp-1674252962581.mjs
+/build/
