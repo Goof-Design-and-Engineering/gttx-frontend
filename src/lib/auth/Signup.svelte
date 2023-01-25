@@ -2,6 +2,7 @@
 	import { currentRole, currentUser, currentOrganization, currentProfilePic, pb } from '../pocketbase';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import 'bootstrap-icons/font/bootstrap-icons.css';
+	import { redirect } from '@sveltejs/kit';
 	import { escape_attribute_value } from 'svelte/internal';
 
 	const form = useForm();
@@ -13,7 +14,7 @@
 	var password_confirm = '';
 
 	async function login() {
-		await pb.collection('users').authWithPassword(emailAddr, password);
+		throw redirect(302, '/login');
 	}
 
 	async function signup() {
@@ -45,12 +46,14 @@
 		Sign out to make a new account, or head to the login page to login.
 	</p>
 	<div class="grid">
-		<button on:click={signout}>Login</button>
+		<form method="POST" action="?/login">
+			<button>Login</button>
+		</form>
 		<button on:click={signout} class="secondary">Logout</button>
 	</div>
 {:else}
 	<h1 class="page-name-header">Signup</h1>
-	<form use:form on:submit|preventDefault>
+	<form use:form on:submit|preventDefault method="POST">
 		<div class="grid">
 			<div>
 			<label for="username">Username</label>

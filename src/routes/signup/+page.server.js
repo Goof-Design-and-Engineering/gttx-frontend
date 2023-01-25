@@ -1,19 +1,9 @@
-// import { redirect } from '@sveltejs/kit'
-// // import type { Actions, PageServerLoad } from './$types'
-// import { currentRole } from "$lib/pocketbase";
+import { redirect } from '@sveltejs/kit';
+export const prerender = false;
 
-// // export const load func async () => {
-// //   switch (currentRole){
-// //     case ('facilitator'):
-// //       throw redirect("302","/f")
-// //   }
-// // }
-
-// /** @type {import('./$types').PageServerLoad} */
-// export async function load({ params }) {
-//   switch (currentRole){
-//     case ('facilitator'):
-//       throw redirect("302","/f")
-//   }
-
-// }
+/** @type {import('./$types').Actions} */
+export const actions = {
+    login: async (event) => {
+        throw redirect(302, '/login');
+    }
+};
