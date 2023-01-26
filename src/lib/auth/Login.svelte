@@ -7,9 +7,16 @@
 
 	var emailaddr = '';
 	var password = '';
+	let isFailure = false;
 
 	async function login() {
-		await pb.collection('users').authWithPassword(emailaddr, password);
+		try {
+			isFailure = false;
+			await pb.collection('users').authWithPassword(emailaddr, password);
+		} catch (e) {
+			console.log(pb.authStore.isValid);
+			isFailure = true;
+		}
 	}
 	async function signout() {
 		pb.authStore.clear();
@@ -52,6 +59,9 @@
 
 		<button disabled={!$form.valid} on:click={login}>Login</button>
 	</form>
+	{#if isFailure}
+		<center><p style="color: #FF0000;">Wrong password, idiot.</p></center>
+	{/if}
 	<center><p>Or login with:</p></center>
 	<div class="grid">
 		<button class="secondary" id="google-oauth"><i class="bi bi-google" /></button>
