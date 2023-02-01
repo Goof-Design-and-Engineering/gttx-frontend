@@ -8,6 +8,10 @@
     margin-bottom: calc(var(--typography-spacing-vertical) / 3) !important; /* lololololololol */
 }
 
+.oauth-button {
+    margin-bottom: 10px;
+}
+
 #google-oauth {
     font-size: larger;
     background-color: #ea4335;
