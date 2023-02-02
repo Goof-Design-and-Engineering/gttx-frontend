@@ -2,7 +2,7 @@
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import 'bootstrap-icons/font/bootstrap-icons.css';
 	import '$lib/style/main.css';
-	import Signup from "$lib/auth/Signup.svelte";
+	import Register from "$lib/auth/Register.svelte";
 	const form = useForm();
 </script>
 
@@ -15,11 +15,7 @@
 </head>
 
 <body>
-	<main class="container">
-		<img class="gttx-logo" src='../svg/gttx_white.svg' alt="gttx!"/>
-		<!-- <h1 class="gttx-logo-main">gttx</h1> -->
-		<Signup />
-	</main>
+	<Register />
 </body>
 
 <pre />

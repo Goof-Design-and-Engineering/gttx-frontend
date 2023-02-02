@@ -52,7 +52,7 @@
 		<button on:click={signout} class="secondary">Logout</button>
 	</div>
 {:else}
-	<h1 class="page-name-header">Signup</h1>
+	<h1 class="page-name-header">Register</h1>
 	<form use:form on:submit|preventDefault method="POST">
 		<div class="grid">
 			<div>
@@ -82,7 +82,7 @@
 			/>
 			<HintGroup for="email">
 				<Hint on="required">This is a mandatory field</Hint>
-				<Hint on="email" hideWhenRequired>Email is not valid</Hint>
+				<Hint on="email" hideWhenRequired><i><center>Email is not valid</center></i></Hint>
 			</HintGroup>
 			</div>
 		</div>
@@ -98,14 +98,14 @@
 		/>
 		<Hint for="password" on="required">This is a mandatory field</Hint>
 
-		<button disabled={!$form.valid} on:click={signup}>Signup</button>
+		<button disabled={!$form.valid} on:click={signup}>Sign up</button>
 	</form>
 
-	<center><p>Or login with:</p></center>
+	<center><p>Or create an account with:</p></center>
 
 	<div class="grid">
-		<button class="secondary" id="google-oauth"><i class="bi bi-google" /></button>
-		<button class="secondary" id="discord-oauth"><i class="bi bi-discord" /></button>
-		<button class="secondary" id="github-oauth"><i class="bi bi-github" /></button>
+		<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth"><i class="bi bi-google" /></a>
+		<a href="https://www.discord.com" role="button" class="oauth-button secondary" id="discord-oauth"><i class="bi bi-discord" /></a>
+		<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth"><i class="bi bi-github" /></a>
 	</div>
 {/if}

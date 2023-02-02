@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { currentRole, currentUser, currentOrganization, currentProfilePic, pb } from '../pocketbase';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
-	import 'bootstrap-icons/font/bootstrap-icons.css';
 	import { escape_attribute_value } from 'svelte/internal';
+	import { redirect } from '@sveltejs/kit';
 	const form = useForm();
 
 	var emailaddr = '';
@@ -13,22 +13,20 @@
 		try {
 			isFailure = false;
 			await pb.collection('users').authWithPassword(emailaddr, password);
+			throw redirect(307, "/account");
 		} catch (e) {
 			console.log(pb.authStore.isValid);
 			isFailure = true;
 		}
 	}
-	async function signout() {
-		pb.authStore.clear();
-	}
+	// async function signout() {
+	// 	pb.authStore.clear();
+	// }
 </script>
 
 {#if $currentUser}
-	<p>
-		<img src='https://api.gttx.app/api/files/_pb_users_auth_/{$currentUser.id}/{$currentUser.avatar}?thumb=100x100' alt={$currentUser.username}/>
-		Signed in as {$currentUser.username}, {$currentRole},{$currentUser.org},{$currentOrganization},{$currentUser.avatar}
-	</p>
-	<button on:click={signout}> logout</button>
+	<h1>You're logged in. Redirecting...</h1>
+	<script>window.location.replace("/account");</script>
 {:else}
 	<h1 class="page-name-header">Login</h1>
 	<form use:form on:submit|preventDefault>
@@ -43,7 +41,7 @@
 		/>
 		<HintGroup for="email">
 			<Hint on="required">This is a mandatory field</Hint>
-			<Hint on="email" hideWhenRequired>Email is not valid</Hint>
+			<Hint on="email" hideWhenRequired class="login-hint"><i><center>Email is not valid</center></i></Hint>
 		</HintGroup>
 
 		<label for="password">Password</label>
@@ -55,7 +53,7 @@
 			bind:value={password}
 			use:validators={[required]}
 		/>
-		<Hint for="password" on="required">This is a mandatory field</Hint>
+		<Hint for="password" on="required"><i><center>This is a mandatory field</center></i></Hint>
 
 		<button disabled={!$form.valid} on:click={login}>Login</button>
 	</form>
