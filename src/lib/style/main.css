@@ -1,11 +1,35 @@
+@import url("https://unpkg.com/@picocss/pico@latest/css/pico.min.css");
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;900');
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 
 .gttx-logo {
     margin-bottom: 1%;
+    opacity: 95%;
+    transition: opacity 0.2s;
+}
+
+.gttx-logo:hover {
+    opacity: 100%;
+    transition: opacity 0.2s;
 }
 
 .page-name-header {
     margin-bottom: calc(var(--typography-spacing-vertical) / 3) !important; /* lololololololol */
+}
+
+.oauth-button {
+    margin-bottom: 10px;
+    opacity: 0.85;
+    transition: opacity 0.15s;
+}
+
+.oauth-button:hover {
+    opacity: 0.95;
+    transition: opacity 0.15s;
+}
+
+.oauth-button:active {
+    opacity: 1;
 }
 
 #google-oauth {
