@@ -24,7 +24,12 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@tiptap/core": "^2.0.0-beta.209",
+		"@tiptap/extension-collaboration": "^2.0.0-beta.209",
+		"@tiptap/starter-kit": "^2.0.0-beta.209",
 		"bootstrap-icons": "^1.10.3",
-		"pocketbase": "^0.10.0"
+		"pocketbase": "^0.10.0",
+		"y-websocket": "^1.4.5",
+		"yjs": "^13.5.45"
 	}
 }
