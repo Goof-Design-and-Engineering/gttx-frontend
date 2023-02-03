@@ -24,12 +24,15 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@tiptap/core": "^2.0.0-beta.209",
-		"@tiptap/extension-collaboration": "^2.0.0-beta.209",
-		"@tiptap/starter-kit": "^2.0.0-beta.209",
+		"@bytemd/plugin-gfm": "^1.20.2",
+		"@syncedstore/core": "^0.4.3",
+		"@syncedstore/svelte": "^0.4.3",
 		"bootstrap-icons": "^1.10.3",
+		"bytemd": "^1.20.2",
 		"pocketbase": "^0.10.0",
-		"y-websocket": "^1.4.5",
-		"yjs": "^13.5.45"
+		"quill": "^1.3.7",
+		"quill-cursors": "^4.0.2",
+		"y-quill": "^0.1.5",
+		"y-webrtc": "^10.2.4"
 	}
 }
