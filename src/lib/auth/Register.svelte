@@ -4,6 +4,7 @@
 	import 'bootstrap-icons/font/bootstrap-icons.css';
 	import { redirect } from '@sveltejs/kit';
 	import { escape_attribute_value } from 'svelte/internal';
+	import { goto } from '$app/navigation';
 
 	const form = useForm();
 
@@ -30,9 +31,17 @@
 				"org": "itqo87s9chb4qk8"
 			};
 			const createdUser = await pb.collection('users').create(data);
-			await login();
+			if (createdUser != null){
+				await pb.collection('users').authWithPassword(data["username"],data["password"]);
+				
+			}
+			// await login();
+			// throw redirect(302,"/login");
+			await goto("/account");
+
 		} catch (err){
-			console.error(err)
+			console.log(err);
+			await goto("/signup")
 		}
 	}
 	async function signout() {
