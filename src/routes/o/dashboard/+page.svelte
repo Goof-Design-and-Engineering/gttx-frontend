@@ -3,7 +3,8 @@
 	import * as Y from 'yjs';
 	import { QuillBinding } from 'y-quill';
 	// import { QuillCursors } from 'quill-cursors';
-	import { WebrtcProvider } from 'y-webrtc';
+	// import { WebrtcProvider } from 'y-webrtc';
+	import { WebsocketProvider } from 'y-websocket'
 	import { currentUser } from '$lib/pocketbase';
 	// import Quill from 'quill';
 
@@ -38,7 +39,8 @@
 		// (async () => {Quill.register('modules/cursors', QuillCursors)});
 
 		ydoc = new Y.Doc();
-		provider = new WebrtcProvider('gttx', ydoc);
+		provider = new WebsocketProvider('ws://ltsec.club:1234','gttx',ydoc)
+		// provider = new WebrtcProvider('quill', ydoc, { signaling: ['ws://localhost:1234'] });
 		ytext = ydoc.getText('quill');
 
 		// Quill.register('modules/cursors', QuillCursors);
