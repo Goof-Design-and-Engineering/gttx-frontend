@@ -1,33 +1,65 @@
 <script lang="ts">
-	import { currentRole, currentUser, currentOrganization, currentProfilePic, pb } from '../pocketbase';
+	import {
+		currentRole,
+		currentUser,
+		currentOrganization,
+		currentProfilePic,
+		pb
+	} from '../pocketbase';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
-	import { escape_attribute_value } from 'svelte/internal';
+	import { escape_attribute_value, onMount } from 'svelte/internal';
 	import { redirect } from '@sveltejs/kit';
+	import { goto } from '$app/navigation';
 	const form = useForm();
 
 	var emailaddr = '';
 	var password = '';
 	let isFailure = false;
+	let logonError;
 
 	async function login() {
 		try {
 			isFailure = false;
 			await pb.collection('users').authWithPassword(emailaddr, password);
-			throw redirect(307, "/account");
+			// throw redirect(307, '/account');
+			goto('/account');
 		} catch (e) {
 			console.log(pb.authStore.isValid);
-			isFailure = true;
+			logonError = e;
 		}
 	}
+
+	function signup() {
+		goto('/register');
+	}
+
+	onMount(() => {
+		if ($currentUser) {
+			goto('/account');
+		} else {
+			return;
+		}
+	});
+
 	// async function signout() {
 	// 	pb.authStore.clear();
 	// }
 </script>
 
-{#if $currentUser}
-	<h1>You're logged in. Redirecting...</h1>
-	<script>window.location.replace("/account");</script>
-{:else}
+<!-- {#if logonError}
+	prints server error
+	<p>
+		{logonError}
+	</p>
+{/if} -->
+
+{#if !$currentUser}
+	<!-- <h1>You're logged in. Redirecting...</h1>
+	<script>
+		window.location.replace('/account');
+	</script>
+{:else} -->
+
 	<h1 class="page-name-header">Login</h1>
 	<form use:form on:submit|preventDefault>
 		<label for="email">Email Address</label>
@@ -41,7 +73,9 @@
 		/>
 		<HintGroup for="email">
 			<Hint on="required">This is a mandatory field</Hint>
-			<Hint on="email" hideWhenRequired class="login-hint"><i><center>Email is not valid</center></i></Hint>
+			<Hint on="email" hideWhenRequired class="login-hint"
+				><i><center>Email is not valid</center></i></Hint
+			>
 		</HintGroup>
 
 		<label for="password">Password</label>
@@ -62,8 +96,20 @@
 	{/if}
 	<center><p>Or login with:</p></center>
 	<div class="grid">
-		<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth"><i class="bi bi-google" /></a>
-		<a href="https://www.discord.com" role="button" class="oauth-button secondary" id="discord-oauth"><i class="bi bi-discord" /></a>
-		<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth"><i class="bi bi-github" /></a>
+		<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth"
+			><i class="bi bi-google" /></a
+		>
+		<a
+			href="https://www.discord.com"
+			role="button"
+			class="oauth-button secondary"
+			id="discord-oauth"><i class="bi bi-discord" /></a
+		>
+		<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth"
+			><i class="bi bi-github" /></a
+		>
 	</div>
+
+	<hr />
+	<button on:click={signup}> register </button>
 {/if}
