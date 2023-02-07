@@ -39,7 +39,7 @@
 		// (async () => {Quill.register('modules/cursors', QuillCursors)});
 
 		ydoc = new Y.Doc();
-		provider = new WebsocketProvider('ws://ltsec.club:1234','gttx',ydoc)
+		provider = new WebsocketProvider('ws://gttx-ws.fly.dev','gttx',ydoc)
 		// provider = new WebrtcProvider('quill', ydoc, { signaling: ['ws://localhost:1234'] });
 		ytext = ydoc.getText('quill');
 
