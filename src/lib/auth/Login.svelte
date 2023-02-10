@@ -16,6 +16,7 @@
 	var password = '';
 	let isFailure = false;
 	let logonError;
+	let discordRedir;
 
 	async function login() {
 		try {
@@ -33,7 +34,14 @@
 		goto('/register');
 	}
 
-	onMount(() => {
+	onMount(async () => {
+		discordRedir = "https://discord.com/api/oauth2/authorize?client_id=1066450258999132191&redirect_uri=https%3A%2F%2Fwww.gttx.app%2Foauth-discord&response_type=code&scope=identify%20email"
+		// const tmp = await pb
+			// .collection('users')
+			// .listAuthMethods()
+		// const discordData = tmp?.authProviders.filter((item) => item.name === 'discord')[0];
+		// console.log(discordData.authUrl);
+		// discordRedir = discordData.authUrl + encodeURIComponent("https://b4d2-208-180-192-218.ngrok.io/oauth-discord")
 		if ($currentUser) {
 			goto('/account');
 		} else {
@@ -100,7 +108,7 @@
 			><i class="bi bi-google" /></a
 		>
 		<a
-			href="https://www.discord.com"
+			href="{discordRedir}"
 			role="button"
 			class="oauth-button secondary"
 			id="discord-oauth"><i class="bi bi-discord" /></a
