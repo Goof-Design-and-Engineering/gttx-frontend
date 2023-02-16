@@ -7,6 +7,8 @@ const config = {
 		adapter: adapter()
 	}, paths: {
 		base: process.env.NODE_ENV === "production" ? "/sveltekit-gh-pages" : "",
+		"$lib": ["src/lib"],
+		"$lib/*": ["src/lib/*"]
 	},
 };
 
