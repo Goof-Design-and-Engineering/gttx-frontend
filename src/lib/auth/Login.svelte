@@ -7,8 +7,7 @@
 		pb
 	} from '../pocketbase';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
-	import { escape_attribute_value, onMount } from 'svelte/internal';
-	import { redirect } from '@sveltejs/kit';
+	import { onMount } from 'svelte/internal';
 	import { goto } from '$app/navigation';
 	const form = useForm();
 
@@ -21,7 +20,7 @@
 	async function login() {
 		try {
 			isFailure = false;
-			await pb.collection('users').authWithPassword(emailaddr, password);
+			await pb.collection('user').authWithPassword(emailaddr, password);
 			// throw redirect(307, '/account');
 			goto('/account');
 		} catch (e) {
@@ -35,13 +34,6 @@
 	}
 
 	onMount(async () => {
-		discordRedir = "https://discord.com/api/oauth2/authorize?client_id=1066450258999132191&redirect_uri=https%3A%2F%2Fwww.gttx.app%2Foauth-discord&response_type=code&scope=identify%20email"
-		// const tmp = await pb
-			// .collection('users')
-			// .listAuthMethods()
-		// const discordData = tmp?.authProviders.filter((item) => item.name === 'discord')[0];
-		// console.log(discordData.authUrl);
-		// discordRedir = discordData.authUrl + encodeURIComponent("https://b4d2-208-180-192-218.ngrok.io/oauth-discord")
 		if ($currentUser) {
 			goto('/account');
 		} else {
@@ -54,19 +46,13 @@
 	// }
 </script>
 
-<!-- {#if logonError}
-	prints server error
+{#if logonError}
 	<p>
 		{logonError}
 	</p>
-{/if} -->
+{/if}
 
 {#if !$currentUser}
-	<!-- <h1>You're logged in. Redirecting...</h1>
-	<script>
-		window.location.replace('/account');
-	</script>
-{:else} -->
 
 	<h1 class="page-name-header">Login</h1>
 	<form use:form on:submit|preventDefault>
@@ -107,11 +93,8 @@
 		<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth"
 			><i class="bi bi-google" /></a
 		>
-		<a
-			href="{discordRedir}"
-			role="button"
-			class="oauth-button secondary"
-			id="discord-oauth"><i class="bi bi-discord" /></a
+		<a href={discordRedir} role="button" class="oauth-button secondary" id="discord-oauth"
+			><i class="bi bi-discord" /></a
 		>
 		<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth"
 			><i class="bi bi-github" /></a
