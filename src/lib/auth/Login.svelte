@@ -9,6 +9,11 @@
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import { onMount } from 'svelte/internal';
 	import { goto } from '$app/navigation';
+
+	import Textfield from '@smui/textfield';
+	import LayoutGrid, { Cell } from '@smui/layout-grid';
+	import Button, {Group, Label} from  '@smui/button';
+
 	const form = useForm();
 
 	var emailaddr = '';
@@ -16,6 +21,9 @@
 	let isFailure = false;
 	let logonError;
 	let discordRedir;
+
+	let invalid = false;
+	$: disabled = !invalid;
 
 	async function login() {
 		try {
@@ -54,53 +62,59 @@
 
 {#if !$currentUser}
 
-	<h1 class="page-name-header">Login</h1>
+	<h3>Login</h3>
+
 	<form use:form on:submit|preventDefault>
-		<label for="email">Email Address</label>
-		<input
+		<Textfield
 			type="email"
-			name="email"
-			id="email"
-			placeholder="goof@goofle.com"
+			variant="outlined"
 			bind:value={emailaddr}
-			use:validators={[required, email]}
+			bind:invalid
+			updateInvalid
+			label="Email"
+			style="min-width: 250px;"
+			input$autocomplete="email"
+			required
 		/>
-		<HintGroup for="email">
-			<Hint on="required">This is a mandatory field</Hint>
-			<Hint on="email" hideWhenRequired class="login-hint"
-				><i><center>Email is not valid</center></i></Hint
-			>
-		</HintGroup>
 
-		<label for="password">Password</label>
-		<input
+		<Textfield
 			type="password"
-			name="password"
-			id="password"
-			placeholder="Password"
+			variant="outlined"
 			bind:value={password}
-			use:validators={[required]}
+			bind:invalid
+			updateInvalid
+			label="Password"
+			required
 		/>
-		<Hint for="password" on="required"><i><center>This is a mandatory field</center></i></Hint>
 
-		<button disabled={!$form.valid} on:click={login}>Login</button>
+		<div style="padding: 1%;">
+			<Button variant="raised" color="secondary" disabled={!disabled} on:click={login}>
+				<Label>Login</Label>
+			</Button>
+		</div>
 	</form>
-	{#if isFailure}
-		<center><p style="color: #FF0000;">Wrong password, idiot.</p></center>
-	{/if}
-	<center><p>Or login with:</p></center>
-	<div class="grid">
-		<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth"
-			><i class="bi bi-google" /></a
-		>
-		<a href={discordRedir} role="button" class="oauth-button secondary" id="discord-oauth"
-			><i class="bi bi-discord" /></a
-		>
-		<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth"
-			><i class="bi bi-github" /></a
-		>
-	</div>
 
-	<hr />
-	<button on:click={signup}> register </button>
+	{#if isFailure}
+		<center><p style="color: #FF0000;">Invalid Email or Password</p></center>
+	{/if}
+
+	<center><p>Or login with:</p></center>
+
+	<LayoutGrid>
+		<Cell>
+			<Button variant="raised" href="https://www.google.com" class="oauth-button secondary" id="google-oauth">
+				<Label class="bi bi-google"></Label>
+			</Button>
+		</Cell>
+		<Cell>
+			<Button variant="raised" href={discordRedir} class="oauth-button secondary" id="discord-oauth">
+				<Label class="bi bi-discord"></Label>
+			</Button>
+		</Cell>
+		<Cell>
+			<Button variant="raised" href="https://www.github.com" class="oauth-button secondary" id="github-oauth">
+				<Label class="bi bi-github"></Label>
+			</Button>
+		</Cell>
+	</LayoutGrid>
 {/if}

@@ -1,4 +1,4 @@
 <hgroup>
-    <h1>Welcome to gttx.</h1>
-    <h2>The premier goofy tabletop exercise platform.</h2>
+    <h3>Welcome to gttx.</h3>
+    <h4>The premier goofy tabletop exercise platform.</h4>
 </hgroup>

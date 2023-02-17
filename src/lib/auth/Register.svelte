@@ -5,6 +5,11 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
+	import Textfield from '@smui/textfield';
+	import LayoutGrid, { Cell } from '@smui/layout-grid';
+	import Button, {Group, Label} from  '@smui/button';
+
+
 	const form = useForm();
 
 	var username = '';
@@ -13,6 +18,9 @@
 	var password = '';
 	// var password_confirm = '';
 	let signupErr;
+
+	let invalid = false;
+	$: disabled = !invalid;
 
 	async function signup() {
 		try {
@@ -55,65 +63,65 @@
 	</p>
 {/if}
 
-<h1 class="page-name-header">Register</h1>
+<h3>Register</h3>
 <form use:form on:submit|preventDefault method="POST">
-	<div class="grid">
-		<div>
-			<label for="username">Username</label>
-			<input
-				type="username"
-				name="username"
-				id="username"
-				placeholder="Goof"
-				bind:value={username}
-				use:validators={[required]}
-			/>
-			<HintGroup for="username">
-				<Hint on="required">This is a mandatory field</Hint>
-			</HintGroup>
-		</div>
-
-		<div>
-			<label for="email">Email Address</label>
-			<input
-				type="email"
-				name="email"
-				id="email"
-				placeholder="goof@goofle.com"
-				bind:value={emailAddr}
-				use:validators={[required, email]}
-			/>
-			<HintGroup for="email">
-				<Hint on="required">This is a mandatory field</Hint>
-				<Hint on="email" hideWhenRequired><i><center>Email is not valid</center></i></Hint>
-			</HintGroup>
-		</div>
-	</div>
-
-	<label for="password">Password</label>
-	<input
-		type="password"
-		name="password"
-		id="password"
-		placeholder="Password"
-		bind:value={password}
-		use:validators={[required]}
+	<Textfield
+		type="username"
+		variant="outlined"
+		bind:value={username}
+		bind:invalid
+		updateInvalid
+		label="Username"
+		placeholder="Goof"
+		required
 	/>
-	<Hint for="password" on="required">This is a mandatory field</Hint>
 
-	<button disabled={!$form.valid} on:click={signup}>Sign up</button>
+	<Textfield
+		type="email"
+		variant="outlined"
+		bind:value={emailAddr}
+		bind:invalid
+		updateInvalid
+		label="Email"
+		placeholder="goof@goofle.com"
+		input$autocomplete="email"
+		required
+	/>
+
+	<Textfield
+		type="password"
+		variant="outlined"
+		bind:value={password}
+		bind:invalid
+		updateInvalid
+		label="Password"
+		placeholder="Password"
+		required
+	/>
+
+	<div style="padding: 1%;">
+		<Button variant="raised" color="secondary" disabled={!disabled} on:click={signup}>
+			<Label>Sign Up</Label>
+		</Button>
+	</div>
 </form>
 
 <center><p>Or create an account with:</p></center>
 
-<div class="grid">
-	<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth"
-		><i class="bi bi-google" /></a
-	>
-	<a href="https://www.discord.com" role="button" class="oauth-button secondary" id="discord-oauth"
-		><i class="bi bi-discord" /></a
-	>
-	<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth"
-		><i class="bi bi-github" /></a
-	>
-</div>
+<LayoutGrid>
+	<Cell>
+		<Button variant="raised" href="https://www.google.com" class="oauth-button secondary" id="google-oauth">
+			<Label class="bi bi-google"></Label>
+		</Button>
+	</Cell>
+	<Cell>
+		<Button variant="raised" href="https://www.discord.com" class="oauth-button secondary" id="discord-oauth">
+			<Label class="bi bi-discord"></Label>
+		</Button>
+	</Cell>
+	<Cell>
+		<Button variant="raised" href="https://www.github.com" class="oauth-button secondary" id="github-oauth">
+			<Label class="bi bi-github"></Label>
+		</Button>
+	</Cell>
+</LayoutGrid>
