@@ -16,7 +16,7 @@ pb.authStore.onChange((auth) => {
     currentUser.set(pb.authStore.model);
 })
 
-export async function WriteToNotesCollection(delta, collection,user) {
+export async function WriteToNotesCollection(delta, collection, user) {
     const data = {
         "content": delta,
         "title": "test",

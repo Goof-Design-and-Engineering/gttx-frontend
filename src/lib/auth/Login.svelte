@@ -1,11 +1,5 @@
 <script lang="ts">
-	import {
-		currentRole,
-		currentUser,
-		currentOrganization,
-		currentProfilePic,
-		pb
-	} from '../pocketbase';
+	import { currentUser, pb } from '../pocketbase';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import { onMount } from 'svelte/internal';
 	import { goto } from '$app/navigation';
@@ -20,9 +14,9 @@
 	async function login() {
 		try {
 			isFailure = false;
-			await pb.collection('user').authWithPassword(emailaddr, password);
+			await pb.collection('users').authWithPassword(emailaddr, password);
 			// throw redirect(307, '/account');
-			goto('/account');
+			goto('/createorg');
 		} catch (e) {
 			console.log(pb.authStore.isValid);
 			logonError = e;
@@ -30,12 +24,12 @@
 	}
 
 	function signup() {
-		goto('/register');
+		goto('/signup');
 	}
 
 	onMount(async () => {
 		if ($currentUser) {
-			goto('/account');
+			goto('/createorg');
 		} else {
 			return;
 		}
@@ -53,7 +47,6 @@
 {/if}
 
 {#if !$currentUser}
-
 	<h1 class="page-name-header">Login</h1>
 	<form use:form on:submit|preventDefault>
 		<label for="email">Email Address</label>
@@ -102,5 +95,5 @@
 	</div>
 
 	<hr />
-	<button on:click={signup}> register </button>
+	<button on:click={signup}> Signup </button>
 {/if}

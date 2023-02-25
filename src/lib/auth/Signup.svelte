@@ -24,25 +24,24 @@
 				passwordConfirm: password,
 				name: 'test',
 				role: 'facilitator',
-				org: 'itqo87s9chb4qk8'
 			};
-			const createdUser = await pb.collection('user').create(data);
+			const createdUser = await pb.collection('users').create(data);
 			if (createdUser != null) {
-				await pb.collection('user').authWithPassword(data['username'], data['password']);
+				await pb.collection('users').authWithPassword(data['username'], data['password']);
 			}
 			// await login();
 			// throw redirect(302,"/login");
-			await goto('/account');
+			await goto('/createorg');
 		} catch (err) {
 			console.log(err);
 			signupErr = err;
-			await goto('/register');
+			await goto('/signup');
 		}
 	}
 
 	onMount(async () => {
 		if ($currentUser) {
-			goto('/account');
+			goto('/createorg');
 		} else {
 			return;
 		}
@@ -55,7 +54,7 @@
 	</p>
 {/if}
 
-<h1 class="page-name-header">Register</h1>
+<h1 class="page-name-header">Signup</h1>
 <form use:form on:submit|preventDefault method="POST">
 	<div class="grid">
 		<div>

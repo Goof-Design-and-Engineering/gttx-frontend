@@ -7,15 +7,18 @@
 		currentProfilePic,
 		pb
 	} from '$lib/pocketbase';
-	import { redirect } from '@sveltejs/kit';
 	import { goto } from '$app/navigation';
+	
 	async function signout() {
 		pb.authStore.clear();
 		goto('/');
 	}
-	async function login() {
-		throw redirect(302, '/login');
+
+	async function invite() {
+		goto('/invite');
 	}
+
+	
 
 	onMount(() => {
 		if (!$currentUser) {
@@ -24,27 +27,15 @@
 	});
 </script>
 
-<!-- 
-{#await $currentUser}
-	<h1>LOADING...</h1>
-{:then currentUser}
-	{#if currentUser}
-		<img
-			src="https://api.gttx.app/api/files/_pb_users_auth_/{currentUser.id}/{currentUser.avatar}?thumb=100x100"
-			alt={currentUser.username}
-		/>
-		Signed in as {currentUser.username}, {$currentRole},{currentUser.org},{$currentOrganization},{currentUser.avatar}
-		<button on:click={signout}> logout</button>
-	{:else}
-		You're not logged in...
-	{/if}
-{/await} -->
+
+
 
 {#if $currentUser}
 	<img
 		src="https://api.gttx.app/api/files/_pb_users_auth_/{$currentUser.id}/{$currentUser.avatar}?thumb=100x100"
 		alt={$currentUser.username}
 	/>
-	Signed in as {$currentUser.username}, {$currentRole},{$currentUser.org},{$currentOrganization},{$currentUser.avatar}
+	Signed in as {$currentUser.username}, {$currentRole},{$currentUser.org.name},{$currentOrganization},{$currentUser.avatar}
 	<button on:click={signout}> logout</button>
+	<button on:click={invite}> invite users</button>
 {/if}
