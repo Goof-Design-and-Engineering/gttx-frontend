@@ -1,5 +1,5 @@
 <script>
-	import Fac from '$lib/facilitator/Fac.svelte';
+	import Fac from '$lib/roles/facilitator/Fac.svelte';
 </script>
 
 <head>

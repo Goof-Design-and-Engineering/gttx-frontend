@@ -6,12 +6,12 @@
 		currentOrganization,
 		currentProfilePic,
 		pb
-	} from '../pocketbase';
+	} from '$lib/pocketbase';
 	import { redirect } from '@sveltejs/kit';
 	import { goto } from '$app/navigation';
 	async function signout() {
 		pb.authStore.clear();
-		goto("/")
+		goto('/');
 	}
 	async function login() {
 		throw redirect(302, '/login');
