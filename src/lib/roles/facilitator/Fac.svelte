@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { currentRole, currentUser,currentOrganization, pb } from '../pocketbase';
+	import { currentRole, currentUser,currentOrganization, pb } from '../../pocketbase';
 	import 'bootstrap-icons/font/bootstrap-icons.css';
 	
 
