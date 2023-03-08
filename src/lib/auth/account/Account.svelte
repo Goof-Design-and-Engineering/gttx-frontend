@@ -15,7 +15,7 @@
 	}
 
 	async function invite() {
-		goto('/invite');
+		goto('/manageorg');
 	}
 
 	

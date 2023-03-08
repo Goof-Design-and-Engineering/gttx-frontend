@@ -9,6 +9,10 @@
 	let rolechangeErr = '';
 
 	onMount(async () => {
+		if ($currentUser == null){
+			goto('createorg');
+			return;
+		}
 		if (currentUser?.org == '') {
 			goto('createorg');
 			return;

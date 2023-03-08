@@ -20,7 +20,9 @@
 
 			const data = {
 				name: organization,
-				members: [$currentUser.id]
+				members: [$currentUser.id],
+				observer_code: organization+"observer", // TODO improve
+				participant_code: organization+"participant",
 			};
 			const createdOrg = await pb.collection('organization').create(data);
 			if (createdOrg != null) {

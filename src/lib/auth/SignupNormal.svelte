@@ -4,6 +4,7 @@
 	import 'bootstrap-icons/font/bootstrap-icons.css';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 
 	const form = useForm();
 
@@ -11,13 +12,43 @@
 	var emailAddr = '';
 	var emailVisibility = true;
 	var password = '';
-	var org = '';
 	var orgkey = '';
 	// var password_confirm = '';
 	let signupErr;
 
+	async function get_organization_role(key) {
+		let invite_codes = ['facilitator_code', 'observer_code', 'participant_code'];
+		let invite_roles = ['facilitator', 'observer', 'participant'];
+
+		// ["facilitator_code","observer_code","participant_code"].forEach(async (element) =>  {
+		// })
+
+		let counter = 0;
+
+		for (const invite_code of invite_codes) {
+			try {
+				const result = await pb
+					.collection('organization')
+					.getFullList(200, { filter: `${invite_code}="${key}"` });
+				console.log(typeof result);
+				console.log(result);
+				if (Array.isArray(result) && result.length == 1) {
+					// return (result[0], invite_roles[counter]);
+					let org_name = result[0],
+						role_name = invite_roles[counter];
+					return { org_name, role_name };
+				}
+				counter++;
+			} finally {
+				console.log('');
+			}
+		}
+	}
+
 	async function signup() {
 		try {
+			let org_magic = await get_organization_role(orgkey);
+
 			const data = {
 				username: username,
 				email: emailAddr,
@@ -25,7 +56,8 @@
 				password: password,
 				passwordConfirm: password,
 				name: 'test',
-				role: 'facilitator',
+				role: org_magic.role_name || '',
+				org: org_magic.org_name?.id || ''
 			};
 			const createdUser = await pb.collection('users').create(data);
 			if (createdUser != null) {
@@ -57,7 +89,7 @@
 {/if}
 
 <h1 class="page-name-header">Signup</h1>
-<form use:form on:submit|preventDefault method="POST">
+<form use:form on:submit|preventDefault method="POST" in:fly={{ delay: 100, duration: 500, y: -10, }} out:fly={{ duration: 500,  y: 10, }}>
 	<div class="grid">
 		<div>
 			<label for="username">Username</label>
@@ -102,8 +134,16 @@
 	/>
 	<Hint for="password" on="required">This is a mandatory field</Hint>
 
-	
-	
+	<label for="orgkey">Invite code</label>
+	<input
+		type="text"
+		name="orkgey"
+		id="text"
+		placeholder=""
+		bind:value={orgkey}
+		use:validators={[required]}
+	/>
+
 	<button disabled={!$form.valid} on:click={signup}>Sign up</button>
 </form>
 
