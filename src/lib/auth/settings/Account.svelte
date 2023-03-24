@@ -47,6 +47,7 @@
 				src="https://api.gttx.app/api/files/_pb_users_auth_/{$currentUser.id}/{$currentUser.avatar}?thumb=100x100"
 				width="100"
 				height="100"
+				style="border-radius: 25px;"
 				alt={$currentUser.username}
 				/>
 			{:else}
@@ -54,6 +55,7 @@
 				src="/defaultpfp.png"
 				width="100"
 				height="100"
+				style="border-radius: 25px;"
 				alt={$currentUser.username}
 				/>
 			{/if}

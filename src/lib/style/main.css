@@ -7,6 +7,17 @@ article {
 }
 }
 @media (min-width: 768px) {
-article {
-    --block-spacing-vertical: calc(var(--spacing) * 1.5);
+    article {
+        --block-spacing-vertical: calc(var(--spacing) * 1.5);
+    }
+}
+
+.right-avatar {
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .right-avatar {
+        display: none;
+    }
 }
