@@ -12,13 +12,14 @@
 	</ul>
 	<ul>
 		<li><a href="/about">About</a></li>
-		<li><a href="/login">Begin</a></li>
+		<!-- <li><a href="/login" role="button">Begin</a></li> -->
 		<!-- <li><button on:click={signout()}> Signout </button></li> -->
-		<!-- {#if $currentUser}
-            <li><a href="/account" role="button">Account</a></li>
+		{#if $currentUser}
+			<li><a href="/account" role="button" class="outline">Settings</a></li>
+			<li><a href="/dashboard" role="button">Dashboard</a></li>
         {:else}
             <li><a href="/login" role="button">Login</a></li>
-        {/if} -->
+        {/if}
 	</ul>
 </nav>
 <article>

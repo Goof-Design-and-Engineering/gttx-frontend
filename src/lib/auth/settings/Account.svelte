@@ -34,12 +34,14 @@
 </script>
 
 {#if $currentUser}
-	<b style="font-size: 40px; color:white">Account Settings</b><br/>
-	<!-- <article> -->
-		<!-- Signed in as {$currentUser.username}, {$currentRole},{$currentUser.org.name},{$currentOrganization},{$currentUser.avatar} -->
-		<label>
-			<center>
-			<b>Hello, {$currentUser.username}</b><br/>
+	<div class="grid">
+		<div>
+			<hgroup>
+				<h1 style="font-size: 40px;">Account Settings</h1>
+				<h2>Welcome back, {$currentUser.username}</h2>
+			</hgroup>
+		</div>
+		<div style="text-align: right;">
 			{#if $currentUser.avatar}
 				<img
 				src="https://api.gttx.app/api/files/_pb_users_auth_/{$currentUser.id}/{$currentUser.avatar}?thumb=100x100"
@@ -54,27 +56,30 @@
 				height="100"
 				alt={$currentUser.username}
 				/>
-			{/if}</center><br/>
-			<div class="grid">
-				<div>
-					Name
-					<input type="text" value="{$currentUser.username}" readonly>
-				</div>
-				<div>
-					Email
-					<input type="text" value="{$currentUser.email}" readonly>
-				</div>
-			</div>
-			<div class="grid">
-				<div>
-					Organization
-					<input type="text" value="{$currentUser.org}" disabled>
-				</div>
-				<div>
-					Role
-					<input type="text" value="{$currentUser.role}" disabled>
-				</div>
-		</label>
+			{/if}
+		</div>
+	</div>
+	<hr><br/>
+	<div class="grid">
+		<div>
+			Name
+			<input type="text" value="{$currentUser.username}" readonly>
+		</div>
+		<div>
+			Email
+			<input type="text" value="{$currentUser.email}" readonly>
+		</div>
+	</div>
+	<div class="grid">
+		<div>
+			Organization
+			<input type="text" value="{$currentUser.org}" disabled>
+		</div>
+		<div>
+			Role
+			<input type="text" value="{$currentUser.role}" disabled>
+		</div>
+	</div>
 	<!-- </article> -->
     <br />
     <div class="grid">
