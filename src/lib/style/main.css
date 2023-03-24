@@ -1,0 +1,12 @@
+article {
+    --block-spacing-vertical: calc(var(--spacing) * 1.1);
+  }
+@media (min-width: 576px) {
+article {
+    --block-spacing-vertical: calc(var(--spacing) * 1.25);
+}
+}
+@media (min-width: 768px) {
+article {
+    --block-spacing-vertical: calc(var(--spacing) * 1.5);
+}

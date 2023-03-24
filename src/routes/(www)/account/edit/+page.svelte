@@ -2,7 +2,7 @@
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import 'bootstrap-icons/font/bootstrap-icons.css';
 	import '$lib/style/main.css'
-	import Account from '$lib/auth/account/Account.svelte';
+	import EditSettings from '$lib/auth/settings/Edit.svelte';
 	const form = useForm();
 </script>
 
@@ -11,7 +11,7 @@
 </head>
 
 <body>
-	<Account />
+	<EditSettings />
 </body>
 
 <pre />

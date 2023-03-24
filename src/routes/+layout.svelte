@@ -21,5 +21,6 @@
         {/if} -->
 	</ul>
 </nav>
-
-<slot />
+<article>
+	<slot />
+</article>

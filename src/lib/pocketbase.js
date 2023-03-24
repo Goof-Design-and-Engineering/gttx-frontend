@@ -7,7 +7,7 @@ export const pb = new Pocketbase("https://api.gttx.app");
 export const currentUser = writable(pb.authStore.model);
 export const currentRole = writable(pb.authStore.model?.role);
 export const currentOrganization = writable(pb.authStore.model?.org);
-export const currentProfilePic = readable(pb.authStore.model?.avatar);
+export const currentProfilePic = writable(pb.authStore.model?.avatar);
 // export const notesRaw = pb.collection("notes").getList(1,50,{});
 // export const notes = writeable(pb.collection("notes").getList(1,50,{}).resolve().items());
 

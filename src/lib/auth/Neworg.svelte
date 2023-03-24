@@ -35,6 +35,11 @@
 		}
 	}
 
+	async function signout() {
+		await pb.authStore.clear();
+		goto('/');
+	}
+
 	onMount(async () => {
 		if ($currentUser.org == '') {
 			return;
@@ -59,7 +64,7 @@
 				type="username"
 				name="organization"
 				id="username"
-				placeholder="Goof"
+				placeholder="Goof, LLC"
 				bind:value={organization}
 				use:validators={[required]}
 			/>
@@ -74,6 +79,7 @@
 				type="password"
 				name="secretkey"
 				id="secretkey"
+				placeholder="dQw4w9WgXcQ"
 				bind:value={secretkey}
 				use:validators={[required]}
 			/>
@@ -84,5 +90,8 @@
 		</div>
 	</div>
 
-	<button disabled={!$form.valid} on:click={signup}>Sign up</button>
+	<div class="grid">
+		<button disabled={!$form.valid} on:click={signup}>Sign up</button>
+		<button on:click={signout} class="secondary">Nevermind, sign out</button>
+	</div>
 </form>
