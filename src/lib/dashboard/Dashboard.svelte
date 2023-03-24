@@ -14,6 +14,10 @@
 		goto('/');
 	}
 
+    async function settings() {
+        goto('/account');
+    }
+
 	async function back() {
 		goto('/');
 	}
@@ -73,9 +77,12 @@
     <b style="font-size: 40px;">Recent Games</b>
     <p>obamna</p>
     <div class="grid">
-        <button on:click={opengames} class="secondary"> Open Games</button>
-        <button on:click={manageorg}> Manage Organization</button>
-        <button on:click={opennotes} class="secondary"> Open Notes</button>
+        <button on:click={opengames}> Open Games</button>
+        <button on:click={opennotes}> Open Notes</button>
     </div>
-    <button on:click={signout} class="secondary">Sign out</button>
+    <div class="grid">
+        <button on:click={manageorg} class="secondary"> Manage Organization</button>
+        <button on:click={settings} class="secondary">Manage account</button>
+        <button on:click={signout} class="secondary outline">Sign out</button>
+    </div>
 {/if}

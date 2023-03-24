@@ -87,6 +87,6 @@
     <div class="grid">
         <button on:click={editsettings}> Edit Account</button>
         <button on:click={changepass}> Change Password</button>
-        <button on:click={signout} class="secondary"> Sign Out</button>
+        <button on:click={signout} class="secondary outline"> Sign Out</button>
     </div>
 {/if}
