@@ -11,9 +11,9 @@
 	var new_password = '';
 	var new_password_again = '';
 	
-	async function signout() {
-		pb.authStore.clear();
-		goto('/');
+	async function submit() {
+		alert("Not implemented.");
+		goto('/account');
 	}
 
     async function back() {
@@ -70,6 +70,6 @@
     <br />
     <div class="grid">
         <button on:click={back} class="secondary"> Back to Settings</button>
-        <button on:click={signout}> Submit</button>
+        <button on:click={submit}> Submit</button>
     </div>
 {/if}
