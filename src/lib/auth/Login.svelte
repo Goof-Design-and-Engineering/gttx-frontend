@@ -83,13 +83,13 @@
 	{/if}
 	<center><p>Or login with:</p></center>
 	<div class="grid">
-		<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth"
+		<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth" data-tooltip="Login with Google"
 			><i class="bi bi-google" /></a
 		>
-		<a href={discordRedir} role="button" class="oauth-button secondary" id="discord-oauth"
+		<a href={discordRedir} role="button" class="oauth-button secondary" id="discord-oauth" data-tooltip="Login with Discord"
 			><i class="bi bi-discord" /></a
 		>
-		<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth"
+		<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth" data-tooltip="Login with GitHub"
 			><i class="bi bi-github" /></a
 		>
 	</div>

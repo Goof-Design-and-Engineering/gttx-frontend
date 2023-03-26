@@ -77,11 +77,11 @@
     <b style="font-size: 40px;">Recent Games</b>
     <p>obamna</p>
     <div class="grid">
-        <button on:click={opengames}> Open Games</button>
-        <button on:click={opennotes}> Open Notes</button>
+        <button on:click={opengames} data-tooltip="Not implemented."> Open Games</button>
+        <button on:click={opennotes} data-tooltip="Not implemented."> Open Notes</button>
     </div>
     <div class="grid">
-        <button on:click={manageorg} class="secondary"> Manage Organization</button>
+        <button on:click={manageorg} class="secondary" data-tooltip="Not implemented."> Manage Organization</button>
         <button on:click={settings} class="secondary">Manage account</button>
         <button on:click={signout} class="secondary outline">Sign out</button>
     </div>

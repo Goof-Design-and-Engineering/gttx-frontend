@@ -99,19 +99,33 @@
 	/>
 	<Hint for="password" on="required">This is a mandatory field</Hint>
 
+	<!-- Checkboxes -->
+	<fieldset>
+		<div class="grid">
+			<label for="terms">
+				<input type="checkbox" id="terms" name="terms" use:validators={[required]}>
+				I agree to the <a href="/terms" target="_blank">Terms and Conditions</a>
+			</label>
+			<label for="privacy">
+				<input type="checkbox" id="privacy" name="privacy" use:validators={[required]}>
+				I agree to the <a href="/privacy" target="_blank">Privacy Policy</a>
+			</label>
+		</div>
+  	</fieldset>
+
 	<button disabled={!$form.valid} on:click={signup}>Sign up</button>
 </form>
 
 <center><p>Or create an account with:</p></center>
 
 <div class="grid">
-	<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth"
+	<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth" data-tooltip="Signup with Google"
 		><i class="bi bi-google" /></a
 	>
-	<a href="https://www.discord.com" role="button" class="oauth-button secondary" id="discord-oauth"
+	<a href="https://www.discord.com" role="button" class="oauth-button secondary" id="discord-oauth" data-tooltip="Signup with Discord"
 		><i class="bi bi-discord" /></a
 	>
-	<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth"
+	<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth" data-tooltip="Signup with GitHub"
 		><i class="bi bi-github" /></a
 	>
 </div>
