@@ -7,12 +7,21 @@
 	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 
-	var new_username = '';
+	var new_username = $currentUser.username;
 	var new_emailaddr = '';
+	var new_avatar = '';
 	
 	async function submit() {
-		alert("Not implemented.");
-		goto('/account');
+		try{
+			await pb.collection('users').update($currentUser.id, {username: new_username})
+			if (new_avatar != ''){
+				await pb.collection('users').update($currentUser.id, {avatar: new_avatar})
+			}
+			goto('/account');
+		} catch(e){
+			console.log(e)
+			alert("Something went wrong, please try again!")
+		}
 	}
 
     async function back() {
@@ -41,7 +50,7 @@
 				type="text"
 				name="new_username"
 				id="new_username"
-				value={$currentUser.username}
+				bind:value={new_username}
 				use:validators={[required]}
 			/>
 
@@ -62,7 +71,8 @@
 					id="pfp"
 					name="pfp"
 					accept="image/*"
-					value=""
+					bind:value={new_avatar}
+					disabled
 				>
 			</label>
 		</label>
