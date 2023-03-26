@@ -16,7 +16,7 @@
 			isFailure = false;
 			await pb.collection('users').authWithPassword(emailaddr, password);
 			// throw redirect(307, '/account');
-			goto('/createorg');
+			goto('/joinorg');
 		} catch (e) {
 			console.log(pb.authStore.isValid);
 			logonError = e;

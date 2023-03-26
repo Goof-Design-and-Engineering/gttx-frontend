@@ -22,7 +22,6 @@
 				emailVisibility: emailVisibility,
 				password: password,
 				passwordConfirm: password,
-				name: 'test',
 				role: 'facilitator',
 			};
 			const createdUser = await pb.collection('users').create(data);
