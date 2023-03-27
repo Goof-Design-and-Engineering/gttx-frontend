@@ -14,6 +14,8 @@ export const currentProfilePic = writable(pb.authStore.model?.avatar);
 pb.authStore.onChange((auth) => {
     console.log("authstore changed", auth);
     currentUser.set(pb.authStore.model);
+    currentRole.set(pb.authStore.model?.role);
+    currentOrganization.set(pb.authStore.model?.org);
 })
 
 export async function WriteToNotesCollection(delta, collection, user) {

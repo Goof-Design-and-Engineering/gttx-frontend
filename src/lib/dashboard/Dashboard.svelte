@@ -10,8 +10,12 @@
 	import { goto } from '$app/navigation';
 	
 	async function signout() {
-		pb.authStore.clear();
-		goto('/');
+        try {
+		    await pb.authStore.clear();
+        }
+        finally {
+		    goto('/login');
+        }
 	}
 
     async function settings() {
@@ -23,7 +27,7 @@
 	}
 
     async function opengames() {
-        alert("Not implemented.");
+        goto('start');
     }
 
     async function manageorg() {
@@ -77,12 +81,16 @@
     <b style="font-size: 40px;">Recent Games</b>
     <p>obamna</p>
     <div class="grid">
-        <button on:click={opengames} data-tooltip="Not implemented."> Open Games</button>
+        <button on:click={opengames}> Open a Game Room</button>
         <button on:click={opennotes} data-tooltip="Not implemented."> Open Notes</button>
     </div>
     <div class="grid">
-        <button on:click={manageorg} class="secondary" data-tooltip="Not implemented."> Manage Organization</button>
+        {#if $currentRole == "facilitator"}
+            <button on:click={manageorg} class="secondary" data-tooltip="Not implemented."> Manage Organization</button>
+        {/if}
         <button on:click={settings} class="secondary">Manage account</button>
         <button on:click={signout} class="secondary outline">Sign out</button>
     </div>
+<!-- {:else}
+    <h1>Not sure how, but this is screwy.</h1> -->
 {/if}
