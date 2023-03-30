@@ -1,4 +1,4 @@
-<script lang="ts">
+<script >
 	import { onMount } from 'svelte';
 	import {
 		currentRole,
@@ -35,7 +35,8 @@
     }
 
     async function opennotes() {
-        alert("Not implemented.");
+        // alert("Not implemented.");
+        goto("/dashboard/notes")
     }
 
 	onMount(() => {
