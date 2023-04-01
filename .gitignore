@@ -23,6 +23,10 @@ _output
 /types
 .eslintcache
 .svelte-kit/
+.svelte-kit/*
 db.json
 vite.config.js.timestamp-1674252962581.mjs
+vite.config.js.timestamp-*
+vite.config.js.*
 /build/
+.DS_Store

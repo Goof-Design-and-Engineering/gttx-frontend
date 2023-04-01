@@ -1,5 +1,6 @@
 <hgroup>
     <h1>About gttx</h1>
-    <h2>i don't care</h2>
+    <h2>The goofy tabletop exercise platform</h2>
 </hgroup>
-<img src="https://www.latech.edu/wp-content/uploads/connections-images/miguel-gates/DJC8822-317e7d64a897dfb4cd7e65a48c181cdd.jpg" alt="hello"/>
+
+<p>Welcome to GTTX, where we believe that cyber preparedness is no longer optional, but rather a vital aspect of organizational security in today's world. We understand that it can be challenging for organizations to evaluate their cyber capabilities, and that's where we come in.<br><br>Our platform offers a user-friendly web interface that simplifies the process of conducting tabletop exercises, a proven method for identifying gaps in cybersecurity plans and improving incident response capabilities. The Cyber Exercise Program (CTEP), developed by the Cybersecurity and Infrastructure Security Agency (CISA), provides a comprehensive set of tabletop exercises that simulate various types of cyber incidents such as ransomware attacks or data breaches.<br><br>At GTTX, we have developed a way to help organizations conduct CTEP exercises more easily than ever before. Our platform enables organizations to evaluate their cybersecurity plans quickly and accurately by simulating realistic scenarios and providing a straightforward evaluation of their response capabilities.<br><br>By using our platform, organizations can better identify vulnerabilities in their cybersecurity plans and improve their incident response capabilities. With GTTX, you can rest assured that your organization will be prepared for any potential cyber incident. Try our platform today and take the first step towards a safer and more secure future.</p>

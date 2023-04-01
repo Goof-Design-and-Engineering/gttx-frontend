@@ -1,11 +1,11 @@
 <script lang="js">
 	import { useForm } from 'svelte-use-form';
-	import 'bootstrap-icons/font/bootstrap-icons.css';
 	// import '$lib/style/main.css';
-	import Signup from '$lib/auth/Signup.svelte';
+	// import Neworg from '$lib/auth/Neworg.svelte';
+	import Joinorg from '../../../lib/auth/Joinorg.svelte';
 	const form = useForm();
 </script>
 
 <body>
-	<Signup />
+	<Joinorg />
 </body>

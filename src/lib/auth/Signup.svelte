@@ -22,27 +22,25 @@
 				emailVisibility: emailVisibility,
 				password: password,
 				passwordConfirm: password,
-				name: 'test',
 				role: 'facilitator',
-				org: 'itqo87s9chb4qk8'
 			};
-			const createdUser = await pb.collection('user').create(data);
+			const createdUser = await pb.collection('users').create(data);
 			if (createdUser != null) {
-				await pb.collection('user').authWithPassword(data['username'], data['password']);
+				await pb.collection('users').authWithPassword(data['username'], data['password']);
 			}
 			// await login();
 			// throw redirect(302,"/login");
-			await goto('/account');
+			await goto('/createorg');
 		} catch (err) {
 			console.log(err);
 			signupErr = err;
-			await goto('/register');
+			await goto('/signup');
 		}
 	}
 
 	onMount(async () => {
 		if ($currentUser) {
-			goto('/account');
+			goto('/createorg');
 		} else {
 			return;
 		}
@@ -55,7 +53,7 @@
 	</p>
 {/if}
 
-<h1 class="page-name-header">Register</h1>
+<h1 class="page-name-header">Signup</h1>
 <form use:form on:submit|preventDefault method="POST">
 	<div class="grid">
 		<div>
@@ -101,19 +99,33 @@
 	/>
 	<Hint for="password" on="required">This is a mandatory field</Hint>
 
+	<!-- Checkboxes -->
+	<fieldset>
+		<div class="grid">
+			<label for="terms">
+				<input type="checkbox" id="terms" name="terms" use:validators={[required]}>
+				I agree to the <a href="/terms" target="_blank">Terms and Conditions</a>
+			</label>
+			<label for="privacy">
+				<input type="checkbox" id="privacy" name="privacy" use:validators={[required]}>
+				I agree to the <a href="/privacy" target="_blank">Privacy Policy</a>
+			</label>
+		</div>
+  	</fieldset>
+
 	<button disabled={!$form.valid} on:click={signup}>Sign up</button>
 </form>
 
 <center><p>Or create an account with:</p></center>
 
 <div class="grid">
-	<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth"
+	<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth" data-tooltip="Signup with Google"
 		><i class="bi bi-google" /></a
 	>
-	<a href="https://www.discord.com" role="button" class="oauth-button secondary" id="discord-oauth"
+	<a href="https://www.discord.com" role="button" class="oauth-button secondary" id="discord-oauth" data-tooltip="Signup with Discord"
 		><i class="bi bi-discord" /></a
 	>
-	<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth"
+	<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth" data-tooltip="Signup with GitHub"
 		><i class="bi bi-github" /></a
 	>
 </div>
