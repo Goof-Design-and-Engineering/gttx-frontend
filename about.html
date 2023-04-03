@@ -9,16 +9,17 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta http-equiv="content-security-policy" content="">
-		<link rel="modulepreload" href="./_app/immutable/start-c1944003.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index-9cd25cf6.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/singletons-89f5b02f.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index-00e09fed.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/preload-helper-41c905a7.js">
-		<link rel="modulepreload" href="./_app/immutable/components/pages/_layout.svelte-127c5e3a.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/pocketbase-389f893c.js">
-		<link rel="modulepreload" href="./_app/immutable/modules/pages/_layout.ts-9cbb603b.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/_layout-da46b06b.js">
-		<link rel="modulepreload" href="./_app/immutable/components/pages/(www)/about/_page.svelte-0307f896.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.54a3b51b.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.7f1a9c88.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.6eb0079f.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.83fee45c.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.8d28bb11.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/preload-helper.41c905a7.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.71d069b7.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/pocketbase.2fde5c2d.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_layout.ts.984db11e.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/_layout.da46b06b.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/(www)-about-page.svelte.e5442162.js">
 </head>
 
 <body data-sveltekit-preload-data="hover">
@@ -37,23 +38,31 @@
 <p>Welcome to GTTX, where we believe that cyber preparedness is no longer optional, but rather a vital aspect of organizational security in today&#39;s world. We understand that it can be challenging for organizations to evaluate their cyber capabilities, and that&#39;s where we come in.<br><br>Our platform offers a user-friendly web interface that simplifies the process of conducting tabletop exercises, a proven method for identifying gaps in cybersecurity plans and improving incident response capabilities. The Cyber Exercise Program (CTEP), developed by the Cybersecurity and Infrastructure Security Agency (CISA), provides a comprehensive set of tabletop exercises that simulate various types of cyber incidents such as ransomware attacks or data breaches.<br><br>At GTTX, we have developed a way to help organizations conduct CTEP exercises more easily than ever before. Our platform enables organizations to evaluate their cybersecurity plans quickly and accurately by simulating realistic scenarios and providing a straightforward evaluation of their response capabilities.<br><br>By using our platform, organizations can better identify vulnerabilities in their cybersecurity plans and improve their incident response capabilities. With GTTX, you can rest assured that your organization will be prepared for any potential cyber incident. Try our platform today and take the first step towards a safer and more secure future.</p></article>
 
 
-		<script type="module" data-sveltekit-hydrate="2enswp">
-			import { start } from "./_app/immutable/start-c1944003.js";
+			
+			<script>
+				{
+					__sveltekit_1dvipdq = {
+						env: {},
+						base: new URL(".", location).pathname.slice(0, -1),
+						element: document.currentScript.parentElement
+					};
 
-			start({
-				env: {},
-				paths: {"assets":"","base":""},
-				target: document.querySelector('[data-sveltekit-hydrate="2enswp"]').parentNode,
-				version: "1680447618447",
-				hydrate: {
-					node_ids: [0, 15],
-					data: [null,null],
-					form: null,
-					error: null
+					const data = [null,null];
+
+					Promise.all([
+						import("./_app/immutable/entry/start.54a3b51b.js"),
+						import("./_app/immutable/entry/app.8d28bb11.js")
+					]).then(([kit, app]) => {
+						kit.start(app, __sveltekit_1dvipdq.element, {
+							node_ids: [0, 15],
+							data,
+							form: null,
+							error: null
+						});
+					});
 				}
-			});
-		</script>
-	</div>
+			</script>
+		</div>
 		<div class="grid" style="padding-top: 2%">
 			<div style="font-family: 'Lato Black', sans-serif">
 				©  2023  <a href="/about">GTTX, LLC.</a>
