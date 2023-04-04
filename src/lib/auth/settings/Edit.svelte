@@ -1,14 +1,19 @@
 <script>
 	import { onMount } from 'svelte';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
-	import { currentUser, pb } from '$lib/pocketbase';
+	import { currentUser, pb, currentOrganization } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { toggleModal } from '$lib/modal';
-	// TODO: Get a file import working. For now, shoving the modal stuff in here will work
+
+	const form = useForm();
 
 	var new_username = '';
 	var new_emailaddr = '';
 	var new_avatar = '';
+
+	var password_confirm = '';
+
+	var confirm_enabled = true
 
 	async function submit() {
 		try {
@@ -25,6 +30,29 @@
 
 	async function back() {
 		goto('/account');
+	}
+
+	async function delete_account(){
+		try{
+			await pb.collection('users').authWithPassword($currentUser.email, password_confirm);
+		} catch(e){
+			toggleModal
+			alert('Your password was incorrect!');
+			return
+		}
+
+		try {
+			if ($currentUser.role == "facilitator"){
+				await pb.collection('organization').delete($currentOrganization)
+			}
+			else {
+				await pb.collection('users').delete($currentUser.id);
+			}
+		} catch (e) {
+			console.log(e);
+			alert('Something went wrong, please try again!');
+		}
+		goto('/');
 	}
 
 	onMount(() => {
@@ -73,8 +101,17 @@
 	<div class="grid">
 		<button on:click={back} class="secondary"> Back to Settings</button>
 		<button on:click={submit}> Submit</button>
-		<button class="outline contrast" data-target="modal-example" on:click={toggleModal}>Delete Account</button>
 	</div>
+	<center>
+		<button 
+			class="outline contrast"
+			data-target="modal-example"
+			on:click={toggleModal}
+			style="width:50%;"
+			data-tooltip="This button is dangerous!">
+			Delete Account
+		</button>
+	</center>
 
 	<dialog id="modal-example">
 		<article>
@@ -87,20 +124,46 @@
 		  <h3>Woah there!</h3>
 		  <p>
 			Are you sure that you want to delete your account?
-			<br>
+			<br><br>
+			{#if $currentUser.role != "facilitator"}
 			You'll need another invite code to join back into your organization.
-			<br>
-			<br>
+			{:else}
+			As the facilitator, your organization "<b>{$currentOrganization.name}</b>" will be deleted as well!
+			{/if}
+			<br><br>
 			<b style="color: red;">This action can not be undone!</b>
 		  </p>
 		  <footer>
-			<br>
-			<button href="#cancel" class="secondary" data-target="modal-example" on:click={toggleModal}>
-				Cancel
-			</button>
-			<button href="#confirm" data-target="modal-example" on:click={toggleModal}>
-			  Confirm
-			</button>
+			<form use:form on:submit|preventDefault method="POST">
+				<br>
+				<input
+					type="password"
+					name="del_confirm_pass"
+					id="del_confrim_pass"
+					placeholder="Your current password, please!"
+					bind:value={password_confirm}
+					use:validators={[required]}
+					/>
+				<br>
+				<button href="#cancel" class="secondary" data-target="modal-example" on:click={toggleModal}>
+					Cancel
+				</button>
+				{#if $currentUser.role != "facilitator"}
+					<button href="#confirm" data-target="modal-example" on:click={delete_account} disabled={!$form.valid}>
+						Confirm
+					</button>
+				{:else}
+					<fieldset>
+						<label for="org_confirm">
+							<input type="checkbox" id="org_confirm" name="terms" use:validators={[required]}>
+							I acknowlege that my organization will be deleted as well!
+						</label>
+					</fieldset>
+					<button href="#confirm" data-target="modal-example" on:click={delete_account} disabled={!$form.valid}>
+						Confirm
+					</button>
+				{/if}
+			</form>
 		  </footer>
 		</article>
 	  </dialog>
