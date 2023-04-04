@@ -71,7 +71,7 @@
 
 				const record2 = await pb.collection('organization').update(org_magic.org_name?.id, data2);
 
-				await goto('/account');
+				await goto('/dashboard');
 			} else {
 				signupErr = 'INVALID CODE; TRY AGAIN';
 				await goto('/joinorg');
@@ -95,7 +95,7 @@
 		if ($currentUser.org == '') {
 			return;
 		} else {
-			goto('/account');
+			goto('/dashboard');
 		}
 	});
 </script>

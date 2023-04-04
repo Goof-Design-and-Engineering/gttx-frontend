@@ -6,6 +6,7 @@
 	import { toggleModal } from '$lib/modal';
 
 	const form = useForm();
+	const formData = new FormData;
 
 	var new_username = '';
 	var new_emailaddr = '';
@@ -19,7 +20,8 @@
 		try {
 			await pb.collection('users').update($currentUser.id, { username: new_username });
 			if (new_avatar != '') {
-				await pb.collection('users').update($currentUser.id, { avatar: new_avatar });
+				formData.append('documents', new_avatar);
+				pb.collection('users').update($currentUser.id, formData)
 			}
 			goto('/account');
 		} catch (e) {
@@ -92,9 +94,9 @@
 			disabled
 		/>
 
-		<label for="file"
-			>Profile Picture
-			<input type="file" id="pfp" name="pfp" accept="image/*" bind:value={new_avatar} disabled />
+		<label for="file">
+			Profile Picture
+			<input type="file" id="pfp" name="pfp" accept="image/*" bind:value={new_avatar} disabled/>
 		</label>
 	</label>
 	<!-- </article> -->
