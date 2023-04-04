@@ -52,6 +52,7 @@
 			console.log(e);
 			alert('Something went wrong, please try again!');
 		}
+		pb.authStore.clear();
 		goto('/');
 	}
 
