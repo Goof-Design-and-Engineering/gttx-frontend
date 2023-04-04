@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import { pb, currentUser, currentOrganization } from '../pocketbase';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -43,7 +43,7 @@
 				const newOrg = { org: createdOrg.id };
 				pb.collection('users').update(pb.authStore.model?.id, newOrg);
 			}
-			await goto('/account');
+			await goto('/dashboard');
 		} catch (err) {
 			// if there is an error drop it here
 			console.log(err);
@@ -65,7 +65,7 @@
 		if ($currentUser.org == '') {
 			return;
 		} else {
-			goto('/account');
+			goto('/dashboard');
 		}
 	});
 </script>

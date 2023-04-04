@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import { currentUser, pb } from '../pocketbase';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import { onMount } from 'svelte/internal';
