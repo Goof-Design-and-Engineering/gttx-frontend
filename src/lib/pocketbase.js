@@ -26,3 +26,11 @@ export async function WriteToNotesCollection(delta, collection, user) {
     };
     await pb.collection(collection).create(data)
 }
+
+
+export async function getCurrentOrganizationRecord() {
+    const record = await pb.collection('organization').getOne(pb.authStore.model?.org,
+        { expand: 'members,scenarios' });
+
+    return record;
+}

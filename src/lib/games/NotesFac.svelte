@@ -9,6 +9,11 @@
 	} from '$lib/pocketbase';
 
 	let scenarioObject;
+	let modules = [];
+	let roomID = 'otl8cddnj0p6hho';
+	let newModule = '';
+	let errorThrown = '';
+
 	onMount(async () => {
 		if (!$currentUser) {
 			goto('/login');
@@ -27,12 +32,65 @@
 	}
 
 	async function loadScenario() {
-		const result = await pb.collection('room').getOne('otl8cddnj0p6hho', {
+		const result = await pb.collection('room').getOne(roomID, {
 			expand: 'scenarios'
 		});
 		console.log(result);
 		scenarioObject = result.expand.scenarios.contents;
+
+		// save module name
+		for (var moduleName in scenarioObject.modules) {
+			modules.push(moduleName);
+		}
 	}
+
+	async function incrementQuestion() {
+		// if (scenarioObject == null) {
+		// 	loadScenario();
+		// }
+		const result = await pb.collection('room').getOne(roomID);
+
+		let maxLength = scenarioObject.modules[result.module].questions.length;
+
+		if (result.question < maxLength) {
+			const data = {
+				question: result.question + 1
+			};
+
+			const result2 = await pb.collection('room').update(roomID, data);
+		} else {
+			errorThrown = 'no questions left';
+		}
+	}
+
+	async function decrementQuestion() {
+		// if (scenarioObject == null) {
+		// 	loadScenario();
+		// }
+		const result = await pb.collection('room').getOne(roomID);
+
+		if (result.question > 1) {
+			const data = {
+				question: result.question - 1
+			};
+
+			const result2 = await pb.collection('room').update(roomID, data);
+		} else {
+			errorThrown = 'no questions left';
+		}
+	}
+
+	async function changeModule() {
+		const result = await pb.collection('room').getOne(roomID);
+
+		const data = {
+			module: newModule
+		};
+
+		const result2 = await pb.collection('room').update(roomID, data);
+	}
+
+
 
 	// let scenarioObject = {
 	// 	name: 'CISA CTEP #1',
@@ -127,9 +185,18 @@
 				</ul>
 			</div>
 		{:else}
-			<div>
-				<h1>HELLO</h1>
-			</div>
+			<h2>Specify Module (current {newModule})</h2>
+			<select bind:value={newModule}>
+				<option value="" disabled selected>Select</option>
+				{#each modules as module}
+					<p>{module}</p>
+					<!-- content here -->
+					<option value={module} on:click={changeModule}>{module}</option>
+				{/each}
+			</select>
+			<hr />
+			<button on:click={incrementQuestion}>INC QUESTION</button>
+			<button on:click={decrementQuestion}>DEC QUESTION</button>
 		{/if}
 	</div>
 
