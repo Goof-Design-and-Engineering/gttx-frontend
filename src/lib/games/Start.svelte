@@ -9,82 +9,195 @@
 	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
+
+	import Switch from '$lib/util/Switch.svelte';
+
 	const form = useForm();
 
 	var invitecode = '';
-    var isFailure = false;
+	var isFailure = false;
+	var switchValue;
+	var moduleChosen = '';
+	var scenarioChosen = '';
 
 	async function back() {
 		goto('/');
 	}
 
-    async function opengames() {
-        goto('start');
-    }
+	async function opengames() {
+		goto('start');
+	}
 
-    async function submitinvitecode() {
-        try {
+	async function submitinvitecode() {
+		try {
 			isFailure = false;
 			// throw redirect(307, '/account');
 		} catch (e) {
-			console.log("Invite Code Failure!");
+			console.log('Invite Code Failure!');
 			// logonError = e;
 		}
-    }
+	}
+
+	async function recentgames() {
+		// you can also fetch all records at once via getFullList
+		const records = await pb.collection('room').getFullList(200 /* batch size */, {
+			sort: '-created',
+			filter: `org='${$currentUser.org}'`
+		});
+
+		return records;
+	}
+
+	async function getScenarios() {
+		const resultList = await pb.collection('scenario').getList(1, 50);
+		console.log(resultList);
+		return resultList.items;
+	}
+
+	async function creategame() {
+		const generateRandomString = (length) =>
+			Array.from({ length }, () => Math.random().toString(36)[2]).join('');
+
+		const data = {
+			uniqueid: generateRandomString(16),
+			org: currentUser.org,
+			users: [currentUser.id],
+			currentUsers: 0,
+			settings: {},
+			scenarios: 'RELATION_RECORD_ID',
+			question: 0,
+			module: moduleChosen
+		};
+	}
+
+	function setValues(scenario, module) {
+		scenarioChosen = scenario;
+		moduleChosen = module;
+	}
 
 	onMount(() => {
 		if (!$currentUser) {
 			goto('/login');
 		}
-        if (!$currentUser.org) {
-            goto('/createorg')
-        }
+		if (!$currentUser.org) {
+			goto('/createorg');
+		}
 	});
 </script>
 
-{#if $currentUser && $currentOrganization}
-    <!-- Facilitator -->
-    {#if $currentRole == "facilitator"}
-        <hgroup>
-            <h1 style="font-size: 40px;">Start a New Exercise</h1>
-            <h2>Let's do it to it.</h2>
-        </hgroup>
-        <hr>
-        <hgroup>
-            <h1>Scenario Settings</h1>
-            <h2>What's going on?</h2>
-        </hgroup>
-        <b style="font-size: 40px;">Recent Games</b>
-        
-    <!-- Participant and Observer -->
-    {:else if $currentRole == "participant" || $currentRole == "observer"}
-        <hgroup>
-            <h1>Join a game Room</h1>
-            <h2>Let's a-go.</h2>
-        </hgroup>
-        <form use:form on:submit|preventDefault>
-            <label for="email">Invite Code</label>
-            <input
-                type="invite"
-                name="invite"
-                id="invite"
-                placeholder="N5IvhutkcLc"
-                bind:value={invitecode}
-                use:validators={[required]}
-            />
-            <HintGroup for="email">
-                <Hint on="required">This is a mandatory field</Hint>
-            </HintGroup>
+<Switch bind:value={switchValue} label="Facilitator toggle" design="slider" style="float" />
 
-            <button disabled={!$form.valid} on:click={submitinvitecode}>Join</button>
-        </form>
-    {:else}
-        <hgroup>
-            <br/>
-            <h2>Not sure how, but you don't have a valid role.</h2>
-            <h3>Your role is {$currentRole}. Please contact your organization manager.</h3>
-        </hgroup>
-    {/if}
-{:else}
-    <h2>Oops. Try refreshing.</h2>
-{/if}
+{#key scenarioChosen}
+	<h1>{scenarioChosen}</h1>
+{/key}
+{#await (currentRole, currentUser)}
+	<progress />
+{:then}
+	<!-- Facilitator -->
+	{#if switchValue == 'on'}
+		<!-- {#if $currentRole == 'facilitator' || switchValue == 'on'} -->
+
+		<hgroup>
+			<h1 style="font-size: 40px;">Start a New Exercise</h1>
+			<h2>Let's do it to it.</h2>
+		</hgroup>
+		<hr />
+		<hgroup>
+			<h1>Scenario To Choose From</h1>
+			<h2>What's going on?</h2>
+			{#await getScenarios()}
+				<progress />
+			{:then scenarios}
+				{#each scenarios as scenario}
+					{#if scenario.name == 'Ransomware'}
+						<details>
+							<summary>{scenario.name}</summary>
+							<h2>{scenario.contents?.overview?.name}</h2>
+							<h5>{scenario.contents?.name} {scenario.contents?.source}</h5>
+							<hr />
+							<h4>PURPOSE</h4>
+							<p>{scenario.contents?.overview?.purpose}</p>
+							<h4>SCOPE</h4>
+							<p>{scenario.contents?.overview?.scope}</p>
+							<hr />
+							<h4>OBJECTIVES</h4>
+							<ul>
+								{#each scenario.contents?.overview.objectives as objective}
+									<li>
+										{objective}
+									</li>
+								{/each}
+							</ul>
+							<hr />
+							<h4>MODULES</h4>
+							<ul>
+								{#each Object.entries(scenario.contents?.modules) as [name, module]}
+									<em>
+										{name}
+									</em>
+									<p>{module.description}</p>
+									<button on:click={() => setValues(scenario.id,name) }> Choose this scenario and module</button>
+								{/each}
+							</ul>
+						</details>
+					{:else}
+						<details>
+							<summary>{scenario.name}</summary>
+						</details>
+					{/if}
+				{/each}
+			{:catch error}
+				<!-- promise was rejected -->
+				{error}
+			{/await}
+		</hgroup>
+		<b style="font-size: 40px;">Recent Games</b>
+		{#await recentgames()}
+			<progress />
+		{:then games}
+			<li>
+				{#each games as game}
+					<!--TODO PUT WAY TO LOOK AT GAME NOTES HERE  -->
+					<ul>{game.id}</ul>
+				{/each}
+				<!-- promise was fulfilled -->
+			</li>
+		{:catch error}
+			{error}
+		{/await}
+
+		<!-- Participant and Observer -->
+	{:else if $currentRole == 'participant' || $currentRole == 'observer' || switchValue == 'off'}
+		<hgroup>
+			<h1>Join a game Room</h1>
+			<h2>Let's a-go.</h2>
+		</hgroup>
+		<form use:form on:submit|preventDefault>
+			<label for="email">Invite Code</label>
+			<input
+				type="invite"
+				name="invite"
+				id="invite"
+				placeholder="N5IvhutkcLc"
+				bind:value={invitecode}
+				use:validators={[required]}
+			/>
+			<HintGroup for="email">
+				<Hint on="required">This is a mandatory field</Hint>
+			</HintGroup>
+
+			<button disabled={!$form.valid} on:click={submitinvitecode}>Join</button>
+		</form>
+	{:else if ['facilitator', 'participant', 'observer'].includes($currentRole)}
+		<hgroup>
+			<br />
+			<h2>Not sure how, but you don't have a valid role.</h2>
+			<h3>Your role is {$currentRole}. Please contact your organization manager.</h3>
+		</hgroup>
+	{/if}
+{:catch error}
+	<h2>Oops</h2>
+	<p>
+		{error}
+	</p>
+{/await}
