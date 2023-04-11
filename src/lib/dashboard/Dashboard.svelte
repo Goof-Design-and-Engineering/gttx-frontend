@@ -78,20 +78,25 @@
         </div>
     </div>
     <hr>
-    <!-- Signed in as {$currentUser.username}, {$currentRole},{$currentUser.org.name},{$currentOrganization},{$currentUser.avatar} -->
-    <b style="font-size: 40px;">Recent Games</b>
-    <p>obamna</p>
-    <div class="grid">
-        <button on:click={opengames}> Open a Game Room</button>
-        <button on:click={opennotes} data-tooltip="Not implemented."> Open Notes</button>
-    </div>
-    <div class="grid">
-        {#if $currentRole == "facilitator"}
-            <button on:click={manageorg} class="secondary" data-tooltip="Not implemented."> Manage Organization</button>
-        {/if}
-        <button on:click={settings} class="secondary">Manage account</button>
-        <button on:click={signout} class="secondary outline">Sign out</button>
-    </div>
+    <article>
+        <header>
+            <button on:click={opengames}> Open a Game Room</button>
+        </header>
+
+        <div class="grid">
+            {#if $currentRole == "facilitator"}
+                <button on:click={manageorg} class="secondary" data-tooltip="Not implemented."> Manage Organization</button>
+            {/if}
+            <button on:click={settings} class="secondary">Manage account</button>
+        </div>
+
+        <footer>
+            <center>
+                <br>
+                <button on:click={signout} style="width: 50%;" class="secondary outline">Sign out</button>
+            </center>
+        </footer>
+    </article>
 <!-- {:else}
     <h1>Not sure how, but this is screwy.</h1> -->
 {/if}

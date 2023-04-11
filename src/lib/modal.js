@@ -49,6 +49,23 @@ export const closeModal = modal => {
   }, animationDuration);
 }
 
+document.addEventListener("DOMContentLoaded", function(event) { 
+    // Close with a click outside
+    document.addEventListener('click', event => {
+      if (visibleModal != null) {
+        const modalContent = visibleModal.querySelector('article');
+        const isClickInside = modalContent.contains(event.target);
+        !isClickInside && closeModal(visibleModal);
+      }
+    });
+  
+    // Close with Esc key
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && visibleModal != null) {
+        closeModal(visibleModal);
+      }
+    });
+});
 // Get scrollbar width
 export const getScrollbarWidth = () => {
 
