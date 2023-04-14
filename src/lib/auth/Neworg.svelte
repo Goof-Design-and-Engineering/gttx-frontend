@@ -31,7 +31,7 @@
 			const data = {
 				name: organization,
 				members: [$currentUser.id],
-				particapant_code: generateInviteCode('participant'),
+				participant_code: generateInviteCode('participant'),
 				facilitator_code: generateInviteCode('facilitator'),
 				observer_code: generateInviteCode('observer')
 			};
