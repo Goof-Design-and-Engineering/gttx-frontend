@@ -26,7 +26,10 @@
 	var moduleChosen = '';
 	var scenarioChosen = '';
 
+	var emailInput;
+
 	var emails = [""];
+	var inputs = [];
 
 	async function back() {
 		goto('/');
@@ -81,7 +84,11 @@
 	function addEmail(formStatus, email){
 		if (formStatus){
 			emails.push(email)
+			emailInput.setAttribute("readonly", true)
+			emailInput.setAttribute("aria-invalid", false)
+			inputs.push(emailInput)
 		}
+		emailInput.setAttribute("aria-invalid", true)
 		console.log(emails)
 	}
 
@@ -196,7 +203,7 @@
 						<h3>External participants</h3>
 						{#each emails as emailBox}
 							<script>
-								var emailAdr = ""
+								var emailInput
 							</script>
 							<input 
 								type="email" 
@@ -205,12 +212,13 @@
 								placeholder="Enter an email" 
 								on:change={() => addEmail($form.valid, emailBox)}
 								use:validators={[required, email]}
+								bind:this={emailInput}
 								required bind:value={emailBox}/>
 						{/each}
 					</body>
 
 					<footer>
-						<button>Invite!</button>
+						<button disabled={!form.valid}>Invite!</button>
 					</footer>
 				</article>
 			</form>
