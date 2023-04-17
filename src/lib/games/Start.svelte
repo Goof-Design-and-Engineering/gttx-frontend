@@ -10,7 +10,7 @@
 	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
-	import InviteModalContent from '$lib/games/InviteModalContent.svelte';
+	// import InviteModalContent from '$lib/games/InviteModalContent.svelte';
 
 	const form = useForm();
 
