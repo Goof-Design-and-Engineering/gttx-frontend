@@ -5,12 +5,18 @@
 		currentUser,
 		currentOrganization,
 		currentProfilePic,
+		getCurrentOrganizationRecord,
 		pb
 	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 
 	import Switch from '$lib/util/Switch.svelte';
+
+	import Carousel from 'svelte-carousel';
+
+	import Modal from '$lib/Modal.svelte';
+	let showModal = false;
 
 	const form = useForm();
 
@@ -70,9 +76,10 @@
 		};
 	}
 
-	function setValues(scenario, module) {
+	function setModal(scenario, module) {
 		scenarioChosen = scenario;
 		moduleChosen = module;
+		showModal = true;
 	}
 
 	onMount(() => {
@@ -96,81 +103,134 @@
 	<!-- Facilitator -->
 	{#if switchValue == 'on'}
 		<!-- {#if $currentRole == 'facilitator' || switchValue == 'on'} -->
-
-		<hgroup>
-			<h1 style="font-size: 40px;">Start a New Exercise</h1>
-			<h2>Let's do it to it.</h2>
-		</hgroup>
-		<hr />
-		<hgroup>
-			<h1>Scenario To Choose From</h1>
-			<h2>What's going on?</h2>
+		<article>
+			<header>
+				<hgroup>
+					<h1>Start a New Exercise</h1>
+					<h2>Choose a scenario, any scenario!</h2>
+				</hgroup>
+			</header>
 			{#await getScenarios()}
 				<progress />
 			{:then scenarios}
-				{#each scenarios as scenario}
-					{#if scenario.name == 'Ransomware'}
-						<details>
-							<summary>{scenario.name}</summary>
-							<h2>{scenario.contents?.overview?.name}</h2>
-							<h5>{scenario.contents?.name} {scenario.contents?.source}</h5>
-							<hr />
-							<h4>PURPOSE</h4>
-							<p>{scenario.contents?.overview?.purpose}</p>
-							<h4>SCOPE</h4>
-							<p>{scenario.contents?.overview?.scope}</p>
-							<hr />
-							<h4>OBJECTIVES</h4>
-							<ul>
-								{#each scenario.contents?.overview.objectives as objective}
-									<li>
-										{objective}
-									</li>
-								{/each}
-							</ul>
-							<hr />
-							<h4>MODULES</h4>
-							<ul>
-								{#each Object.entries(scenario.contents?.modules) as [name, module]}
-									<em>
-										{name}
-									</em>
-									<p>{module.description}</p>
-									<button on:click={() => setValues(scenario.id,name) }> Choose this scenario and module</button>
-								{/each}
-							</ul>
-						</details>
-					{:else}
-						<details>
-							<summary>{scenario.name}</summary>
-						</details>
-					{/if}
-				{/each}
+				<Carousel>
+					{#each scenarios as scenario}
+						{#if scenario.name == 'Ransomware'}
+							<details>
+								<summary>{scenario.name}</summary>
+								<h2>{scenario.contents?.overview?.name}</h2>
+								<h5>{scenario.contents?.name} {scenario.contents?.source}</h5>
+								<hr />
+								<h4>PURPOSE</h4>
+								<p>{scenario.contents?.overview?.purpose}</p>
+								<h4>SCOPE</h4>
+								<p>{scenario.contents?.overview?.scope}</p>
+								<hr />
+								<h4>OBJECTIVES</h4>
+								<ul>
+									{#each scenario.contents?.overview.objectives as objective}
+										<li>
+											{objective}
+										</li>
+									{/each}
+								</ul>
+								<hr />
+								<h4>MODULES</h4>
+								<ul>
+									{#each Object.entries(scenario.contents?.modules) as [name, module]}
+										<em>
+											{name}
+										</em>
+										<p>{module.description}</p>
+										<button on:click={() => setModal()}> Choose this scenario and module</button>
+									{/each}
+								</ul>
+							</details>
+						{:else}
+							<details>
+								<summary>{scenario.name}</summary>
+							</details>
+						{/if}
+					{/each}
+				</Carousel>
 			{:catch error}
 				<!-- promise was rejected -->
 				{error}
 			{/await}
-		</hgroup>
-		<b style="font-size: 40px;">Recent Games</b>
-		{#await recentgames()}
-			<progress />
-		{:then games}
-			<li>
-				{#each games as game}
-					<!--TODO PUT WAY TO LOOK AT GAME NOTES HERE  -->
-					<ul>{game.id}</ul>
-				{/each}
-				<!-- promise was fulfilled -->
-			</li>
-		{:catch error}
-			{error}
-		{/await}
+		</article>
+
+		<Modal bind:showModal>
+			<article>
+				<header>
+					<hgroup>
+						<h1>Who's participating?</h1>
+						<h2>You can't have a party by yourself</h2>
+					</hgroup>
+				</header>
+
+				<body>
+					<details role="list">
+						<summary aria-haspopup="listbox">Org members</summary>
+							<ul role="listbox">
+								{#await getCurrentOrganizationRecord()}
+									<progress />
+								{:then org}
+								{#each org.members as member}
+									<li>
+										<label>
+											<input type="checkbox" />
+											{member}
+										</label>
+									</li>
+								{/each}
+								{/await}
+							</ul>
+					</details>
+
+					<hgroup>
+						<h1>External participants</h1>
+						<h2>Just enter any emails you need!</h2>
+					</hgroup>
+
+					<input type="email" id="email" name="email" placeholder="Enter an email" required>
+				</body>
+
+				<footer>
+					<button>Invite!</button>
+				</footer>
+			</article>
+		</Modal>
+
+		<article>
+			<hgroup>
+				<header>
+					<h1>Recent Games</h1>
+				</header>
+				{#await recentgames()}
+					<li aria-busy="true">Loading your recent games...</li>
+				{:then games}
+					{#if games.length != 0}
+						<li>
+							{#each games as game}
+								<!--TODO PUT WAY TO LOOK AT GAME NOTES HERE  -->
+								<ul>{game.id}</ul>
+							{/each}
+							<!-- promise was fulfilled -->
+						</li>
+					{:else}
+						<h2>You don't have any recent games!</h2>
+					{/if}
+				{:catch error}
+					{error}
+				{/await}
+			</hgroup>
+		</article>
 
 		<!-- Participant and Observer -->
 	{:else if $currentRole == 'participant' || $currentRole == 'observer' || switchValue == 'off'}
 		<hgroup>
 			<h1>Join a game Room</h1>
-			<h2>Let's a-go.</h2>
+			<h2>Let's-a go.</h2>
 		</hgroup>
 		<form use:form on:submit|preventDefault>
 			<label for="email">Invite Code</label>
@@ -191,8 +251,8 @@
 	{:else if ['facilitator', 'participant', 'observer'].includes($currentRole)}
 		<hgroup>
 			<br />
-			<h2>Not sure how, but you don't have a valid role.</h2>
-			<h3>Your role is {$currentRole}. Please contact your organization manager.</h3>
+			<h2>You find yourself in a strange place; you don't have a valid role.</h2>
+			<h3>Your current role is {$currentRole}. Please contact your organization manager.</h3>
 		</hgroup>
 	{/if}
 {:catch error}

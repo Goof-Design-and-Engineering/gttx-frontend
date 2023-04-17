@@ -5,8 +5,11 @@
 	import { goto } from '$app/navigation';
 	import { toggleModal } from '$lib/modal';
 
+	import Modal from '$lib/Modal.svelte';
+	let showModal = false;
+
 	const form = useForm();
-	const formData = new FormData;
+	const formData = new FormData();
 
 	var new_username = '';
 	var new_emailaddr = '';
@@ -14,14 +17,14 @@
 
 	var password_confirm = '';
 
-	var confirm_enabled = true
+	var confirm_enabled = true;
 
 	async function submit() {
 		try {
 			await pb.collection('users').update($currentUser.id, { username: new_username });
 			if (new_avatar != '') {
 				formData.append('documents', new_avatar);
-				pb.collection('users').update($currentUser.id, formData)
+				pb.collection('users').update($currentUser.id, formData);
 			}
 			goto('/account');
 		} catch (e) {
@@ -34,26 +37,25 @@
 		goto('/account');
 	}
 
-	async function delete_account(){
-		try{
+	async function delete_account() {
+		try {
 			await pb.collection('users').authWithPassword($currentUser.email, password_confirm);
-		} catch(e){
-			toggleModal
+		} catch (e) {
 			alert('Your password was incorrect!');
-			return
+			return;
 		}
 
 		try {
-			if ($currentUser.role == "facilitator"){
-				await pb.collection('organization').delete($currentOrganization)
-			}
-			else {
+			if ($currentUser.role == 'facilitator') {
+				await pb.collection('organization').delete($currentOrganization);
+			} else {
 				await pb.collection('users').delete($currentUser.id);
 			}
 		} catch (e) {
 			console.log(e);
 			alert('Something went wrong, please try again!');
 		}
+		toggleModal;
 		pb.authStore.clear();
 		goto('/');
 	}
@@ -96,7 +98,7 @@
 
 		<label for="file">
 			Profile Picture
-			<input type="file" id="pfp" name="pfp" accept="image/*" bind:value={new_avatar} disabled/>
+			<input type="file" id="pfp" name="pfp" accept="image/*" bind:value={new_avatar} disabled />
 		</label>
 	</label>
 	<!-- </article> -->
@@ -106,17 +108,18 @@
 		<button on:click={submit}> Submit</button>
 	</div>
 	<center>
-		<button 
+		<button
 			class="outline contrast"
 			data-target="modal-example"
-			on:click={toggleModal}
+			on:click={() => (showModal = true)}
 			style="width:50%;"
-			data-tooltip="This button is dangerous!">
+			data-tooltip="This button is dangerous!"
+		>
 			Delete Account
 		</button>
 	</center>
 
-	<dialog id="modal-example">
+	<!-- <dialog id="modal-example">
 		<article>
 		  <a href="#close"
 			aria-label="Close"
@@ -169,5 +172,61 @@
 			</form>
 		  </footer>
 		</article>
-	  </dialog>
+	</dialog> -->
+	<Modal bind:showModal>
+		<article>
+			<h3>Woah there!</h3>
+			<p>
+				Are you sure that you want to delete your account?
+				<br /><br />
+				{#if $currentUser.role != 'facilitator'}
+					You'll need another invite code to join back into your organization.
+				{:else}
+					As the facilitator, your organization "<b>{$currentOrganization.name}</b>" will be deleted
+					as well!
+				{/if}
+				<br /><br />
+				<b style="color: red;">This action can not be undone!</b>
+			</p>
+			<footer>
+				<form use:form on:submit|preventDefault method="POST">
+					<br />
+					<input
+						type="password"
+						name="del_confirm_pass"
+						id="del_confrim_pass"
+						placeholder="Your current password, please!"
+						bind:value={password_confirm}
+						use:validators={[required]}
+					/>
+					<br />
+					{#if $currentUser.role != 'facilitator'}
+						<button
+							href="#confirm"
+							data-target="modal-example"
+							on:click={delete_account}
+							disabled={!$form.valid}
+						>
+							Confirm
+						</button>
+					{:else}
+						<fieldset>
+							<label for="org_confirm">
+								<input type="checkbox" id="org_confirm" name="terms" use:validators={[required]} />
+								I acknowlege that my organization will be deleted as well!
+							</label>
+						</fieldset>
+						<button
+							href="#confirm"
+							data-target="modal-example"
+							on:click={delete_account}
+							disabled={!$form.valid}
+						>
+							Confirm
+						</button>
+					{/if}
+				</form>
+			</footer>
+		</article>
+	</Modal>
 {/if}

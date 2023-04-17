@@ -41,7 +41,7 @@
 			// call cursed function
 			let org_magic = await get_organization_role(invitecode);
 			if (org_magic.role_name == '' || org_magic.org_name?.id == '') {
-				signupErr = 'INVALID CODE; TRY AGAIn';
+				signupErr = 'Your code seems to be invlid; try again!';
 			}
 
 			const data = {
@@ -73,7 +73,7 @@
 
 				await goto('/dashboard');
 			} else {
-				signupErr = 'INVALID CODE; TRY AGAIN';
+				signupErr = 'Your code seems to be invlid; try again!';
 				await goto('/joinorg');
 			}
 		} catch (err) {
@@ -107,7 +107,7 @@
 {/if}
 
 {#await currentUser then _}
-	<h1 class="page-name-header">Create an org</h1>
+	<h1 class="page-name-header">Join an org</h1>
 	<form use:form on:submit|preventDefault method="POST">
 		<div class="grid">
 			<div>
@@ -116,7 +116,7 @@
 					type="username"
 					name="invitecode"
 					id="invitecode"
-					placeholder="dQw4w9WgXcQ"
+					placeholder="Your code (should be a mix of letters and numbers)"
 					bind:value={invitecode}
 					use:validators={[required]}
 				/>
