@@ -16,6 +16,8 @@
 	import Carousel from 'svelte-carousel';
 
 	import Modal from '$lib/Modal.svelte';
+	import MemberSelector from '../util/MemberSelector.svelte';
+	import AddEmail from '../util/AddEmail.svelte';
 	let showModal = false;
 
 	const form = useForm();
@@ -26,18 +28,7 @@
 	var moduleChosen = '';
 	var scenarioChosen = '';
 
-	var emailInput;
-
-	var emails = [""];
 	var inputs = [];
-
-	async function back() {
-		goto('/');
-	}
-
-	async function opengames() {
-		goto('start');
-	}
 
 	async function submitinvitecode() {
 		try {
@@ -81,18 +72,19 @@
 		};
 	}
 
-	function addEmail(formStatus, email){
-		if (formStatus){
-			emails.push(email)
-			emailInput.setAttribute("readonly", true)
-			emailInput.setAttribute("aria-invalid", false)
-			inputs.push(emailInput)
+	function addEmail(formStatus, email) {
+		if (formStatus) {
+			emails = [...emailsNotOrg, ...emailsInOrg, email];
+			emailInput.setAttribute('readonly', true);
+			emailInput.setAttribute('aria-invalid', false);
+			inputs.push(emailInput);
 		}
-		emailInput.setAttribute("aria-invalid", true)
-		console.log(emails)
+		emailInput.setAttribute('aria-invalid', true);
+		console.log(emails);
 	}
 
 	function setModal(scenario, module) {
+		console.log(scenario, module);
 		scenarioChosen = scenario;
 		moduleChosen = module;
 		showModal = true;
@@ -131,6 +123,7 @@
 			{:then scenarios}
 				<Carousel>
 					{#each scenarios as scenario}
+						<!-- TODO REMVOE THIS ONCE THE SCENARIOS WORK -->
 						{#if scenario.name == 'Ransomware'}
 							<details>
 								<summary>{scenario.name}</summary>
@@ -158,7 +151,9 @@
 											{name}
 										</em>
 										<p>{module.description}</p>
-										<button on:click={() => setModal()}> Choose this scenario and module</button>
+										<button on:click={() => setModal(scenario.id, name)}>
+											Choose this scenario and module</button
+										>
 									{/each}
 								</ul>
 							</details>
@@ -176,52 +171,7 @@
 		</article>
 
 		<Modal bind:showModal>
-			<form use:form on:submit|preventDefault method="POST">
-				<article>
-					<header>
-						<h3>Who's participating?</h3>
-						<details role="list">
-							<summary aria-haspopup="listbox">Org members</summary>
-							<ul role="listbox">
-								{#await getCurrentOrganizationRecord()}
-									<progress />
-								{:then org}
-									{#each org.expand.members as member}
-										<li>
-											<label>
-												<input type="checkbox" />
-												{member.email}
-											</label>
-										</li>
-									{/each}
-								{/await}
-							</ul>
-						</details>
-					</header>
-
-					<body>
-						<h3>External participants</h3>
-						{#each emails as emailBox}
-							<script>
-								var emailInput
-							</script>
-							<input 
-								type="email" 
-								id="email" 
-								name="email" 
-								placeholder="Enter an email" 
-								on:change={() => addEmail($form.valid, emailBox)}
-								use:validators={[required, email]}
-								bind:this={emailInput}
-								required bind:value={emailBox}/>
-						{/each}
-					</body>
-
-					<footer>
-						<button disabled={!form.valid}>Invite!</button>
-					</footer>
-				</article>
-			</form>
+			<AddEmail />
 		</Modal>
 
 		<article>
