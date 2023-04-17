@@ -10,6 +10,9 @@
 	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
+	import InviteModalContent from '$lib/games/InviteModalContent.svelte';
+
+	const form = useForm();
 
 	import Switch from '$lib/util/Switch.svelte';
 
@@ -18,18 +21,11 @@
 	import Modal from '$lib/Modal.svelte';
 	let showModal = false;
 
-	const form = useForm();
-
 	var invitecode = '';
 	var isFailure = false;
 	var switchValue;
 	var moduleChosen = '';
 	var scenarioChosen = '';
-
-	var emailInput;
-
-	var emails = [""];
-	var inputs = [];
 
 	async function back() {
 		goto('/');
@@ -79,17 +75,6 @@
 			question: 0,
 			module: moduleChosen
 		};
-	}
-
-	function addEmail(formStatus, email){
-		if (formStatus){
-			emails.push(email)
-			emailInput.setAttribute("readonly", true)
-			emailInput.setAttribute("aria-invalid", false)
-			inputs.push(emailInput)
-		}
-		emailInput.setAttribute("aria-invalid", true)
-		console.log(emails)
 	}
 
 	function setModal(scenario, module) {
@@ -176,52 +161,7 @@
 		</article>
 
 		<Modal bind:showModal>
-			<form use:form on:submit|preventDefault method="POST">
-				<article>
-					<header>
-						<h3>Who's participating?</h3>
-						<details role="list">
-							<summary aria-haspopup="listbox">Org members</summary>
-							<ul role="listbox">
-								{#await getCurrentOrganizationRecord()}
-									<progress />
-								{:then org}
-									{#each org.expand.members as member}
-										<li>
-											<label>
-												<input type="checkbox" />
-												{member.email}
-											</label>
-										</li>
-									{/each}
-								{/await}
-							</ul>
-						</details>
-					</header>
-
-					<body>
-						<h3>External participants</h3>
-						{#each emails as emailBox}
-							<script>
-								var emailInput
-							</script>
-							<input 
-								type="email" 
-								id="email" 
-								name="email" 
-								placeholder="Enter an email" 
-								on:change={() => addEmail($form.valid, emailBox)}
-								use:validators={[required, email]}
-								bind:this={emailInput}
-								required bind:value={emailBox}/>
-						{/each}
-					</body>
-
-					<footer>
-						<button disabled={!form.valid}>Invite!</button>
-					</footer>
-				</article>
-			</form>
+			<InviteModalContent />
 		</Modal>
 
 		<article>
