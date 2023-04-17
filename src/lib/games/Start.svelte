@@ -10,6 +10,9 @@
 	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
+	import InviteModalContent from '$lib/games/InviteModalContent.svelte';
+
+	const form = useForm();
 
 	import Switch from '$lib/util/Switch.svelte';
 
@@ -19,8 +22,6 @@
 	import MemberSelector from '../util/MemberSelector.svelte';
 	import AddEmail from '../util/AddEmail.svelte';
 	let showModal = false;
-
-	const form = useForm();
 
 	var invitecode = '';
 	var isFailure = false;
@@ -70,17 +71,6 @@
 			question: 0,
 			module: moduleChosen
 		};
-	}
-
-	function addEmail(formStatus, email) {
-		if (formStatus) {
-			emails = [...emailsNotOrg, ...emailsInOrg, email];
-			emailInput.setAttribute('readonly', true);
-			emailInput.setAttribute('aria-invalid', false);
-			inputs.push(emailInput);
-		}
-		emailInput.setAttribute('aria-invalid', true);
-		console.log(emails);
 	}
 
 	function setModal(scenario, module) {
