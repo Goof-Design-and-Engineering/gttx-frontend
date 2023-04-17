@@ -26,6 +26,8 @@
 	var moduleChosen = '';
 	var scenarioChosen = '';
 
+	var emails = [""];
+
 	async function back() {
 		goto('/');
 	}
@@ -74,6 +76,13 @@
 			question: 0,
 			module: moduleChosen
 		};
+	}
+
+	function addEmail(formStatus, email){
+		if (formStatus){
+			emails.push(email)
+		}
+		console.log(emails)
 	}
 
 	function setModal(scenario, module) {
@@ -160,45 +169,51 @@
 		</article>
 
 		<Modal bind:showModal>
-			<article>
-				<header>
-					<hgroup>
-						<h1>Who's participating?</h1>
-						<h2>You can't have a party by yourself</h2>
-					</hgroup>
-				</header>
-
-				<body>
-					<details role="list">
-						<summary aria-haspopup="listbox">Org members</summary>
+			<form use:form on:submit|preventDefault method="POST">
+				<article>
+					<header>
+						<h3>Who's participating?</h3>
+						<details role="list">
+							<summary aria-haspopup="listbox">Org members</summary>
 							<ul role="listbox">
 								{#await getCurrentOrganizationRecord()}
 									<progress />
 								{:then org}
-								{#each org.members as member}
-									<li>
-										<label>
-											<input type="checkbox" />
-											{member}
-										</label>
-									</li>
-								{/each}
+									{#each org.expand.members as member}
+										<li>
+											<label>
+												<input type="checkbox" />
+												{member.email}
+											</label>
+										</li>
+									{/each}
 								{/await}
 							</ul>
-					</details>
+						</details>
+					</header>
 
-					<hgroup>
-						<h1>External participants</h1>
-						<h2>Just enter any emails you need!</h2>
-					</hgroup>
+					<body>
+						<h3>External participants</h3>
+						{#each emails as emailBox}
+							<script>
+								var emailAdr = ""
+							</script>
+							<input 
+								type="email" 
+								id="email" 
+								name="email" 
+								placeholder="Enter an email" 
+								on:change={() => addEmail($form.valid, emailBox)}
+								use:validators={[required, email]}
+								required bind:value={emailBox}/>
+						{/each}
+					</body>
 
-					<input type="email" id="email" name="email" placeholder="Enter an email" required>
-				</body>
-
-				<footer>
-					<button>Invite!</button>
-				</footer>
-			</article>
+					<footer>
+						<button>Invite!</button>
+					</footer>
+				</article>
+			</form>
 		</Modal>
 
 		<article>
