@@ -1,13 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import {
-		currentRole,
-		currentUser,
-		currentOrganization,
-		currentProfilePic,
-		getCurrentOrganizationRecord,
-		pb
-	} from '$lib/pocketbase';
+	import { currentRole, currentUser, pb } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	// import InviteModalContent from '$lib/games/InviteModalContent.svelte';
@@ -22,11 +15,16 @@
 	import AddEmail from '../util/AddEmail.svelte';
 	let showModal = false;
 
+	// values to pass to addEmail
+	let gameData = {};
+
+	// values found elsewhere
 	var invitecode = '';
 	var isFailure = false;
 	var switchValue;
 	var moduleChosen = '';
 	var scenarioChosen = '';
+	var message2send = '';
 
 	var inputs = [];
 
@@ -56,30 +54,29 @@
 		return resultList.items;
 	}
 
-	async function creategame() {
-		const generateRandomString = (length) =>
-			Array.from({ length }, () => Math.random().toString(36)[2]).join('');
-
-		const data = {
-			uniqueid: generateRandomString(16),
-			org: currentUser.org,
-			users: [currentUser.id],
-			currentUsers: 0,
-			settings: {},
-			scenarios: 'RELATION_RECORD_ID',
-			question: 0,
-			module: moduleChosen
-		};
-	}
-
 	function setModal(scenario, module) {
 		console.log(scenario, module);
 		scenarioChosen = scenario;
 		moduleChosen = module;
+	
+		gameData = {
+			org: $currentUser.org,
+			users: [$currentUser.id],
+			currentUsers: 0,
+			settings: {},
+			question: 0,
+			module: module,
+			scenarios: scenario
+		};
 		showModal = true;
 	}
 
-	onMount(() => {
+	onMount(async () => {
+		const org = await getCurrentOrganizationRecord();
+		
+		message2send = `Hello! Welcome to GTTX. Here is the information to get started:\nobserver_code: ${org.observer_code}\nparticipant_code: ${org.participant_code}\n facilitator_code:${org.facilitor_code}. GOTO https://gttx.api/blah to get started!`
+
+
 		if (!$currentUser) {
 			goto('/login');
 		}
@@ -153,7 +150,7 @@
 		</article>
 
 		<Modal bind:showModal>
-			<AddEmail />
+			<AddEmail {gameData} />
 		</Modal>
 
 		<article>

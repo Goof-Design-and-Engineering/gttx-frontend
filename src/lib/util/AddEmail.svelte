@@ -1,24 +1,82 @@
 <script>
-	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
-	import { getCurrentOrganizationRecord } from '$lib/pocketbase';
+	import { useForm, validators, email, required } from 'svelte-use-form';
+	import { getCurrentOrganizationRecord, pb } from '$lib/pocketbase';
 	const form = useForm();
 
 	let newEmail = '';
-	let emailsInOrg = [];
-	// let emailsNotOrg = [];
-	let emailsAll = [];
+	export let emailsInOrg = [];
+	let warning = '';
+	export let emailsAll = [];
+	export let gameData;
+
+	let createGameSwitch = false;
+	// export let showModal = false;
 
 	function addEmail(formStatus, email) {
 		if (formStatus) {
 			// first put all emails together
 			emailsAll = [...emailsAll, ...emailsInOrg, email];
+			warning = '';
+		} else {
+			warning = 'NOT A VALID EMAIL';
 		}
 		// ensure no duplicates
 		emailsAll = emailsAll.filter((item, index) => emailsAll.indexOf(item) === index);
 
 		console.log(emailsAll);
 	}
+
+	async function emailUsersNotInOrg(org) {
+
+		const result = await pb.send('/api/send_invite_code', {
+			// for all possible options check
+			// https://developer.mozilla.org/en-US/docs/Web/API/fetch#options
+			params: {
+				email: email,
+				participant_code: org?.participant_code,
+				facilitator_code: org?.facilitator_code,
+				observer_code: org?.observer_code,
+				desired_role: desired_role
+			}
+		});
+	}
+
+	async function emailUsersInOrg(org) {}
+
+	async function creategame() {
+
+		const org = await getCurrentOrganizationRecord();
+		
+		let message2send = `Hello! Welcome to GTTX. Here is the information to get started:\nobserver_code: ${org.observer_code}\nparticipant_code: ${org.participant_code}\n facilitator_code:${org.facilitor_code}. GOTO https://gttx.api/blah to get started!`
+
+		// set message2send
+		gameData.emailbody = message2send
+
+		// ensure all emails are inserted
+		gameData.emails = emailsAll;
+
+		// create record
+		const record = await pb.collection('room').create(gameData);
+		console.log(record);
+		return record;
+	}
 </script>
+
+{#key createGameSwitch}
+	{#if createGameSwitch}
+		{#await creategame()}
+			<!-- creategame is pending -->
+			<progressbar />
+		{:then result}
+			<!-- creategame was fulfilled -->
+			{result.id}
+			<h1>SUCCESS</h1>
+		{:catch error}
+			<!-- creategame was rejected -->
+			{error}
+		{/await}
+	{/if}
+{/key}
 
 <form use:form on:submit|preventDefault method="POST">
 	<article>
@@ -38,7 +96,9 @@
 										value={member.email}
 										on:click={() => {
 											emailsAll = [...emailsAll, member.email];
-                                            emailsAll = emailsAll.filter((item, index) => emailsAll.indexOf(item) === index);
+											emailsAll = emailsAll.filter(
+												(item, index) => emailsAll.indexOf(item) === index
+											);
 										}}
 										type="checkbox"
 									/>
@@ -58,12 +118,17 @@
 				<input
 					type="button"
 					value={emailValue}
+					class="secondary outline"
 					on:click={() =>
 						(emailsAll = emailsAll.filter(function (item) {
 							return item !== emailValue;
 						}))}
 				/>
 			{/each}
+
+			{#if warning != ''}
+				<label for="email">{warning}</label>
+			{/if}
 			<input
 				type="email"
 				id="email"
@@ -76,8 +141,8 @@
 			/>
 		</body>
 
-		<footer>
-			<button disabled={!form.valid}>Invite!</button>
-		</footer>
+		<footer />
 	</article>
 </form>
+
+<button disabled={emailsAll.length == 0} on:click={() => (createGameSwitch = true)}>Invite!</button>
