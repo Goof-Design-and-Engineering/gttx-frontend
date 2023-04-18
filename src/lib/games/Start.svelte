@@ -19,7 +19,6 @@
 	import Carousel from 'svelte-carousel';
 
 	import Modal from '$lib/Modal.svelte';
-	import MemberSelector from '../util/MemberSelector.svelte';
 	import AddEmail from '../util/AddEmail.svelte';
 	let showModal = false;
 
@@ -113,45 +112,38 @@
 			{:then scenarios}
 				<Carousel>
 					{#each scenarios as scenario}
-						<!-- TODO REMVOE THIS ONCE THE SCENARIOS WORK -->
-						{#if scenario.name == 'Ransomware'}
-							<details>
-								<summary>{scenario.name}</summary>
-								<h2>{scenario.contents?.overview?.name}</h2>
-								<h5>{scenario.contents?.name} {scenario.contents?.source}</h5>
-								<hr />
-								<h4>PURPOSE</h4>
-								<p>{scenario.contents?.overview?.purpose}</p>
-								<h4>SCOPE</h4>
-								<p>{scenario.contents?.overview?.scope}</p>
-								<hr />
-								<h4>OBJECTIVES</h4>
-								<ul>
-									{#each scenario.contents?.overview.objectives as objective}
-										<li>
-											{objective}
-										</li>
-									{/each}
-								</ul>
-								<hr />
-								<h4>MODULES</h4>
-								<ul>
-									{#each Object.entries(scenario.contents?.modules) as [name, module]}
-										<em>
-											{name}
-										</em>
-										<p>{module.description}</p>
-										<button on:click={() => setModal(scenario.id, name)}>
-											Choose this scenario and module</button
-										>
-									{/each}
-								</ul>
-							</details>
-						{:else}
-							<details>
-								<summary>{scenario.name}</summary>
-							</details>
-						{/if}
+						<details>
+							<summary>{scenario.name}</summary>
+							<h2>{scenario.contents?.overview?.name || ''}</h2>
+							<h5>{scenario.contents?.name || ''} {scenario.contents?.source || ''}</h5>
+							<hr />
+							<h4>PURPOSE</h4>
+							<p>{scenario.contents?.overview?.purpose || ''}</p>
+							<h4>SCOPE</h4>
+							<p>{scenario.contents?.overview?.scope || ''}</p>
+							<hr />
+							<h4>OBJECTIVES</h4>
+							<ul>
+								{#each scenario.contents?.overview.objectives || [] as objective}
+									<li>
+										{objective}
+									</li>
+								{/each}
+							</ul>
+							<hr />
+							<h4>MODULES</h4>
+							<ul>
+								{#each Object.entries(scenario.contents?.modules || []) as [name, module]}
+									<em>
+										{name}
+									</em>
+									<p>{module.description}</p>
+									<button on:click={() => setModal(scenario.id, name)}>
+										Choose this scenario and module</button
+									>
+								{/each}
+							</ul>
+						</details>
 					{/each}
 				</Carousel>
 			{:catch error}
