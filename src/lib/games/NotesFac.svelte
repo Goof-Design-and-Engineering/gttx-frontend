@@ -13,8 +13,23 @@
 	let roomID = 'otl8cddnj0p6hho';
 	let newModule = '';
 	let errorThrown = '';
+	let docxDownload = '';
+	let latexDownload = '';
+	let htmlDownload = '';
 
 	onMount(async () => {
+		let tmp = '';
+		tmp = await exportNotes('docx');
+		console.log();
+		const docxBlob = new Blob([tmp], { type: 'application/octet-stream' });
+		tmp = await exportNotes('html');
+		const htmlBlob = new Blob([tmp], { type: 'application/octet-stream' });
+		tmp = await exportNotes('latex');
+		const latexBlob = new Blob([tmp], { type: 'application/octet-stream' });
+		docxDownload = URL.createObjectURL(docxBlob);
+		latexDownload = URL.createObjectURL(latexBlob);
+		htmlDownload = URL.createObjectURL(htmlBlob);
+
 		if (!$currentUser) {
 			goto('/login');
 		}
@@ -90,7 +105,68 @@
 		const result2 = await pb.collection('room').update(roomID, data);
 	}
 
+	// takes in one dimensional arrays and returns a string
+	function _makeMD(responses) {
+		return (
+			'## ' +
+			responses[0].question +
+			'\n' +
+			responses
+				.map(
+					(response) =>
+						`### ${response.expand.user.username || ''} - ${response.expand.user.email || ''}\n\n ${
+							response.content
+						}\n\n`
+				)
+				.join('\n')
+		);
+	}
 
+	async function _callPandoc(markdown, format) {
+		let query = {
+			text: markdown,
+			from: 'markdown',
+			to: format
+		};
+
+		let result = fetch('https://gttx-pandoc.fly.dev/', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(query)
+		})
+			.then((response) => response.text())
+			.then((data) => {
+				return data;
+			});
+		// .then((data) => console.log(data));
+
+		return result;
+	}
+
+	async function exportNotes(format) {
+		let filterMagic = `(org='${$currentUser.org}' && room='${roomID}')`;
+		const resultList = await pb.collection('notes').getList(1, 50, {
+			filter: filterMagic,
+			expand: 'user'
+		});
+
+		// magic code to split the array of all into ones where the question is common accross all
+		const result = resultList.items.reduce((acc, obj) => {
+			const key = obj.question;
+			if (!acc[key]) {
+				acc[key] = [];
+			}
+			acc[key].push(obj);
+			return acc;
+		}, {});
+		const blocks = Object.values(result);
+
+		// convert bad array to a string
+		let markdown = blocks.map((responses) => _makeMD(responses)).join('\n');
+
+		let final_result = await _callPandoc(markdown, format);
+		return final_result;
+	}
 
 	// let scenarioObject = {
 	// 	name: 'CISA CTEP #1',
@@ -205,3 +281,7 @@
 {:catch error}
 	<p>Error: {error.message}</p>
 {/await}
+
+<a role="button" class="contrast outline" href={docxDownload} download="results.docx"> EXPORT DOCX</a>
+<a role="button" class="contrast outline" href={latexDownload} download="results.latex"> EXPORT LATEX</a>
+<a role="button" class="contrast outline" href={htmlDownload} download="results.html"> EXPORT HTML</a>
