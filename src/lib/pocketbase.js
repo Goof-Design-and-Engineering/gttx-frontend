@@ -31,7 +31,7 @@ export async function WriteToNotesCollection(delta, collection, user) {
 export async function getCurrentOrganizationRecord() {
     if (pb.authStore.model?.org) {
         const record = await pb.collection('organization').getOne(pb.authStore.model?.org,
-            { expand: 'members' });
+            { expand: 'members'});
         return record;
     }
     return {};

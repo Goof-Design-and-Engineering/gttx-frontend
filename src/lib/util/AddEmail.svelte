@@ -46,8 +46,25 @@
 	async function creategame() {
 
 		const org = await getCurrentOrganizationRecord();
+
+		const email = {observer_code: org.observer_code, participant_code: org.participant_code, facilitator_code: org.facilitator_code}
 		
-		let message2send = `Hello! Welcome to GTTX. Here is the information to get started:\nobserver_code: ${org.observer_code}\nparticipant_code: ${org.participant_code}\n facilitator_code:${org.facilitor_code}. GOTO https://gttx.api/blah to get started!`
+		let message2send = `
+		<html>
+			<img class="gttx-logo" src="/svg/gttx_white.svg" alt="gttx!" />
+
+			<p>
+			Hello! Welcome to GTTX.
+			Here is the information to get started:
+
+			observer_code: ${email.observer_code}
+			participant_code: ${email.participant_code}
+			facilitator_code: ${email.facilitator_code}
+			
+			GOTO https://gttx.api/blah to get started!
+			</p>
+		</html>
+		`;
 
 		// set message2send
 		gameData.emailbody = message2send

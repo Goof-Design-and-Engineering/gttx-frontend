@@ -5,9 +5,12 @@
 		currentUser,
 		currentOrganization,
 		currentProfilePic,
-		pb
+		pb,
+		getCurrentOrganizationRecord
 	} from '$lib/pocketbase';
 	import { jsPDF } from 'jspdf';
+
+	import Modal from '$lib/Modal.svelte';
 
 	let scenarioObject;
 	let modules = [];
@@ -17,6 +20,7 @@
 	let docxDownload = '';
 	let latexDownload = '';
 	let htmlDownload = '';
+	let org;
 
 	onMount(async () => {
 		// docx
@@ -41,13 +45,19 @@
 			goto('/createorg');
 		}
 
+		org = await getCurrentOrganizationRecord();
+
 		// console.log(result);
 	});
 
-	let visible = true;
+	let showModal = true;
 
-	function toggleVissible() {
-		visible = !visible;
+	function toggleVisible() {
+		showModal = true;
+	}
+
+	async function insertOrg(text) {
+		return text.replace('<Insert Organization>', org.name);
 	}
 
 	async function loadScenario() {
@@ -256,53 +266,58 @@
 {#await loadScenario()}
 	<p>Loading...</p>
 {:then}
-	<!-- {#await rawscenarioObject then scenarioObject} -->
 	<h3>
 		{scenarioObject.overview.name}
 	</h3>
 
 	<div class="grid">
-		{#if visible}
-			<!-- content here -->
-			<div>
-				<h4>SCENARIO OVERVIEW</h4>
-				<h5>SCOPE:</h5>
-				<article>
-					{scenarioObject.overview.scope}
-				</article>
-				<h5>PURPOSE:</h5>
-				<article>
-					{scenarioObject.overview.purpose}
-				</article>
-			</div>
-			<div>
-				<h4>OBJECTIVES</h4>
-				<ul>
-					{#each scenarioObject.overview.objectives as objective}
-						<li>
-							{objective}
-						</li>
-					{/each}
-				</ul>
-			</div>
-		{:else}
-			<h2>Specify Module (current {newModule})</h2>
-			<select bind:value={newModule}>
-				<option value="" disabled selected>Select</option>
-				{#each modules as module}
-					<p>{module}</p>
-					<!-- content here -->
-					<option value={module} on:click={changeModule}>{module}</option>
-				{/each}
-			</select>
-			<hr />
-			<button on:click={incrementQuestion}>INC QUESTION</button>
-			<button on:click={decrementQuestion}>DEC QUESTION</button>
-		{/if}
+		<h2>Specify Module (current {newModule})</h2>
+		<select bind:value={newModule}>
+			<option value="" disabled selected>Select</option>
+			{#each modules as module}
+				<p>{module}</p>
+				<!-- content here -->
+				<option value={module} on:click={changeModule}>{module}</option>
+			{/each}
+		</select>
+		<hr />
+		<button on:click={incrementQuestion}>Next Question</button>
+		<button on:click={decrementQuestion}>Prev. Question</button>
 	</div>
 
-	<button on:click={toggleVissible} class="secondary"> Hide </button>
-	<!-- {/await} -->
+	<button on:click={toggleVisible} class="secondary"> Hide </button>
+
+	<Modal bind:showModal>
+		<article>
+			<header>
+				<b>Scope</b>
+			</header>
+			{scenarioObject.overview.scope.replace('<Insert Organization>', org.name)}
+		</article>
+		<article>
+			<header>
+				<b>Purpose</b>
+			</header>
+			{scenarioObject.overview.purpose.replace('<Insert Organization>', org.name)}
+		</article>
+
+		<article>
+			<header>
+				<b>Objectives</b>
+			</header>
+			<ul>
+				{#each scenarioObject.overview.objectives as objective}
+					{#await insertOrg(objective)}
+						<article aria-busy="true" />
+					{:then objective}
+						<li>{objective}</li>
+					{:catch error}
+						<li>Failed to load this objective({error})</li>
+					{/await}
+				{/each}
+			</ul>
+		</article>
+	</Modal>
 {:catch error}
 	<p>Error: {error.message}</p>
 {/await}
