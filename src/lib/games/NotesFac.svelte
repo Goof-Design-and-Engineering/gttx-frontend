@@ -7,10 +7,11 @@
 		currentProfilePic,
 		pb
 	} from '$lib/pocketbase';
+	import { jsPDF } from 'jspdf';
 
 	let scenarioObject;
 	let modules = [];
-	let roomID = 'otl8cddnj0p6hho';
+	let roomID = 'yir2twyh4ws5697';
 	let newModule = '';
 	let errorThrown = '';
 	let docxDownload = '';
@@ -18,16 +19,19 @@
 	let htmlDownload = '';
 
 	onMount(async () => {
-		let tmp = '';
-		tmp = await exportNotes('docx');
-		console.log();
-		const docxBlob = new Blob([tmp], { type: 'application/octet-stream' });
-		tmp = await exportNotes('html');
-		const htmlBlob = new Blob([tmp], { type: 'application/octet-stream' });
-		tmp = await exportNotes('latex');
-		const latexBlob = new Blob([tmp], { type: 'application/octet-stream' });
+		// docx
+		let exportDOCX = await exportNotes('docx');
+		const docxBlob = new Blob([exportDOCX], { type: 'application/octet-stream' });
 		docxDownload = URL.createObjectURL(docxBlob);
-		latexDownload = URL.createObjectURL(latexBlob);
+
+		// // latex
+		// tmp = await exportNotes('latex');
+		// const latexBlob = new Blob([tmp], { type: 'application/octet-stream' });
+		// latexDownload = URL.createObjectURL(latexBlob);
+
+		// html
+		let exportHTML = await exportNotes('html');
+		const htmlBlob = new Blob([exportHTML], { type: 'application/octet-stream' });
 		htmlDownload = URL.createObjectURL(htmlBlob);
 
 		if (!$currentUser) {
@@ -168,6 +172,27 @@
 		return final_result;
 	}
 
+	async function rawPDF() {
+		let exportHTML = await exportNotes('html');
+		const htmlBlob = new Blob([exportHTML], { type: 'application/octet-stream' });
+		htmlDownload = URL.createObjectURL(htmlBlob);
+
+		// turn html 2 pdf
+		const doc = new jsPDF();
+		doc.setFont("times", "normal");
+		doc.html(exportHTML, {
+			callback: function (doc) {
+				// Save the PDF
+				doc.save('sample-document.pdf');
+			},
+			autoPaging: 'text',
+			x: 15,
+			y: 15,
+			width: 170, //target width in the PDF document
+			windowWidth: 650 //window width in CSS pixels
+		});
+	}
+
 	// let scenarioObject = {
 	// 	name: 'CISA CTEP #1',
 	// 	source: 'https://www.cisa.gov/resources-tools/resources/cybersecurity-scenarios',
@@ -282,6 +307,10 @@
 	<p>Error: {error.message}</p>
 {/await}
 
-<a role="button" class="contrast outline" href={docxDownload} download="results.docx"> EXPORT DOCX</a>
-<a role="button" class="contrast outline" href={latexDownload} download="results.latex"> EXPORT LATEX</a>
-<a role="button" class="contrast outline" href={htmlDownload} download="results.html"> EXPORT HTML</a>
+<a role="button" class="contrast outline" href={docxDownload} download="results.docx">
+	EXPORT DOCX</a
+>
+<a role="button" class="contrast outline" on:click={rawPDF} href="#"> EXPORT PDF</a>
+<a role="button" class="contrast outline" href={htmlDownload} download="results.html">
+	EXPORT HTML</a
+>

@@ -4,7 +4,7 @@
 
 	let response = '';
 	let scenarioObject;
-	let roomID = 'otl8cddnj0p6hho';
+	let roomID = 'yir2twyh4ws5697';
 	let success = '';
 
 	onMount(() => {
@@ -46,7 +46,8 @@
 			user: $currentUser.id,
 			org: $currentUser.org,
 			question: scenarioObject.modules[result.module].questions[result.question],
-			content: response
+			content: response,
+			room: roomID
 		};
 
 		const result2 = await pb.collection('notes').create(data);
