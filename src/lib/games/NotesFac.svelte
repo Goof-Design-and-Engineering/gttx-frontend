@@ -9,8 +9,10 @@
 		getCurrentOrganizationRecord
 	} from '$lib/pocketbase';
 	import { jsPDF } from 'jspdf';
-
 	import Modal from '$lib/Modal.svelte';
+
+	import CurrentQuestion from '$lib/games/CurrentQuestion.svelte';
+	import { bind } from 'svelte/internal';
 
 	let scenarioObject;
 	let modules = [];
@@ -21,6 +23,10 @@
 	let latexDownload = '';
 	let htmlDownload = '';
 	let org;
+	let question;
+
+	let prevEnabled = false;
+	let nextEnabled = true;
 
 	onMount(async () => {
 		// docx
@@ -45,19 +51,32 @@
 			goto('/createorg');
 		}
 
-		org = await getCurrentOrganizationRecord();
+		await getQuestion();
 
 		// console.log(result);
 	});
 
-	let showModal = true;
+	async function getQuestion() {
+		// if not loaded load it
+		if (scenarioObject == null) {
+			loadScenario();
+		}
+
+		const result = await pb.collection('room').getOne(roomID);
+
+		question = scenarioObject.modules[result.module].questions[result.question];
+	}
+
+	let showModal = false;
 
 	function toggleVisible() {
 		showModal = true;
 	}
 
 	async function insertOrg(text) {
-		return text.replace('<Insert Organization>', org.name);
+		org = await getCurrentOrganizationRecord();
+		console.log(org.name);
+		return text.replace('<Insert Organization>', 'org.name');
 	}
 
 	async function loadScenario() {
@@ -79,6 +98,8 @@
 		// }
 		const result = await pb.collection('room').getOne(roomID);
 
+		prevEnabled = true;
+
 		let maxLength = scenarioObject.modules[result.module].questions.length;
 
 		if (result.question < maxLength) {
@@ -87,8 +108,11 @@
 			};
 
 			const result2 = await pb.collection('room').update(roomID, data);
+
+			await getQuestion();
 		} else {
 			errorThrown = 'no questions left';
+			nextEnabled = false;
 		}
 	}
 
@@ -98,14 +122,19 @@
 		// }
 		const result = await pb.collection('room').getOne(roomID);
 
+		nextEnabled = true;
+
 		if (result.question > 1) {
 			const data = {
 				question: result.question - 1
 			};
 
 			const result2 = await pb.collection('room').update(roomID, data);
+
+			await getQuestion();
 		} else {
 			errorThrown = 'no questions left';
+			prevEnabled = false;
 		}
 	}
 
@@ -189,7 +218,7 @@
 
 		// turn html 2 pdf
 		const doc = new jsPDF();
-		doc.setFont("times", "normal");
+		doc.setFont('times', 'normal');
 		doc.html(exportHTML, {
 			callback: function (doc) {
 				// Save the PDF
@@ -202,130 +231,82 @@
 			windowWidth: 650 //window width in CSS pixels
 		});
 	}
-
-	// let scenarioObject = {
-	// 	name: 'CISA CTEP #1',
-	// 	source: 'https://www.cisa.gov/resources-tools/resources/cybersecurity-scenarios',
-	// 	document:
-	// 		'https://www.cisa.gov/sites/default/files/2023-02/ransomware-ctep-situation-manual-ncep-072022-508_0.docx',
-	// 	overview: {
-	// 		name: 'RANSOMWARE SITUATION',
-	// 		scope: '...',
-	// 		purpose:
-	// 			'Examine the coordination, collaboration, information sharing, and response capabilities of <Insert Organization> in response to a significant cyber incident.',
-	// 		objectives: [
-	// 			'Examine the ability for <Insert Organization> to respond to a significant cyber incident.',
-	// 			'Evaluate the ability for <Insert Organization> to coordinate information sharing during a significant cyber incident.',
-	// 			'...'
-	// 		],
-	// 		scenario: '...'
-	// 	},
-	// 	modules: {
-	// 		'1': {
-	// 			description:
-	// 				'This module introduces several events affecting IT users, including an operating system that is no longer supported by its developer, a lost laptop, and a phishing email.',
-	// 			alerts: {
-	// 				'Day 1':
-	// 					'It has been one year since the developer of your current operating system announced that they will no longer develop security patches for your operating system. The final security patch was installed last week. This vulnerability was identified in your recently completed annual risk assessment',
-	// 				'Day 2 - 8PM':
-	// 					'An employee reports to their manager that their work laptop was stolen from their car overnight. The laptop contained sensitive information.',
-	// 				'Day 4 - 3PM':
-	// 					'A Cybersecurity and Infrastructure Security Agency (CISA) Alert is released regarding a new ransomware variant. This ransomware is being used in a campaign targeting state, local, tribal, and territorial governments and private sector firms.',
-	// 				'Day 6 - 10AM':
-	// 					'A system administrator from the Information Technology (IT) Department receives an email from the personal email account of a human resources (HR) employee. The system administrator and HR employee are connected via professional networking websites. The email notes that the HR employee recently noticed some discrepancies in their 401K withholdings and recommends that the system administrator review their own account information. The system administrator clicks on the link in the email and is re-directed to what appears to be the legitimate 401K website. The IT employee does not believe the email to be suspicious. '
-	// 			},
-	// 			questions: [
-	// 				'What are the greatest cyber threats to your organization?',
-	// 				'What cybersecurity threat intelligence does your organization receive?',
-	// 				'What cyber threat information is most useful?',
-	// 				'Who is responsible for collating information across your organization?',
-	// 				'What actions would your organization take following an alert like the one presented in the scenario?',
-	// 				'What patch management plans does your IT department utilize?',
-	// 				'What procedures are followed to evaluate each server’s criticality and applicability to software patches?',
-	// 				'Describe your organization’s cybersecurity training program for employees.',
-	// 				'How often are employees required to go through this training?',
-	// 				'What are the ramifications for employees not completing cybersecurity training?',
-	// 				'What additional training is required for employees who have system administrator-level privileges?',
-	// 				'How do employees report suspected phishing attempts and/or other cybersecurity incidents?',
-	// 				'What actions does the IT department take when suspicious emails are reported?',
-	// 				'What are some of the challenges your organization encounters with phishing?',
-	// 				'How effective are your organization’s methods to protect against phishing?',
-	// 				'What cyber risk assessment(s) has your organization conducted to identify specific threats, vulnerabilities, and critical assets?',
-	// 				'What were the outcomes of the assessment(s)?',
-	// 				'What considerations are addressed in your risk management strategy? (e.g., extended downtime, impaired functionality, loss of data, etc.) '
-	// 			]
-	// 		},
-	// 		'2': {
-	// 			description:
-	// 				'This module includes the discovery of significant data exfiltration possibly including personally identifiable information, unauthorized changes to your website, and ransomware execution.'
-	// 		}
-	// 	}
-	// };
 </script>
 
-{#await loadScenario()}
-	<p>Loading...</p>
-{:then}
-	<h3>
-		{scenarioObject.overview.name}
-	</h3>
+<article>
+	{#await loadScenario()}
+		<p aria-busy="true">Loading...</p>
+	{:then}
+		<header>
+			<b>{scenarioObject.overview.name}</b>
+		</header>
 
-	<div class="grid">
-		<h2>Specify Module (current {newModule})</h2>
-		<select bind:value={newModule}>
-			<option value="" disabled selected>Select</option>
-			{#each modules as module}
-				<p>{module}</p>
-				<!-- content here -->
-				<option value={module} on:click={changeModule}>{module}</option>
-			{/each}
-		</select>
-		<hr />
-		<button on:click={incrementQuestion}>Next Question</button>
-		<button on:click={decrementQuestion}>Prev. Question</button>
-	</div>
-
-	<button on:click={toggleVisible} class="secondary"> Hide </button>
-
-	<Modal bind:showModal>
-		<article>
-			<header>
-				<b>Scope</b>
-			</header>
-			{scenarioObject.overview.scope.replace('<Insert Organization>', org.name)}
-		</article>
-		<article>
-			<header>
-				<b>Purpose</b>
-			</header>
-			{scenarioObject.overview.purpose.replace('<Insert Organization>', org.name)}
-		</article>
-
-		<article>
-			<header>
-				<b>Objectives</b>
-			</header>
-			<ul>
-				{#each scenarioObject.overview.objectives as objective}
-					{#await insertOrg(objective)}
-						<article aria-busy="true" />
-					{:then objective}
-						<li>{objective}</li>
-					{:catch error}
-						<li>Failed to load this objective({error})</li>
-					{/await}
+		Specify Module
+		<div class="grid">
+			<select bind:value={newModule}>
+				<option value="" disabled selected>Select</option>
+				{#each modules as module}
+					<p>{module}</p>
+					<!-- content here -->
+					<option value={module} on:click={changeModule}>{module}</option>
 				{/each}
-			</ul>
-		</article>
-	</Modal>
-{:catch error}
-	<p>Error: {error.message}</p>
-{/await}
+			</select>
+			<hr />
+			<button on:click={decrementQuestion} disabled={!prevEnabled}>Prev. Question</button>
+			<button on:click={incrementQuestion} disabled={!nextEnabled}>Next Question</button>
+		</div>
 
-<a role="button" class="contrast outline" href={docxDownload} download="results.docx">
-	EXPORT DOCX</a
->
-<a role="button" class="contrast outline" on:click={rawPDF} href="#"> EXPORT PDF</a>
-<a role="button" class="contrast outline" href={htmlDownload} download="results.html">
-	EXPORT HTML</a
->
+		<CurrentQuestion bind:question />
+
+		<button on:click={toggleVisible} class="secondary"> Show Scenario Information </button>
+
+		<Modal bind:showModal>
+			<article>
+				<header>
+					<b>Scope</b>
+				</header>
+				{scenarioObject.overview.scope.replace('<Insert Organization>', 'org.name')}
+			</article>
+			<article>
+				<header>
+					<b>Purpose</b>
+				</header>
+				{scenarioObject.overview.purpose.replace('<Insert Organization>', 'org.name')}
+			</article>
+
+			<article>
+				<header>
+					<b>Objectives</b>
+				</header>
+				<ul>
+					{#each scenarioObject.overview.objectives as objective}
+						<!-- {#await}
+						<article aria-busy="true" />
+					{:then objective} -->
+						<li>{objective}</li>
+						<!-- {:catch error}
+						<li>Failed to load this objective ({error})</li>
+					{/await} -->
+					{/each}
+				</ul>
+			</article>
+		</Modal>
+	{:catch error}
+		<p>Error: {error.message}</p>
+	{/await}
+
+	<footer>
+		<br />
+		Export options
+		<hr />
+		<div class="grid">
+			<a role="button" class="contrast outline" href={docxDownload} download="results.docx"
+				>Export DOCX</a
+			>
+			<a role="button" class="contrast outline" on:click={rawPDF} href="#">Export PDF</a>
+			<a role="button" class="contrast outline" href={htmlDownload} download="results.html">
+				Export HTML</a
+			>
+		</div>
+	</footer>
+</article>
