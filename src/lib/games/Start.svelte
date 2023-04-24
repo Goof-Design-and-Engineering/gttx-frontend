@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	// import InviteModalContent from '$lib/games/InviteModalContent.svelte';
+	import GamesList from './GamesList.svelte';
 
 	const form = useForm();
 
@@ -31,21 +32,12 @@
 	async function submitinvitecode() {
 		try {
 			isFailure = false;
+			goto(`/dashboard/notes?roomid=${invitecode}`)
 			// throw redirect(307, '/account');
 		} catch (e) {
 			console.log('Invite Code Failure!');
 			// logonError = e;
 		}
-	}
-
-	async function recentgames() {
-		// you can also fetch all records at once via getFullList
-		const records = await pb.collection('room').getFullList(200 /* batch size */, {
-			sort: '-created',
-			filter: `org='${$currentUser.org}'`
-		});
-
-		return records;
 	}
 
 	async function getScenarios() {
@@ -153,31 +145,9 @@
 			<AddEmail {gameData} />
 		</Modal>
 
-		<article>
-			<hgroup>
-				<header>
-					<h1>Recent Games</h1>
-				</header>
-				{#await recentgames()}
-					<li aria-busy="true">Loading your recent games...</li>
-				{:then games}
-					{#if games.length != 0}
-						<li>
-							{#each games as game}
-								<!--TODO PUT WAY TO LOOK AT GAME NOTES HERE  -->
-								<ul>{game.id}</ul>
-							{/each}
-							<!-- promise was fulfilled -->
-						</li>
-					{:else}
-						<h2>You don't have any recent games!</h2>
-					{/if}
-				{:catch error}
-					{error}
-				{/await}
-			</hgroup>
-		</article>
+		<GamesList/>
 
+		
 		<!-- Participant and Observer -->
 	{:else if $currentRole == 'participant' || $currentRole == 'observer' || switchValue == 'off'}
 		<hgroup>

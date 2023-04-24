@@ -4,7 +4,7 @@
 
 	let response = '';
 	let scenarioObject;
-	let roomID = 'yir2twyh4ws5697';
+	export let roomID = 'yir2twyh4ws5697';
 	let success = '';
 
 	onMount(() => {

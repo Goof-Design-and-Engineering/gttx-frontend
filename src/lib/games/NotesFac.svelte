@@ -10,13 +10,13 @@
 	} from '$lib/pocketbase';
 	import { jsPDF } from 'jspdf';
 	import Modal from '$lib/Modal.svelte';
+	import { page } from '$app/stores';
 
 	import CurrentQuestion from '$lib/games/CurrentQuestion.svelte';
-	import { bind } from 'svelte/internal';
 
 	let scenarioObject;
 	let modules = [];
-	let roomID = 'yir2twyh4ws5697';
+	export let roomID = 'yir2twyh4ws5697';
 	let newModule = '';
 	let errorThrown = '';
 	let docxDownload = '';
@@ -30,7 +30,15 @@
 
 	let newTab = false;
 
+	let newRoomName = '';
+
 	onMount(async () => {
+		const url = $page.url;
+		urlRoomID = url.searchParams.get('roomid');
+		if (urlRoomID != '') {
+			roomID = urlRoomID;
+		}
+
 		// docx
 		let exportDOCX = await exportNotes('docx');
 		const docxBlob = new Blob([exportDOCX], { type: 'application/octet-stream' });
@@ -241,6 +249,12 @@
 			windowWidth: 650 //window width in CSS pixels
 		});
 	}
+
+	async function patchRoomName(){
+		const result = pb.collection('room').update(roomID,{"name": newRoomName || ''})
+		alert("Changed to " + newRoomName + " under way!")
+		return result
+	}
 </script>
 
 <article>
@@ -305,6 +319,16 @@
 		<p>Error: {error.message}</p>
 	{/await}
 
+	<article>
+		<header>
+			Change Room Name
+		</header>
+		<form on:submit={patchRoomName}>
+			<label for="text"> enter new roomname</label>
+			<input type="text" bind:value={newRoomName}>
+		</form>
+	</article>
+
 	<footer>
 		<br />
 		Export options
@@ -318,7 +342,14 @@
 			<a role="button" class="contrast outline" href={docxDownload} download="results.docx"
 				>Export DOCX</a
 			>
-			<a role="button" class="contrast outline" on:click={async(e) => {await rawPDF}} href="#">Export PDF</a>
+			<a
+				role="button"
+				class="contrast outline"
+				on:click={async (e) => {
+					await rawPDF;
+				}}
+				href="#">Export PDF</a
+			>
 			<a role="button" class="contrast outline" href={htmlDownload} download="results.html">
 				Export HTML</a
 			>
