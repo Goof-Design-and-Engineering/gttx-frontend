@@ -16,8 +16,8 @@
 		<!-- <li><button on:click={signout()}> Signout </button></li> -->
 		{#await currentUser}
 			<progressbar />
-		{:then user}
-			{#if user}
+		{:then _}
+			{#if $currentUser}
 				<li><a href="/account" role="button" class="outline">Settings</a></li>
 				<li><a href="/dashboard" role="button">Dashboard</a></li>
 			{:else}
