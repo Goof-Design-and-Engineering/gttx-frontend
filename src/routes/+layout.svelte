@@ -1,6 +1,6 @@
 <script>
 	import { currentUser, pb } from '../lib/pocketbase';
-
+	import '@picocss/pico'
 	async function signout() {
 		await pb.authStore.clear();
 	}
