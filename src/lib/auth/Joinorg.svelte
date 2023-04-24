@@ -1,13 +1,11 @@
-<script lang="ts">
+<script>
 	import { pb, currentUser, currentOrganization } from '../pocketbase';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
-	import 'bootstrap-icons/font/bootstrap-icons.css';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
 	const form = useForm();
 
-	let organization;
 	let invitecode;
 	let signupErr;
 
@@ -41,7 +39,7 @@
 			// call cursed function
 			let org_magic = await get_organization_role(invitecode);
 			if (org_magic.role_name == '' || org_magic.org_name?.id == '') {
-				signupErr = 'INVALID CODE; TRY AGAIn';
+				signupErr = 'Your code seems to be invlid; try again!';
 			}
 
 			const data = {
@@ -71,9 +69,9 @@
 
 				const record2 = await pb.collection('organization').update(org_magic.org_name?.id, data2);
 
-				await goto('/account');
+				await goto('/dashboard');
 			} else {
-				signupErr = 'INVALID CODE; TRY AGAIN';
+				signupErr = 'Your code seems to be invlid; try again!';
 				await goto('/joinorg');
 			}
 		} catch (err) {
@@ -95,7 +93,7 @@
 		if ($currentUser.org == '') {
 			return;
 		} else {
-			goto('/account');
+			goto('/dashboard');
 		}
 	});
 </script>
@@ -107,7 +105,7 @@
 {/if}
 
 {#await currentUser then _}
-	<h1 class="page-name-header">Create an org</h1>
+	<h1 class="page-name-header">Join an org</h1>
 	<form use:form on:submit|preventDefault method="POST">
 		<div class="grid">
 			<div>
@@ -116,7 +114,7 @@
 					type="username"
 					name="invitecode"
 					id="invitecode"
-					placeholder="dQw4w9WgXcQ"
+					placeholder="Your code (should be a mix of letters and numbers)"
 					bind:value={invitecode}
 					use:validators={[required]}
 				/>

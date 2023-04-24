@@ -1,6 +1,5 @@
-<script lang="ts">
+<script>
 	import { currentRole, currentUser,currentOrganization, pb } from '../../pocketbase';
-	import 'bootstrap-icons/font/bootstrap-icons.css';
 	
 
 </script>
