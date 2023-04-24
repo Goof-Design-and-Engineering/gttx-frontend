@@ -28,6 +28,8 @@
 	let prevEnabled = false;
 	let nextEnabled = true;
 
+	let newTab = false;
+
 	onMount(async () => {
 		// docx
 		let exportDOCX = await exportNotes('docx');
@@ -218,11 +220,19 @@
 
 		// turn html 2 pdf
 		const doc = new jsPDF();
+		const title_page = new jsPDF();
+		title_page.text(20, 20, 'Hello world!');
+
 		doc.setFont('times', 'normal');
 		doc.html(exportHTML, {
 			callback: function (doc) {
-				// Save the PDF
-				doc.save('sample-document.pdf');
+				if (newTab) {
+					// Open PDF in new tab
+					doc.output('dataurlnewwindow');
+				} else {
+					// Save the PDF
+					doc.save('sample-document.pdf');
+				}
 			},
 			autoPaging: 'text',
 			x: 15,
@@ -299,11 +309,16 @@
 		<br />
 		Export options
 		<hr />
+		<label>
+			<input type="checkbox" bind:checked={newTab} />
+			Open in a new tab
+		</label>
+		<br />
 		<div class="grid">
 			<a role="button" class="contrast outline" href={docxDownload} download="results.docx"
 				>Export DOCX</a
 			>
-			<a role="button" class="contrast outline" on:click={rawPDF} href="#">Export PDF</a>
+			<a role="button" class="contrast outline" on:click={async(e) => {await rawPDF}} href="#">Export PDF</a>
 			<a role="button" class="contrast outline" href={htmlDownload} download="results.html">
 				Export HTML</a
 			>
