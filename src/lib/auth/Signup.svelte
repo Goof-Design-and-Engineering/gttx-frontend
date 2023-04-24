@@ -1,7 +1,6 @@
 <script>
 	import { currentUser, pb } from '../pocketbase';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
-	import 'bootstrap-icons/font/bootstrap-icons.css';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
