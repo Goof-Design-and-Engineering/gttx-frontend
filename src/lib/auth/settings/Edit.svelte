@@ -3,7 +3,6 @@
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	import { currentUser, pb, currentOrganization } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
-	import { toggleModal } from '$lib/modal';
 
 	import Modal from '$lib/Modal.svelte';
 	let showModal = false;
