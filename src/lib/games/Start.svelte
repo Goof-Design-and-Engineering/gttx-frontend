@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { error } from '@sveltejs/kit';
 	import { currentRole, currentUser, pb } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
@@ -75,6 +76,13 @@
 		if (!$currentUser.org) {
 			goto('/createorg');
 		}
+
+		window.onunhandledrejection = (e) => {
+			throw error(404, {
+            	message: 'Not found'
+        	});
+		}
+
 	});
 </script>
 
