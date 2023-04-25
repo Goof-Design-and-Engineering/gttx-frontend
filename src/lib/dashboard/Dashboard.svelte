@@ -30,7 +30,7 @@
 	}
 
 	async function manageorg() {
-		alert('Not implemented.');
+		goto('/dashboard/manage_org');
 	}
 
 	async function opennotes() {
@@ -89,9 +89,7 @@
 
 			<div class="grid">
 				{#if $currentRole == 'facilitator'}
-					<button on:click={manageorg} class="secondary" data-tooltip="Not implemented.">
-						Manage Organization</button
-					>
+					<button on:click={manageorg} class="secondary">Manage Organization</button>
 				{/if}
 				<button on:click={settings} class="secondary">Manage account</button>
 			</div>
