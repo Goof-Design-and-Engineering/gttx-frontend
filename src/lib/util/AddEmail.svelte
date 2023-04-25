@@ -1,6 +1,7 @@
 <script>
 	import { useForm, validators, email, required } from 'svelte-use-form';
 	import { getCurrentOrganizationRecord, pb } from '$lib/pocketbase';
+	import { goto } from '$app/navigation';
 	const form = useForm();
 
 	let newEmail = '';
@@ -87,7 +88,7 @@
 		{:then result}
 			<!-- creategame was fulfilled -->
 			{result.id}
-			<h1>SUCCESS</h1>
+			{goto("/dashboard/notes?roomid="+result.id)}
 		{:catch error}
 			<!-- creategame was rejected -->
 			{error}
