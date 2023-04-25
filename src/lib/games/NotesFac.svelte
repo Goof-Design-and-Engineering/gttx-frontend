@@ -17,6 +17,7 @@
 	let scenarioObject;
 	let modules = [];
 	export let roomID = 'yir2twyh4ws5697';
+	export let compactView = false;
 	let newModule = '';
 	let errorThrown = '';
 	let docxDownload = '';
@@ -250,10 +251,10 @@
 		});
 	}
 
-	async function patchRoomName(){
-		const result = pb.collection('room').update(roomID,{"name": newRoomName || ''})
-		alert("Changed to " + newRoomName + " under way!")
-		return result
+	async function patchRoomName() {
+		const result = pb.collection('room').update(roomID, { name: newRoomName || '' });
+		alert('Changed to ' + newRoomName + ' under way!');
+		return result;
 	}
 </script>
 
@@ -265,20 +266,22 @@
 			<b>{scenarioObject.overview.name}</b>
 		</header>
 
-		Specify Module
-		<div class="grid">
-			<select bind:value={newModule}>
-				<option value="" disabled selected>Select</option>
-				{#each modules as module}
-					<p>{module}</p>
-					<!-- content here -->
-					<option value={module} on:click={changeModule}>{module}</option>
-				{/each}
-			</select>
-			<hr />
-			<button on:click={decrementQuestion} disabled={!prevEnabled}>Prev. Question</button>
-			<button on:click={incrementQuestion} disabled={!nextEnabled}>Next Question</button>
-		</div>
+		{#if !compactView}
+			Specify Module
+			<div class="grid">
+				<select bind:value={newModule}>
+					<option value="" disabled selected>Select</option>
+					{#each modules as module}
+						<p>{module}</p>
+						<!-- content here -->
+						<option value={module} on:click={changeModule}>{module}</option>
+					{/each}
+				</select>
+				<hr />
+				<button on:click={decrementQuestion} disabled={!prevEnabled}>Prev. Question</button>
+				<button on:click={incrementQuestion} disabled={!nextEnabled}>Next Question</button>
+			</div>
+		{/if}
 
 		<CurrentQuestion bind:question />
 
@@ -319,40 +322,40 @@
 		<p>Error: {error.message}</p>
 	{/await}
 
-	<article>
-		<header>
-			Change Room Name
-		</header>
-		<form on:submit={patchRoomName}>
-			<label for="text"> enter new roomname</label>
-			<input type="text" bind:value={newRoomName}>
-		</form>
-	</article>
+	{#if !compactView}
+		<article>
+			<header>Change Room Name</header>
+			<form on:submit={patchRoomName}>
+				<label for="text"> enter new roomname</label>
+				<input type="text" bind:value={newRoomName} />
+			</form>
+		</article>
 
-	<footer>
-		<br />
-		Export options
-		<hr />
-		<label>
-			<input type="checkbox" bind:checked={newTab} />
-			Open in a new tab
-		</label>
-		<br />
-		<div class="grid">
-			<a role="button" class="contrast outline" href={docxDownload} download="results.docx"
-				>Export DOCX</a
-			>
-			<a
-				role="button"
-				class="contrast outline"
-				on:click={async (e) => {
-					await rawPDF;
-				}}
-				href="#">Export PDF</a
-			>
-			<a role="button" class="contrast outline" href={htmlDownload} download="results.html">
-				Export HTML</a
-			>
-		</div>
-	</footer>
+		<footer>
+			<br />
+			Export options
+			<hr />
+			<label>
+				<input type="checkbox" bind:checked={newTab} />
+				Open in a new tab
+			</label>
+			<br />
+			<div class="grid">
+				<a role="button" class="contrast outline" href={docxDownload} download="results.docx"
+					>Export DOCX</a
+				>
+				<a
+					role="button"
+					class="contrast outline"
+					on:click={async (e) => {
+						await rawPDF;
+					}}
+					href="#">Export PDF</a
+				>
+				<a role="button" class="contrast outline" href={htmlDownload} download="results.html">
+					Export HTML</a
+				>
+			</div>
+		</footer>
+	{/if}
 </article>
