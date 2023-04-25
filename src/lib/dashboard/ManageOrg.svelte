@@ -166,6 +166,11 @@
 		</div>
 		<br>
 	{/each}
+
+	<footer>
+		<br>
+		<button class="outline">Save Changes</button>
+	</footer>
 </article>
 
 <Modal bind:showModal>
