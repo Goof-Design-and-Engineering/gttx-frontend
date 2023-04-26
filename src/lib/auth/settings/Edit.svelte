@@ -59,7 +59,6 @@
 			console.log(e);
 			alert('Something went wrong, please try again!');
 		}
-		toggleModal;
 		pb.authStore.clear();
 		goto('/');
 	}

@@ -17,9 +17,9 @@
 	let memberToRemove;
 	var password_confirm = '';
 
-	function presentModal(username) {
+	function presentModal(member) {
+		memberToRemove = member;
 		showModal = true;
-		memberToRemove = username;
 	}
 
 	onMount(async () => {
@@ -31,7 +31,7 @@
 			goto('createorg');
 			return;
 		}
-		if ($currentUser.role != "facilitator") {
+		if ($currentUser.role != 'facilitator') {
 			goto('/dashboard');
 			return;
 		}
@@ -95,6 +95,15 @@
 			return;
 		}
 
+		try {
+			await pb.collection('users').update(userid, { org: '' });
+		} catch (e) {
+			deleting = false;
+			console.log(e);
+			alert('Something went wrong, please try again!');
+			return;
+		}
+
 		// const result = pb.collection('organization').getOne($currentUser?.org);
 		const result = members.filter((m) => m.id !== userid);
 		console.log(result);
@@ -135,7 +144,7 @@
 		</hgroup>
 		<progress /> -->
 		<center>
-			<br/>
+			<br />
 			<hgroup>
 				<h1 aria-busy="true">Loading...</h1>
 				<h2>Give it a second...</h2>
@@ -157,7 +166,7 @@
 				{/if}
 				<hr />
 				<div class="grid">
-					<input type="text" value={member.email} aria-invalid="false" disabled>
+					<input type="text" value={member.email} aria-invalid="false" disabled />
 					{#if member.id == $currentUser.id}
 						<select disabled>
 							<option value="facilitator">Facilitator</option>
@@ -179,50 +188,52 @@
 								<option value="observer" selected>Observer</option>
 							{/if}
 						</select>
-						<button class="primary" on:click={presentModal(member.username)}>Remove</button>
+						<button class="primary" on:click={presentModal(member)}>Remove</button>
 					{/if}
 				</div>
 			</div>
-			<br>
+			<br />
 		{/each}
 
 		<footer>
-			<br>
+			<br />
 			<button class="outline">Save Changes</button>
 		</footer>
-		{/await}
+	{/await}
 </article>
 
-<Modal bind:showModal>
-	<article>
-		<h3>Woah there!</h3>
-		<p>
-			Are you sure that you want to remove <b>{memberToRemove}</b> from your organization?
-			<br /><br />
-			If you change your mind, you'll have to send <b>{memberToRemove}</b> another invite.
-			<br /><br />
-			<b style="color: red;">This action can not be undone!</b>
-		</p>
-		<footer>
-			<form use:form on:submit|preventDefault method="POST">
-				<br />
-				<input
-					type="password"
-					name="del_confirm_pass"
-					id="del_confrim_pass"
-					placeholder="Your current password, please!"
-					bind:value={password_confirm}
-					use:validators={[required]}
-				/>
-				<br />
-				<button
-					data-target="modal-example"
-					on:click={deleteUser}
-					disabled={!$form.valid}
-				>
-					Confirm
-				</button>
-			</form>
-		</footer>
-	</article>
-</Modal>
+{#if showModal}
+	<Modal bind:showModal>
+		<article>
+			<h3>Woah there!</h3>
+			<p>
+				Are you sure that you want to remove <b>{memberToRemove.username}</b> from your organization?
+				<br /><br />
+				If you change your mind, you'll have to send <b>{memberToRemove.username}</b> another invite.
+				<br /><br />
+				<b style="color: red;">This action can not be undone!</b>
+			</p>
+			<footer>
+				<form use:form on:submit|preventDefault method="POST">
+					<br />
+					<input
+						type="password"
+						name="del_confirm_pass"
+						id="del_confrim_pass"
+						placeholder="Your current password, please!"
+						bind:value={password_confirm}
+						use:validators={[required]}
+					/>
+					<br />
+					<button
+						data-target="modal-example"
+						on:click={deleteUser(memberToRemove.id)}
+						disabled={!$form.valid}
+					>
+						Confirm
+					</button>
+				</form>
+			</footer>
+		</article>
+	</Modal>
+{/if}
