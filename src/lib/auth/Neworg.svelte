@@ -89,7 +89,7 @@
 				use:validators={[required]}
 			/>
 			<HintGroup for="organization">
-				<Hint on="required">This is a mandatory field</Hint>
+				<Hint on="required"><center>This is a mandatory field</center><br/></Hint>
 			</HintGroup>
 		</div>
 
@@ -110,10 +110,10 @@
 		</div> -->
 	</div>
 
+	<button disabled={!$form.valid} on:click={signup}>Create your organization!</button>
+	<hr><br/>
 	<div class="grid">
-		<button disabled={!$form.valid} on:click={signup}>Sign up</button>
+		<button on:click={joinorg}>Join an org instead</button>
 		<button on:click={signout} class="secondary">Nevermind, sign out</button>
 	</div>
-
-	<button on:click={joinorg}>Join an org instead</button>
 </form>

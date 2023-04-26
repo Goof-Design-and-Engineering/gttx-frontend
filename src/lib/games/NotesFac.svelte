@@ -6,23 +6,26 @@
 		currentOrganization,
 		currentProfilePic,
 		pb,
-		getCurrentOrganizationRecord
+		getCurrentOrganizationRecord,
+		formatScenario
 	} from '$lib/pocketbase';
 	import { jsPDF } from 'jspdf';
 	import Modal from '$lib/Modal.svelte';
 	import { page } from '$app/stores';
 
 	import CurrentQuestion from '$lib/games/CurrentQuestion.svelte';
+	import { insert } from 'svelte/internal';
+	import { replaceInJSON } from '../pocketbase';
 
 	let scenarioObject;
 	let modules = [];
 	export let roomID = 'yir2twyh4ws5697';
+	export let compactView = false;
 	let newModule = '';
 	let errorThrown = '';
 	let docxDownload = '';
 	let latexDownload = '';
 	let htmlDownload = '';
-	let org;
 	let question;
 
 	let prevEnabled = false;
@@ -32,9 +35,11 @@
 
 	let newRoomName = '';
 
+	let currOrg;
+
 	onMount(async () => {
 		const url = $page.url;
-		urlRoomID = url.searchParams.get('roomid');
+		let urlRoomID = url.searchParams.get('roomid') || '';
 		if (urlRoomID != '') {
 			roomID = urlRoomID;
 		}
@@ -61,20 +66,19 @@
 			goto('/createorg');
 		}
 
-		await getQuestion();
-
 		// console.log(result);
+		currOrg = await getCurrentOrganizationRecord();
 	});
 
 	async function getQuestion() {
 		// if not loaded load it
-		if (scenarioObject == null) {
-			loadScenario();
-		}
+		// if (scenarioObject == null) {
+		// 	loadScenario();
+		// }
 
 		const result = await pb.collection('room').getOne(roomID);
 
-		question = scenarioObject.modules[result.module].questions[result.question];
+		question = scenarioObject.modules[result.module].questions[result.question] || '';
 	}
 
 	let showModal = false;
@@ -84,9 +88,9 @@
 	}
 
 	async function insertOrg(text) {
-		org = await getCurrentOrganizationRecord();
-		console.log(org.name);
-		return text.replace('<Insert Organization>', 'org.name');
+		// org = await getCurrentOrganizationRecord();
+		// console.log(org.name);
+		return text.replace('(<Organization’s>|<Insert Organization>)', currOrg.name);
 	}
 
 	async function loadScenario() {
@@ -95,6 +99,14 @@
 		});
 		console.log(result);
 		scenarioObject = result.expand.scenarios.contents;
+
+		// do the inline modification of the code
+		scenarioObject =
+			replaceInJSON(
+				scenarioObject,
+				['<Insert Organization>', '<Organization’s>', '<Organization>'],
+				currOrg?.name || 'your organization'
+			) || scenarioObject;
 
 		// save module name
 		for (var moduleName in scenarioObject.modules) {
@@ -250,109 +262,139 @@
 		});
 	}
 
-	async function patchRoomName(){
-		const result = pb.collection('room').update(roomID,{"name": newRoomName || ''})
-		alert("Changed to " + newRoomName + " under way!")
-		return result
+	async function patchRoomName() {
+		const result = pb.collection('room').update(roomID, { name: newRoomName || '' });
+		alert('Changed to ' + newRoomName + ' under way!');
+		return result;
 	}
 </script>
 
 <article>
 	{#await loadScenario()}
-		<p aria-busy="true">Loading...</p>
+		<center>
+			<br />
+			<hgroup>
+				<h1 aria-busy="true">Loading...</h1>
+				<h2>Give it a second...</h2>
+			</hgroup>
+			<br />
+		</center>
 	{:then}
-		<header>
-			<b>{scenarioObject.overview.name}</b>
-		</header>
+		{#await getQuestion()}
+			<!-- getQuestion() is pending -->
+			<center>
+				<br />
+				<hgroup>
+					<h1 aria-busy="true">Loading...</h1>
+					<h2>Give it a second...</h2>
+				</hgroup>
+				<br />
+			</center>
+		{:then value}
+			<!-- getQuestion() was fulfilled -->
 
-		Specify Module
-		<div class="grid">
-			<select bind:value={newModule}>
-				<option value="" disabled selected>Select</option>
-				{#each modules as module}
-					<p>{module}</p>
-					<!-- content here -->
-					<option value={module} on:click={changeModule}>{module}</option>
-				{/each}
-			</select>
-			<hr />
-			<button on:click={decrementQuestion} disabled={!prevEnabled}>Prev. Question</button>
-			<button on:click={incrementQuestion} disabled={!nextEnabled}>Next Question</button>
-		</div>
+			<header>
+				<b>{scenarioObject.overview.name}</b>
+			</header>
 
-		<CurrentQuestion bind:question />
+			{#if !compactView}
+				Specify Module
+				<div class="grid">
+					<select bind:value={newModule}>
+						<option value="" disabled selected>Select</option>
+						{#each modules as module}
+							<p>{module}</p>
+							<!-- content here -->
+							<option value={module} on:click={changeModule}>{module}</option>
+						{/each}
+					</select>
+					<hr />
+					<button on:click={decrementQuestion} disabled={!prevEnabled}>Prev. Question</button>
+					<button on:click={incrementQuestion} disabled={!nextEnabled}>Next Question</button>
+				</div>
+			{/if}
 
-		<button on:click={toggleVisible} class="secondary"> Show Scenario Information </button>
+			<CurrentQuestion bind:question />
 
-		<Modal bind:showModal>
-			<article>
-				<header>
-					<b>Scope</b>
-				</header>
-				{scenarioObject.overview.scope.replace('<Insert Organization>', 'org.name')}
-			</article>
-			<article>
-				<header>
-					<b>Purpose</b>
-				</header>
-				{scenarioObject.overview.purpose.replace('<Insert Organization>', 'org.name')}
-			</article>
+			<button on:click={toggleVisible} class="secondary"> Show Scenario Information </button>
 
-			<article>
-				<header>
-					<b>Objectives</b>
-				</header>
-				<ul>
-					{#each scenarioObject.overview.objectives as objective}
-						<!-- {#await}
+			<Modal bind:showModal>
+				<article>
+					<header>
+						<b>Scope</b>
+					</header>
+					{scenarioObject.overview.scope.replace('<Insert Organization>', 'org.name')}
+				</article>
+				<article>
+					<header>
+						<b>Purpose</b>
+					</header>
+					{scenarioObject.overview.purpose.replace('<Insert Organization>', 'org.name')}
+				</article>
+
+				<article>
+					<header>
+						<b>Objectives</b>
+					</header>
+					<ul>
+						{#each scenarioObject.overview.objectives as objective}
+							<!-- {#await}
 						<article aria-busy="true" />
 					{:then objective} -->
-						<li>{objective}</li>
-						<!-- {:catch error}
+							<li>{objective}</li>
+							<!-- {:catch error}
 						<li>Failed to load this objective ({error})</li>
 					{/await} -->
-					{/each}
-				</ul>
-			</article>
-		</Modal>
+						{/each}
+					</ul>
+				</article>
+			</Modal>
+		{:catch error}
+			<!-- getQuestion() was rejected -->
+		{/await}
 	{:catch error}
 		<p>Error: {error.message}</p>
 	{/await}
 
-	<article>
-		<header>
-			Change Room Name
-		</header>
-		<form on:submit={patchRoomName}>
-			<label for="text"> enter new roomname</label>
-			<input type="text" bind:value={newRoomName}>
-		</form>
-	</article>
+	{#if !compactView}
+		<article>
+			<header>Change Room Name</header>
+			<form on:submit={patchRoomName}>
+				<label for="text"> enter new roomname</label>
+				<input type="text" bind:value={newRoomName} />
+			</form>
+		</article>
 
-	<footer>
-		<br />
-		Export options
-		<hr />
-		<label>
-			<input type="checkbox" bind:checked={newTab} />
-			Open in a new tab
-		</label>
-		<br />
-		<div class="grid">
-			<a role="button" class="contrast outline" href={docxDownload} download="results.docx"
-				>Export DOCX</a
-			>
-			<a
-				role="button"
-				class="contrast outline"
-				on:click={async (e) => {
-					await rawPDF;
-				}}
-				href="#">Export PDF</a
-			>
-			<a role="button" class="contrast outline" href={htmlDownload} download="results.html">
-				Export HTML</a
-			>
-		</div>
-	</footer>
+		<footer>
+			<br />
+			<div class="grid">
+				<div>
+					<b>Export Options</b>
+				</div>
+				<div>
+					<label style="text-align: right;">
+						<input type="checkbox" bind:checked={newTab} />
+						Open in a new tab
+					</label>
+				</div>
+			</div>
+			<hr />
+			<div class="grid">
+				<a role="button" class="contrast outline" href={docxDownload} download="results.docx"
+					>Export DOCX</a
+				>
+				<a
+					role="button"
+					class="contrast outline"
+					on:click={async (e) => {
+						await rawPDF;
+					}}
+					href="#">Export PDF</a
+				>
+				<a role="button" class="contrast outline" href={htmlDownload} download="results.html">
+					Export HTML</a
+				>
+			</div>
+		</footer>
+	{/if}
 </article>

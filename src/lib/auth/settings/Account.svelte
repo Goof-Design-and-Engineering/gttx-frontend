@@ -9,6 +9,8 @@
 	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 
+	let organizationName = "None";
+
 	async function signout() {
 		pb.authStore.clear();
 		goto('/');
@@ -26,14 +28,30 @@
 		goto('/');
 	}
 
-	onMount(() => {
+	async function getOrgName() {
+		if ($currentOrganization) {
+			const result = await pb.collection('organization').getOne($currentUser?.org);
+			organizationName = result.name;
+		}
+	}
+
+	onMount(async () => {
 		if (!$currentUser) {
 			goto('/login');
 		}
 	});
 </script>
 
-{#await currentUser then _}
+{#await getOrgName()}
+	<center>
+		<br/>
+		<hgroup>
+			<h1 aria-busy="true">Loading...</h1>
+			<h2>Give it a second...</h2>
+		</hgroup>
+	</center>
+	<!-- <br/><br/><center><p aria-busy="true">Loading...</p></center> -->
+{:then}
 	<!-- promise was fulfilled -->
 	{#if $currentUser}
 		<div class="grid">
@@ -68,23 +86,25 @@
 		<div class="grid">
 			<div>
 				Name
-				<input type="text" value={$currentUser.username} readonly />
+				<input style="border: 1px solid var(--primary); border-radius: 1px;" type="text" value={$currentUser.username} readonly />
 			</div>
 			<div>
 				Email
-				<input type="text" value={$currentUser.email} readonly />
+				<input style="border: 1px solid var(--primary); border-radius: 1px;" type="text" value={$currentUser.email} readonly />
 			</div>
 		</div>
-		<div class="grid">
-			<div>
-				Organization
-				<input type="text" value={$currentUser.org} disabled />
+		{#if $currentOrganization}
+			<div class="grid">
+				<div>
+					Organization
+					<input style="border: 1px solid var(--primary); border-radius: 1px;" type="text" value={organizationName} readonly />
+				</div>
+				<div>
+					Role
+					<input style="border: 1px solid var(--primary); border-radius: 1px;" type="text" value={$currentUser.role} readonly />
+				</div>
 			</div>
-			<div>
-				Role
-				<input type="text" value={$currentUser.role} disabled />
-			</div>
-		</div>
+		{/if}
 		<!-- </article> -->
 		<br />
 		<div class="grid">

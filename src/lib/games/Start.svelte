@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
-	import { currentRole, currentUser, pb } from '$lib/pocketbase';
+	import { error } from '@sveltejs/kit';
+	import { currentRole, currentUser, pb, getCurrentOrganizationRecord, formatScenario } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	// import InviteModalContent from '$lib/games/InviteModalContent.svelte';
@@ -22,7 +23,6 @@
 	// values found elsewhere
 	var invitecode = '';
 	var isFailure = false;
-	var switchValue;
 	var moduleChosen = '';
 	var scenarioChosen = '';
 	var message2send = '';
@@ -32,13 +32,15 @@
 	async function submitinvitecode() {
 		try {
 			isFailure = false;
-			goto(`/dashboard/notes?roomid=${invitecode}`)
+			goto(`/dashboard/notes?roomid=${invitecode}`);
 			// throw redirect(307, '/account');
 		} catch (e) {
 			console.log('Invite Code Failure!');
 			// logonError = e;
 		}
 	}
+
+	
 
 	async function getScenarios() {
 		const resultList = await pb.collection('scenario').getList(1, 50);
@@ -50,7 +52,7 @@
 		console.log(scenario, module);
 		scenarioChosen = scenario;
 		moduleChosen = module;
-	
+
 		gameData = {
 			org: $currentUser.org,
 			users: [$currentUser.id],
@@ -65,9 +67,8 @@
 
 	onMount(async () => {
 		const org = await getCurrentOrganizationRecord();
-		
-		message2send = `Hello! Welcome to GTTX. Here is the information to get started:\nobserver_code: ${org.observer_code}\nparticipant_code: ${org.participant_code}\n facilitator_code:${org.facilitor_code}. GOTO https://gttx.api/blah to get started!`
 
+		message2send = `Hello! Welcome to GTTX. Here is the information to get started:\nobserver_code: ${org.observer_code}\nparticipant_code: ${org.participant_code}\n facilitator_code:${org.facilitor_code}. GOTO https://gttx.api/blah to get started!`;
 
 		if (!$currentUser) {
 			goto('/login');
@@ -75,20 +76,23 @@
 		if (!$currentUser.org) {
 			goto('/createorg');
 		}
+
+		window.onunhandledrejection = (e) => {
+			throw error(404, {
+				message: 'Not found'
+			});
+		};
 	});
 </script>
-
-<Switch bind:value={switchValue} label="Facilitator toggle" design="slider" style="float" />
 
 {#key scenarioChosen}
 	<h1>{scenarioChosen}</h1>
 {/key}
-{#await (currentRole, currentUser)}
+{#await $currentUser}
 	<progress />
-{:then}
+{:then user}
 	<!-- Facilitator -->
-	{#if switchValue == 'on'}
-		<!-- {#if $currentRole == 'facilitator' || switchValue == 'on'} -->
+	{#if user.role == 'facilitator'}
 		<article>
 			<header>
 				<hgroup>
@@ -98,43 +102,47 @@
 			</header>
 			{#await getScenarios()}
 				<progress />
-			{:then scenarios}
-				<Carousel>
-					{#each scenarios as scenario}
-						<details>
-							<summary>{scenario.name}</summary>
-							<h2>{scenario.contents?.overview?.name || ''}</h2>
-							<h5>{scenario.contents?.name || ''} {scenario.contents?.source || ''}</h5>
-							<hr />
-							<h4>PURPOSE</h4>
-							<p>{scenario.contents?.overview?.purpose || ''}</p>
-							<h4>SCOPE</h4>
-							<p>{scenario.contents?.overview?.scope || ''}</p>
-							<hr />
-							<h4>OBJECTIVES</h4>
-							<ul>
-								{#each scenario.contents?.overview.objectives || [] as objective}
-									<li>
-										{objective}
-									</li>
-								{/each}
-							</ul>
-							<hr />
-							<h4>MODULES</h4>
-							<ul>
-								{#each Object.entries(scenario.contents?.modules || []) as [name, module]}
-									<em>
-										{name}
-									</em>
-									<p>{module.description}</p>
-									<button on:click={() => setModal(scenario.id, name)}>
-										Choose this scenario and module</button
-									>
-								{/each}
-							</ul>
-						</details>
-					{/each}
-				</Carousel>
+			{:then rawScenarios}
+				{#await formatScenario(rawScenarios) then scenarios}
+					<Carousel>
+						{#each scenarios as scenario}
+							<details>
+								<summary>{scenario.name}</summary>
+								<h2>{scenario.contents?.overview?.name || ''}</h2>
+								<h5>{scenario.contents?.name || ''} {scenario.contents?.source || ''}</h5>
+								<hr />
+								<h4>PURPOSE</h4>
+								<p>{scenario.contents?.overview?.purpose || ''}</p>
+								<h4>SCOPE</h4>
+								<p>{scenario.contents?.overview?.scope || ''}</p>
+								<hr />
+								<h4>OBJECTIVES</h4>
+								<ul>
+									{#each scenario.contents?.overview.objectives || [] as objective}
+										<li>
+											{objective}
+										</li>
+									{/each}
+								</ul>
+								<hr />
+								<h4>MODULES</h4>
+								<ul>
+									{#each Object.entries(scenario.contents?.modules || []) as [name, module]}
+										<em>
+											{name}
+										</em>
+										<p>{module.description}</p>
+										<button on:click={() => setModal(scenario.id, name)}>
+											Choose this scenario and module</button
+										>
+									{/each}
+								</ul>
+							</details>
+						{/each}
+					</Carousel>
+				{:catch error}
+					{error}
+				{/await}
 			{:catch error}
 				<!-- promise was rejected -->
 				{error}
@@ -145,11 +153,10 @@
 			<AddEmail {gameData} />
 		</Modal>
 
-		<GamesList/>
+		<GamesList />
 
-		
 		<!-- Participant and Observer -->
-	{:else if $currentRole == 'participant' || $currentRole == 'observer' || switchValue == 'off'}
+	{:else if user.role == 'participant' || user.role == 'observer'}
 		<hgroup>
 			<h1>Join a game Room</h1>
 			<h2>Let's-a go.</h2>
@@ -170,7 +177,7 @@
 
 			<button disabled={!$form.valid} on:click={submitinvitecode}>Join</button>
 		</form>
-	{:else if ['facilitator', 'participant', 'observer'].includes($currentRole)}
+	{:else if ['facilitator', 'participant', 'observer'].includes(user.role)}
 		<hgroup>
 			<br />
 			<h2>You find yourself in a strange place; you don't have a valid role.</h2>

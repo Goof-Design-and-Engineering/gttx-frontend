@@ -5,6 +5,8 @@
 	import NotesDefault from './NotesDefault.svelte';
 	import NotesFac from './NotesFac.svelte';
 
+	let compact = true;
+
 	async function recentgames() {
 		// you can also fetch all records at once via getFullList
 		const records = await pb.collection('room').getFullList(200 /* batch size */, {
@@ -17,22 +19,30 @@
 </script>
 
 <article>
-	<hgroup>
-		<header>
+	<header>
+		<hgroup>
 			<h1>Recent Games</h1>
-		</header>
+			<h2>For jumping right back into the action</h2>
+		</hgroup>
+	</header>
 		{#await recentgames()}
-			<li aria-busy="true">Loading your recent games...</li>
+			<!-- <li aria-busy="true">Loading your recent games...</li> -->
+			<center>
+				<br/>
+				<hgroup>
+					<h1 aria-busy="true">Loading your recent games...</h1>
+					<h2>Give it a second...</h2>
+				</hgroup>
+			</center>
 		{:then games}
 			{#if games.length != 0}
 				<Carousel>
 					{#each games as game}
-						<li>
-                            
+					<hgroup>
 							<h2>{game.name == "" ? game.name  : game.id}</h2>
-							<NotesFac bind:roomID={game.id} />
-                            <a href="/dashboard/notes?roomid={game.id}"> Open in a new tab instead</a>
-						</li>
+							<NotesFac bind:roomID={game.id} bind:compactView={compact} />
+                            <a href="/dashboard/notes?roomid={game.id}" target="_blank" rel="noreferrer"> Open in a new tab instead</a>
+					</hgroup>
 					{/each}
 					<!-- promise was fulfilled -->
 				</Carousel>
@@ -42,5 +52,4 @@
 		{:catch error}
 			{error}
 		{/await}
-	</hgroup>
 </article>

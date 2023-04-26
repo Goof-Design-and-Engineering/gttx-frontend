@@ -83,7 +83,7 @@
 		<!-- Grid -->
 		<h2>Request for comment</h2>
 
-		<p>
+		<p id="curr_question">
 			{#await getQuestion() then question}
 				<!-- promise was fulfilled -->
 				{question}
@@ -99,7 +99,7 @@
 		</label>
 
 		<!-- Button -->
-		<button type="submit" on:click={submitNote}>Submit</button>
+		<button type="submit" id="submit_answer" on:click={submitNote}>Submit</button>
 	</form>
 {:catch error}
 	<p>Error: {error.message}</p>
