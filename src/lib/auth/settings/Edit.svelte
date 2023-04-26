@@ -229,7 +229,6 @@
 							<br />
 							{#if $currentUser.role != 'facilitator'}
 								<button
-									href="#confirm"
 									data-target="modal-example"
 									on:click={delete_account}
 									disabled={!$form.valid}
@@ -250,7 +249,6 @@
 								</fieldset>
 								<button
 									aria-busy={deleting}
-									href="#confirm"
 									data-target="modal-example"
 									on:click={delete_account}
 									disabled={!$form.valid}
