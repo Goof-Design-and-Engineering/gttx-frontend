@@ -23,7 +23,6 @@
 	// values found elsewhere
 	var invitecode = '';
 	var isFailure = false;
-	var switchValue;
 	var moduleChosen = '';
 	var scenarioChosen = '';
 	var message2send = '';
@@ -86,17 +85,14 @@
 	});
 </script>
 
-<Switch bind:value={switchValue} label="Facilitator toggle" design="slider" style="float" />
-
 {#key scenarioChosen}
 	<h1>{scenarioChosen}</h1>
 {/key}
-{#await (currentRole, currentUser)}
+{#await $currentUser}
 	<progress />
-{:then}
+{:then user}
 	<!-- Facilitator -->
-	{#if switchValue == 'on'}
-		<!-- {#if $currentRole == 'facilitator' || switchValue == 'on'} -->
+	{#if user.role == 'facilitator'}
 		<article>
 			<header>
 				<hgroup>
@@ -160,7 +156,7 @@
 		<GamesList />
 
 		<!-- Participant and Observer -->
-	{:else if $currentRole == 'participant' || $currentRole == 'observer' || switchValue == 'off'}
+	{:else if user.role == 'participant' || user.role == 'observer'}
 		<hgroup>
 			<h1>Join a game Room</h1>
 			<h2>Let's-a go.</h2>
@@ -181,7 +177,7 @@
 
 			<button disabled={!$form.valid} on:click={submitinvitecode}>Join</button>
 		</form>
-	{:else if ['facilitator', 'participant', 'observer'].includes($currentRole)}
+	{:else if ['facilitator', 'participant', 'observer'].includes(user.role)}
 		<hgroup>
 			<br />
 			<h2>You find yourself in a strange place; you don't have a valid role.</h2>

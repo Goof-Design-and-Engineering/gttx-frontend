@@ -113,6 +113,6 @@
 		</div>
 
 		<hr />
-		<button on:click={signup}> Signup </button>
+		<button id="signup_button" on:click={signup}> Signup </button>
 	{/if}
 {/await}
