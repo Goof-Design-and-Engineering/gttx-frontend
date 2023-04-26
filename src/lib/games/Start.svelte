@@ -1,6 +1,5 @@
 <script>
 	import { onMount } from 'svelte';
-	import { error } from '@sveltejs/kit';
 	import { currentRole, currentUser, pb, getCurrentOrganizationRecord, formatScenario } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
@@ -76,12 +75,6 @@
 		if (!$currentUser.org) {
 			goto('/createorg');
 		}
-
-		window.onunhandledrejection = (e) => {
-			throw error(404, {
-				message: 'Not found'
-			});
-		};
 	});
 </script>
 
@@ -92,7 +85,7 @@
 	<progress />
 {:then user}
 	<!-- Facilitator -->
-	{#if user.role == 'facilitator'}
+	{#if user?.role == 'facilitator'}
 		<article>
 			<header>
 				<hgroup>
@@ -156,7 +149,7 @@
 		<GamesList />
 
 		<!-- Participant and Observer -->
-	{:else if user.role == 'participant' || user.role == 'observer'}
+	{:else if user?.role == 'participant' || user?.role == 'observer'}
 		<hgroup>
 			<h1>Join a game Room</h1>
 			<h2>Let's-a go.</h2>
@@ -177,7 +170,7 @@
 
 			<button disabled={!$form.valid} on:click={submitinvitecode}>Join</button>
 		</form>
-	{:else if ['facilitator', 'participant', 'observer'].includes(user.role)}
+	{:else if ['facilitator', 'participant', 'observer'].includes(user?.role)}
 		<hgroup>
 			<br />
 			<h2>You find yourself in a strange place; you don't have a valid role.</h2>
