@@ -8,11 +8,14 @@
 	var new_password = '';
 	var new_password_again = '';
 
+	let loading = false;
+
 	const form = useForm();
 
 	async function submit() {
 		console.log(currentUser);
 		try {
+			loading = true;
 			await pb.collection('users').authWithPassword($currentUser.username, old_password);
 
 			if (new_password == new_password_again && new_password != '') {
@@ -28,13 +31,16 @@
 					pb.authStore.clear();
 					goto('/login');
 				} catch (e) {
+					loading = false;
 					console.log(e);
 					alert('Something went wrong, please try again.');
 				}
 			} else {
+				loading = false;
 				alert('Your passwords do not match!');
 			}
 		} catch (e) {
+			loading = false;
 			console.log(e);
 			alert('Your old password was not correct!');
 		}
@@ -95,7 +101,7 @@
 		<br />
 		<div class="grid">
 			<button on:click={back} class="secondary"> Back to Settings</button>
-			<button disabled={!$form.valid} on:click={submit}> Submit</button>
+			<button disabled={!$form.valid} aria-busy={loading} on:click={submit}> Submit</button>
 		</div>
 	{/if}
 {/await}

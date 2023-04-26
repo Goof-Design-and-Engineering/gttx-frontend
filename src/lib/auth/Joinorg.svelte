@@ -124,11 +124,11 @@
 			</div>
 		</div>
 
+		<button disabled={!$form.valid} on:click={signup}>Join the organization!</button>
+		<hr><br/>
 		<div class="grid">
-			<button disabled={!$form.valid} on:click={signup}>Sign up</button>
+			<button on:click={createorg}>Create an org instead</button>
 			<button on:click={signout} class="secondary">Nevermind, sign out</button>
 		</div>
-		<hr><br/>
-		<button on:click={createorg}>Create an org instead</button>
 	</form>
 {/await}
