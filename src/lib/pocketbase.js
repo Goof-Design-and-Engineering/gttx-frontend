@@ -37,3 +37,45 @@ export async function getCurrentOrganizationRecord() {
     return {};
 
 }
+
+
+export function replaceInJSON(json, oldValues, newValue) {
+    const copiedJson = JSON.parse(JSON.stringify(json));
+
+    // go through each object
+    for (let key in copiedJson) {
+        if (typeof copiedJson[key] === 'object') {
+            copiedJson[key] = replaceInJSON(copiedJson[key], oldValues, newValue);
+        } else if (typeof copiedJson[key] === 'string') {
+            for (let oldValue of oldValues) {
+                if (copiedJson[key].includes(oldValue)) {
+                    // if type string replace value
+                    copiedJson[key] = copiedJson[key].replace(oldValue, newValue);
+                }
+            }
+        }
+    }
+
+    return copiedJson;
+}
+
+export async function formatScenario(scenarios) {
+    let newScenarios = [];
+    const orgHere = await getCurrentOrganizationRecord();
+    for (let scenario of scenarios) {
+        console.log('SCENARIO');
+        console.log(scenario);
+
+        newScenarios.push(
+            replaceInJSON(
+                scenario,
+                ['<Insert Organization>', '<Organization’s>', '<Organization>'],
+                orgHere?.name || 'your organization'
+            ) || {}
+        );
+    }
+    console.log('NEW SCENARIO...');
+    console.log(newScenarios);
+    return newScenarios;
+}
+

@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { error } from '@sveltejs/kit';
-	import { currentRole, currentUser, pb } from '$lib/pocketbase';
+	import { currentRole, currentUser, pb, getCurrentOrganizationRecord, formatScenario } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	// import InviteModalContent from '$lib/games/InviteModalContent.svelte';
@@ -33,13 +33,15 @@
 	async function submitinvitecode() {
 		try {
 			isFailure = false;
-			goto(`/dashboard/notes?roomid=${invitecode}`)
+			goto(`/dashboard/notes?roomid=${invitecode}`);
 			// throw redirect(307, '/account');
 		} catch (e) {
 			console.log('Invite Code Failure!');
 			// logonError = e;
 		}
 	}
+
+	
 
 	async function getScenarios() {
 		const resultList = await pb.collection('scenario').getList(1, 50);
@@ -51,7 +53,7 @@
 		console.log(scenario, module);
 		scenarioChosen = scenario;
 		moduleChosen = module;
-	
+
 		gameData = {
 			org: $currentUser.org,
 			users: [$currentUser.id],
@@ -66,9 +68,8 @@
 
 	onMount(async () => {
 		const org = await getCurrentOrganizationRecord();
-		
-		message2send = `Hello! Welcome to GTTX. Here is the information to get started:\nobserver_code: ${org.observer_code}\nparticipant_code: ${org.participant_code}\n facilitator_code:${org.facilitor_code}. GOTO https://gttx.api/blah to get started!`
 
+		message2send = `Hello! Welcome to GTTX. Here is the information to get started:\nobserver_code: ${org.observer_code}\nparticipant_code: ${org.participant_code}\n facilitator_code:${org.facilitor_code}. GOTO https://gttx.api/blah to get started!`;
 
 		if (!$currentUser) {
 			goto('/login');
@@ -79,10 +80,9 @@
 
 		window.onunhandledrejection = (e) => {
 			throw error(404, {
-            	message: 'Not found'
-        	});
-		}
-
+				message: 'Not found'
+			});
+		};
 	});
 </script>
 
@@ -106,43 +106,47 @@
 			</header>
 			{#await getScenarios()}
 				<progress />
-			{:then scenarios}
-				<Carousel>
-					{#each scenarios as scenario}
-						<details>
-							<summary>{scenario.name}</summary>
-							<h2>{scenario.contents?.overview?.name || ''}</h2>
-							<h5>{scenario.contents?.name || ''} {scenario.contents?.source || ''}</h5>
-							<hr />
-							<h4>PURPOSE</h4>
-							<p>{scenario.contents?.overview?.purpose || ''}</p>
-							<h4>SCOPE</h4>
-							<p>{scenario.contents?.overview?.scope || ''}</p>
-							<hr />
-							<h4>OBJECTIVES</h4>
-							<ul>
-								{#each scenario.contents?.overview.objectives || [] as objective}
-									<li>
-										{objective}
-									</li>
-								{/each}
-							</ul>
-							<hr />
-							<h4>MODULES</h4>
-							<ul>
-								{#each Object.entries(scenario.contents?.modules || []) as [name, module]}
-									<em>
-										{name}
-									</em>
-									<p>{module.description}</p>
-									<button on:click={() => setModal(scenario.id, name)}>
-										Choose this scenario and module</button
-									>
-								{/each}
-							</ul>
-						</details>
-					{/each}
-				</Carousel>
+			{:then rawScenarios}
+				{#await formatScenario(rawScenarios) then scenarios}
+					<Carousel>
+						{#each scenarios as scenario}
+							<details>
+								<summary>{scenario.name}</summary>
+								<h2>{scenario.contents?.overview?.name || ''}</h2>
+								<h5>{scenario.contents?.name || ''} {scenario.contents?.source || ''}</h5>
+								<hr />
+								<h4>PURPOSE</h4>
+								<p>{scenario.contents?.overview?.purpose || ''}</p>
+								<h4>SCOPE</h4>
+								<p>{scenario.contents?.overview?.scope || ''}</p>
+								<hr />
+								<h4>OBJECTIVES</h4>
+								<ul>
+									{#each scenario.contents?.overview.objectives || [] as objective}
+										<li>
+											{objective}
+										</li>
+									{/each}
+								</ul>
+								<hr />
+								<h4>MODULES</h4>
+								<ul>
+									{#each Object.entries(scenario.contents?.modules || []) as [name, module]}
+										<em>
+											{name}
+										</em>
+										<p>{module.description}</p>
+										<button on:click={() => setModal(scenario.id, name)}>
+											Choose this scenario and module</button
+										>
+									{/each}
+								</ul>
+							</details>
+						{/each}
+					</Carousel>
+				{:catch error}
+					{error}
+				{/await}
 			{:catch error}
 				<!-- promise was rejected -->
 				{error}
@@ -153,9 +157,8 @@
 			<AddEmail {gameData} />
 		</Modal>
 
-		<GamesList/>
+		<GamesList />
 
-		
 		<!-- Participant and Observer -->
 	{:else if $currentRole == 'participant' || $currentRole == 'observer' || switchValue == 'off'}
 		<hgroup>
