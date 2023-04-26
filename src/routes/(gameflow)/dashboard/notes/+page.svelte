@@ -5,10 +5,10 @@
 </script>
 
 
-{#await currentRole then role}
+{#await $currentRole then role}
 	{#if role == "facilitator"}
 		<NotesFac />
 	{:else}
-	<NotesDefault />
+		<NotesDefault />
 	{/if}
 {/await}
