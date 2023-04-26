@@ -1,6 +1,6 @@
 <script>
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
-	import { pb, currentUser } from '$lib/pocketbase';
+	import { pb, currentUser, currentRole } from '$lib/pocketbase';
 	import { onMount, onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Modal from '$lib/Modal.svelte';
@@ -27,8 +27,12 @@
 			goto('createorg');
 			return;
 		}
-		if (currentUser?.org == '') {
+		if ($currentUser?.org == '') {
 			goto('createorg');
+			return;
+		}
+		if ($currentUser.role != "facilitator") {
+			goto('/dashboard');
 			return;
 		}
 	});

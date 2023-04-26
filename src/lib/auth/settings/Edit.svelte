@@ -7,6 +7,7 @@
 	import Modal from '$lib/Modal.svelte';
 	let showModal = false;
 	let organizationName;
+	let deleting = false;
 
 	const form = useForm();
 	const formData = new FormData();
@@ -39,8 +40,10 @@
 
 	async function delete_account() {
 		try {
+			deleting = true;
 			await pb.collection('users').authWithPassword($currentUser.email, password_confirm);
 		} catch (e) {
+			deleting = false;
 			alert('Your password was incorrect!');
 			return;
 		}
@@ -52,6 +55,7 @@
 				await pb.collection('users').delete($currentUser.id);
 			}
 		} catch (e) {
+			deleting = false;
 			console.log(e);
 			alert('Something went wrong, please try again!');
 		}
@@ -205,7 +209,8 @@
 								{:else}
 									As the facilitator, your organization "<b>{organizationName}</b>" will be deleted as well!
 								{/if}
-							{/if}<br/><br/>
+								<br/><br/>
+							{/if}
 							<input style="border: 2px solid red; border-radius: 5px; text-align: center;" type="text" value="This action can not be undone!" readonly>
 							<!-- <b style="color: red;">This action can not be undone!</b> -->
 						</h5>
@@ -244,6 +249,7 @@
 									</label>
 								</fieldset>
 								<button
+									aria-busy={deleting}
 									href="#confirm"
 									data-target="modal-example"
 									on:click={delete_account}
