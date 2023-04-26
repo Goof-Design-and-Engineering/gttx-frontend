@@ -1,5 +1,5 @@
 <script>
-	export let question;
+	export let question = '';
 </script>
 
 <article>
