@@ -31,7 +31,14 @@
 			goto('createorg');
 			return;
 		}
+	});
 
+	// Unsubscribe from realtime messages
+	onDestroy(() => {
+		organizationEvent?.();
+	});
+
+	async function getMembers() {
 		// get current members
 		const result = await pb
 			.collection('organization')
@@ -74,12 +81,7 @@
 				// );
 			});
 		// organizationTest = await pb.collection('organization').getOne($currentUser?.org,{});
-	});
-
-	// Unsubscribe from realtime messages
-	onDestroy(() => {
-		organizationEvent?.();
-	});
+	}
 
 	async function deleteUser(userid) {
 		try {
@@ -122,55 +124,69 @@
 {/if}
 
 <article>
-	<header>
-		<hgroup>
-			<h1>{organizationName}</h1>
-			<h2>Time for a change?</h2>
+	{#await getMembers()}
+		<!-- <hgroup>
+			<h1>Loading...</h1>
+			<h2>Give it a second.. or three...</h2>
 		</hgroup>
-	</header>
-
-	{#each members as member, index (member.id)}
-		<div>
-			{#if member.id == $currentUser.id}
-				<b>{member.username} (that's you!)</b>
-			{:else}
-				{member.username}
-			{/if}
-			<hr />
-			<div class="grid">
-				<input type="text" value={member.email} aria-invalid="false" disabled>
+		<progress /> -->
+		<center>
+			<br/>
+			<hgroup>
+				<h1 aria-busy="true">Loading...</h1>
+				<h2>Give it a second...</h2>
+			</hgroup>
+		</center>
+	{:then}
+		<header>
+			<hgroup>
+				<h1>{organizationName}</h1>
+				<h2>Time for a change?</h2>
+			</hgroup>
+		</header>
+		{#each members as member, index (member.id)}
+			<div>
 				{#if member.id == $currentUser.id}
-					<select disabled>
-						<option value="facilitator">Facilitator</option>
-					</select>
-					<button class="primary" disabled="true">Remove</button>
+					<b>{member.username} (that's you!)</b>
 				{:else}
-					<select>
-						{#if member.role == 'facilitator'}
-							<option value="facilitator" selected>Facilitator</option>
-							<option value="participant">Participant</option>
-							<option value="observer">Observer</option>
-						{:else if member.role == 'participant'}
-							<option value="facilitator">Facilitator</option>
-							<option value="participant" selected>Participant</option>
-							<option value="observer">Observer</option>
-						{:else}
-							<option value="facilitator">Facilitator</option>
-							<option value="participant">Participant</option>
-							<option value="observer" selected>Observer</option>
-						{/if}
-					</select>
-					<button class="primary" on:click={presentModal(member.username)}>Remove</button>
+					{member.username}
 				{/if}
+				<hr />
+				<div class="grid">
+					<input type="text" value={member.email} aria-invalid="false" disabled>
+					{#if member.id == $currentUser.id}
+						<select disabled>
+							<option value="facilitator">Facilitator</option>
+						</select>
+						<button class="primary" disabled="true">Remove</button>
+					{:else}
+						<select>
+							{#if member.role == 'facilitator'}
+								<option value="facilitator" selected>Facilitator</option>
+								<option value="participant">Participant</option>
+								<option value="observer">Observer</option>
+							{:else if member.role == 'participant'}
+								<option value="facilitator">Facilitator</option>
+								<option value="participant" selected>Participant</option>
+								<option value="observer">Observer</option>
+							{:else}
+								<option value="facilitator">Facilitator</option>
+								<option value="participant">Participant</option>
+								<option value="observer" selected>Observer</option>
+							{/if}
+						</select>
+						<button class="primary" on:click={presentModal(member.username)}>Remove</button>
+					{/if}
+				</div>
 			</div>
-		</div>
-		<br>
-	{/each}
+			<br>
+		{/each}
 
-	<footer>
-		<br>
-		<button class="outline">Save Changes</button>
-	</footer>
+		<footer>
+			<br>
+			<button class="outline">Save Changes</button>
+		</footer>
+		{/await}
 </article>
 
 <Modal bind:showModal>

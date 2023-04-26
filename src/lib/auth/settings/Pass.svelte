@@ -95,7 +95,7 @@
 		<br />
 		<div class="grid">
 			<button on:click={back} class="secondary"> Back to Settings</button>
-			<button on:click={submit}> Submit</button>
+			<button disabled={!$form.valid} on:click={submit}> Submit</button>
 		</div>
 	{/if}
 {/await}

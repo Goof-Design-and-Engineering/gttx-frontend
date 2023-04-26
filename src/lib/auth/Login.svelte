@@ -8,16 +8,20 @@
 	var emailaddr = '';
 	var password = '';
 	let isFailure = false;
+	let loading = false;
 	let logonError;
 	let discordRedir;
 
 	async function login() {
 		try {
+			loading = true;
+			logonError = false;
 			isFailure = false;
 			await pb.collection('users').authWithPassword(emailaddr, password);
 			// throw redirect(307, '/account');
 			goto('/dashboard');
 		} catch (e) {
+			loading = false;
 			console.log(pb.authStore.isValid);
 			logonError = e;
 		}
@@ -40,11 +44,11 @@
 	// }
 </script>
 
-{#if logonError}
+<!-- {#if logonError}
 	<p>
 		{logonError}
 	</p>
-{/if}
+{/if} -->
 
 {#await currentUser then _}
 	{#if !$currentUser}
@@ -77,29 +81,30 @@
 			/>
 			<Hint for="password" on="required"><i><center>This is a mandatory field</center></i></Hint>
 
-			<button disabled={!$form.valid} on:click={login}>Login</button>
+			<button disabled={!$form.valid} on:click={login} aria-busy={loading}>Login</button>
 		</form>
-		{#if isFailure}
-			<center><p style="color: #FF0000;">Wrong password, idiot.</p></center>
+		{#if logonError}
+			<center>
+				<input style="border: 2px solid red; border-radius: 5px; text-align: center;" type="text" value={logonError} readonly>
+				<!-- <p style="color: #B24C4C;">Failed to authenticate! <em data-tooltip={logonError}>(View Login Error)</em></p> -->
+			</center>
 		{/if}
-		<center><p>Or login with:</p></center>
+		<center><p><s>Or login with:</s></p></center>
 		<div class="grid">
 			<a
-				href="https://www.google.com"
 				role="button"
 				class="oauth-button secondary"
 				id="google-oauth"
 				data-tooltip="Login with Google"><i class="bi bi-google" /></a
 			>
 			<a
-				href={discordRedir}
+				aria-disabled=true
 				role="button"
 				class="oauth-button secondary"
 				id="discord-oauth"
 				data-tooltip="Login with Discord"><i class="bi bi-discord" /></a
 			>
 			<a
-				href="https://www.github.com"
 				role="button"
 				class="oauth-button secondary"
 				id="github-oauth"

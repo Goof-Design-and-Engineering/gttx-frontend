@@ -6,5 +6,9 @@
 	<header>
 		<b>Current Question</b>
 	</header>
-	{question}
+	{#if question}
+		{question}
+	{:else}
+		Question failed to load.
+	{/if}
 </article>

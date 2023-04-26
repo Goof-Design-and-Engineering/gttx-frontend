@@ -12,9 +12,12 @@
 	var password = '';
 	// var password_confirm = '';
 	let signupErr;
+	let loading = false;
 
 	async function signup() {
 		try {
+			loading = true;
+			signupErr = false;
 			const data = {
 				username: username,
 				email: emailAddr,
@@ -31,6 +34,7 @@
 			// throw redirect(302,"/login");
 			await goto('/createorg');
 		} catch (err) {
+			loading = false;
 			console.log(err);
 			signupErr = err;
 			await goto('/signup');
@@ -46,11 +50,11 @@
 	});
 </script>
 
-{#if signupErr}
+<!-- {#if signupErr}
 	<p>
 		{signupErr}
 	</p>
-{/if}
+{/if} -->
 
 <h1 class="page-name-header">Signup</h1>
 <form use:form on:submit|preventDefault method="POST">
@@ -112,19 +116,25 @@
 		</div>
   	</fieldset>
 
-	<button disabled={!$form.valid} on:click={signup}>Sign up</button>
+	<button disabled={!$form.valid} on:click={signup} aria-busy={loading}>Sign up</button>
+
+	{#if signupErr}
+	  <center>
+		<input style="border: 2px solid red; border-radius: 5px; text-align: center;" type="text" value={signupErr} readonly>
+	  </center>
+  	{/if}
 </form>
 
-<center><p>Or create an account with:</p></center>
+<center><p><s>Or create an account with:</s></p></center>
 
 <div class="grid">
-	<a href="https://www.google.com" role="button" class="oauth-button secondary" id="google-oauth" data-tooltip="Signup with Google"
+	<a role="button" class="oauth-button secondary" id="google-oauth" data-tooltip="Signup with Google"
 		><i class="bi bi-google" /></a
 	>
-	<a href="https://www.discord.com" role="button" class="oauth-button secondary" id="discord-oauth" data-tooltip="Signup with Discord"
+	<a role="button" class="oauth-button secondary" id="discord-oauth" data-tooltip="Signup with Discord"
 		><i class="bi bi-discord" /></a
 	>
-	<a href="https://www.github.com" role="button" class="oauth-button secondary" id="github-oauth" data-tooltip="Signup with GitHub"
+	<a role="button" class="oauth-button secondary" id="github-oauth" data-tooltip="Signup with GitHub"
 		><i class="bi bi-github" /></a
 	>
 </div>

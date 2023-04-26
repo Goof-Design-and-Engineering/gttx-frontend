@@ -51,9 +51,18 @@
 	});
 </script>
 
-{#await currentUser then _}
+<!-- {#await currentUser then _} -->
+{#await currentUser}
+	<center>
+		<br/>
+		<hgroup>
+			<h1 aria-busy="true">Loading...</h1>
+			<h2>Give it a second...</h2>
+		</hgroup>
+	</center>
+{:then}
 	<!-- promise was fulfilled -->
-	{#if $currentUser}
+	{#if $currentOrganization}
 		<div class="grid">
 			<div>
 				<hgroup>

@@ -21,7 +21,14 @@
 				<li><a href="/account" role="button" class="outline">Settings</a></li>
 				<li><a href="/dashboard" role="button">Dashboard</a></li>
 			{:else}
-				<li><a href="/login" role="button">Login</a></li>
+				<details role="list" dir="rtl">
+					<!-- svelte-ignore a11y-no-redundant-roles -->
+					<summary href="#" aria-haspopup="listbox" role="button">Get Started!</summary>
+					<ul role="listbox" style="text-align: center;">
+					<li><a href="/login">Login</a></li>
+					<li><a href="/signup">Signup</a></li>
+					</ul>
+			  	</details>
 			{/if}
 		{/await}
 	</ul>

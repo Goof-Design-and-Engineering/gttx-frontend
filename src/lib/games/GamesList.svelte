@@ -26,7 +26,14 @@
 		</hgroup>
 	</header>
 		{#await recentgames()}
-			<li aria-busy="true">Loading your recent games...</li>
+			<!-- <li aria-busy="true">Loading your recent games...</li> -->
+			<center>
+				<br/>
+				<hgroup>
+					<h1 aria-busy="true">Loading your recent games...</h1>
+					<h2>Give it a second...</h2>
+				</hgroup>
+			</center>
 		{:then games}
 			{#if games.length != 0}
 				<Carousel>
@@ -34,7 +41,7 @@
 					<hgroup>
 							<h2>{game.name == "" ? game.name  : game.id}</h2>
 							<NotesFac bind:roomID={game.id} bind:compactView={compact} />
-                            <a href="/dashboard/notes?roomid={game.id}"> Open in a new tab instead</a>
+                            <a href="/dashboard/notes?roomid={game.id}" target="_blank" rel="noreferrer"> Open in a new tab instead</a>
 					</hgroup>
 					{/each}
 					<!-- promise was fulfilled -->

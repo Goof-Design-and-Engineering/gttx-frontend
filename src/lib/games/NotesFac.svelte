@@ -260,7 +260,14 @@
 
 <article>
 	{#await loadScenario()}
-		<p aria-busy="true">Loading...</p>
+	<center>
+		<br/>
+		<hgroup>
+			<h1 aria-busy="true">Loading...</h1>
+			<h2>Give it a second...</h2>
+		</hgroup>
+		<br/>
+	</center>
 	{:then}
 		<header>
 			<b>{scenarioObject.overview.name}</b>
@@ -333,13 +340,18 @@
 
 		<footer>
 			<br />
-			Export options
+			<div class="grid">
+				<div>
+					<b>Export Options</b>
+				</div>
+				<div>
+					<label style="text-align: right;">
+						<input type="checkbox" bind:checked={newTab} />
+						Open in a new tab
+					</label>
+				</div>
+			</div>
 			<hr />
-			<label>
-				<input type="checkbox" bind:checked={newTab} />
-				Open in a new tab
-			</label>
-			<br />
 			<div class="grid">
 				<a role="button" class="contrast outline" href={docxDownload} download="results.docx"
 					>Export DOCX</a
