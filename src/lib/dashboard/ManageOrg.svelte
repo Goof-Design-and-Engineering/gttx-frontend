@@ -216,7 +216,6 @@
 				/>
 				<br />
 				<button
-					href="#confirm"
 					data-target="modal-example"
 					on:click={deleteUser}
 					disabled={!$form.valid}
