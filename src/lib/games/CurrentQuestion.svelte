@@ -37,6 +37,6 @@
 	{#if question}
 		{question}
 	{:else}
-		Question failed to load.
+		<i>Question failed to load.</i>
 	{/if}
 </article>

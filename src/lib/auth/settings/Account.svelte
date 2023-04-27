@@ -57,7 +57,7 @@
 		<div class="grid">
 			<div>
 				<hgroup>
-					<h1 style="font-size: 40px;">Account Settings</h1>
+					<h1 style="font-size: 40px;">Your Account</h1>
 					<h2>Welcome back, {$currentUser.username}</h2>
 				</hgroup>
 			</div>

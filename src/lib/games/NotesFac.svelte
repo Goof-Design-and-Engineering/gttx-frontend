@@ -32,6 +32,9 @@
 	let prevEnabled = false;
 	let nextEnabled = true;
 
+	let prevLoading = false;
+	let nextLoading = false;
+
 	let newTab = false;
 
 	let newRoomName = '';
@@ -125,9 +128,10 @@
 		// if (scenarioObject == null) {
 		// 	loadScenario();
 		// }
+		nextEnabled = false;
+		prevEnabled = false;
+		nextLoading = true;
 		const result = await pb.collection('room').getOne(roomID);
-
-		prevEnabled = true;
 
 		let maxLength = scenarioObject.modules[result.module].questions.length;
 
@@ -139,19 +143,23 @@
 			const result2 = await pb.collection('room').update(roomID, data);
 
 			await getQuestion();
+			nextEnabled = true;
 		} else {
 			errorThrown = 'no questions left';
 			nextEnabled = false;
 		}
+		prevEnabled = true;
+		nextLoading = false;
 	}
 
 	async function decrementQuestion() {
 		// if (scenarioObject == null) {
 		// 	loadScenario();
 		// }
+		prevLoading = true;
+		prevEnabled = false;
+		nextEnabled = false;
 		const result = await pb.collection('room').getOne(roomID);
-
-		nextEnabled = true;
 
 		if (result.question > 1) {
 			const data = {
@@ -161,10 +169,14 @@
 			const result2 = await pb.collection('room').update(roomID, data);
 
 			await getQuestion();
+
+			prevEnabled = true;
 		} else {
 			errorThrown = 'no questions left';
 			prevEnabled = false;
 		}
+		nextEnabled = true;
+		prevLoading = false;
 	}
 
 	async function changeModule() {
@@ -316,12 +328,21 @@
 						{/each}
 					</select>
 					<hr />
-					<button on:click={decrementQuestion} disabled={!prevEnabled}>Prev. Question</button>
-					<button on:click={incrementQuestion} disabled={!nextEnabled}>Next Question</button>
+					<button on:click={decrementQuestion} aria-busy={prevLoading} disabled={!prevEnabled}>Prev. Question</button>
+					<button on:click={incrementQuestion} aria-busy={nextLoading} disabled={!nextEnabled}>Next Question</button>
 				</div>
 			{/if}
 
-			<CurrentQuestion bind:question bind:scenarioObject bind:roomID />
+			{#if prevLoading || nextLoading}
+				<article>
+					<header>
+						<b>Current Question</b>
+					</header>
+					<progress />
+				</article>
+			{:else}
+				<CurrentQuestion bind:question bind:scenarioObject bind:roomID />
+			{/if}
 
 			<button on:click={toggleVisible} class="secondary"> Show Scenario Information </button>
 
