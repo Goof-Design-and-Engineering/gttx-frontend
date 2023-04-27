@@ -19,7 +19,8 @@
 
 	let scenarioObject;
 	let modules = [];
-	export let roomID = 'yir2twyh4ws5697';
+	const url = $page.url;
+	export let roomID = url.searchParams.get('roomid') || '';
 	export let compactView = false;
 	let newModule = '';
 	let errorThrown = '';
@@ -37,12 +38,18 @@
 
 	let currOrg;
 
+	let roomChange;
+
 	onMount(async () => {
-		const url = $page.url;
-		let urlRoomID = url.searchParams.get('roomid') || '';
-		if (urlRoomID != '') {
-			roomID = urlRoomID;
-		}
+
+		roomChange = await pb.collection('room').subscribe(roomID, async function (e) {
+			console.log(e.record.module);
+			// if (e.record.question != currQ) {
+			// 	const result = await getQuestionForSubscription(e.record.module, e.record.question);
+			// 	// currQ = "test";
+			// 	metaQuestion = result || '';
+			// }
+		});
 
 		// docx
 		let exportDOCX = await exportNotes('docx');
@@ -290,7 +297,7 @@
 				</hgroup>
 				<br />
 			</center>
-		{:then value}
+		{:then _}
 			<!-- getQuestion() was fulfilled -->
 
 			<header>
@@ -314,7 +321,7 @@
 				</div>
 			{/if}
 
-			<CurrentQuestion bind:question />
+			<CurrentQuestion bind:question bind:scenarioObject bind:roomID />
 
 			<button on:click={toggleVisible} class="secondary"> Show Scenario Information </button>
 
