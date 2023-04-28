@@ -106,7 +106,7 @@
 			<footer>
 				<center>
 					<br />
-					<button on:click={signout} style="width: 50%;" class="secondary outline">Sign out</button>
+					<button on:click={signout} style="width: 50%;" class="contrast outline">Sign out</button>
 				</center>
 			</footer>
 		</article>

@@ -1,27 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;900');
-/* @import url("https://www.unpkg.com/browse/bootstrap-icons@1.10.3/bootstrap-icons.css"); */
-
-:root {
+/* @import url("https://www.unpkg.com/browse/bootstrap-icons@1.10.3/bootstrap-icons.css"); */:root
+{
     --primary: #A937CC !important;
     --primary-hover: #D445FF !important;
     --primary-focus: #b83cdef0 !important;
     --primary-inverse: #FFF;
-    /* --primary: #e14e4e !important;
-    --primary-hover: #af4e4e !important;
-    --primary-focus: rgba(230, 19, 19, 0.25) !important;
-    --primary-inverse: #FFF; */
-}
-
-[data-theme=dark],
-:root:not([data-theme=light]) {
-  --background-color: #19081F !important;
-  --card-background-color: #452C4D !important;
-  --form-element-background-color: #35223b !important;
-  --card-sectionning-background-color: #54365e !important;
+    --background-color: #19081F !important;
+    --card-background-color: #452C4D !important;
+    --form-element-background-color: #35223b !important;
+    --card-sectionning-background-color: #54365e !important;
 }
 
 footer {
-    padding-top: 0px !important;
+    padding-top: 0 !important;
 }
 
 .gttx-logo {
@@ -72,13 +63,13 @@ footer {
 
 article {
     --block-spacing-vertical: calc(var(--spacing) * 1.1);
-  }
-@media (min-width: 576px) {
-article {
-    --block-spacing-vertical: calc(var(--spacing) * 1.25);
 }
+@media(min-width: 576px) {
+    article {
+        --block-spacing-vertical: calc(var(--spacing) * 1.25);
+    }
 }
-@media (min-width: 768px) {
+@media(min-width: 768px) {
     article {
         --block-spacing-vertical: calc(var(--spacing) * 1.5);
     }
@@ -88,7 +79,7 @@ article {
     display: block;
 }
 
-@media (min-width: 768px) {
+@media(min-width: 768px) {
     .right-avatar {
         display: none;
     }
