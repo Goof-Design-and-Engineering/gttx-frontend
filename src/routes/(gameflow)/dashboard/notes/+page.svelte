@@ -4,9 +4,8 @@
 	import NotesFac from '../../../../lib/games/NotesFac.svelte';
 </script>
 
-
 {#await $currentRole then role}
-	{#if role == "facilitator"}
+	{#if role == 'facilitator'}
 		<NotesFac />
 	{:else if role == "participant" || role == "observer"}
 		<NotesDefault />
