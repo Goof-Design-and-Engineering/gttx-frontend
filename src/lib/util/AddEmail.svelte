@@ -158,8 +158,6 @@
 				bind:value={newEmail}
 			/>
 		</body>
-
-		<footer />
 	</article>
 </form>
 

@@ -1,6 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { currentRole, currentUser, pb, getCurrentOrganizationRecord, formatScenario } from '$lib/pocketbase';
+	import {
+		currentRole,
+		currentUser,
+		pb,
+		getCurrentOrganizationRecord,
+		formatScenario
+	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	// import InviteModalContent from '$lib/games/InviteModalContent.svelte';
@@ -38,8 +44,6 @@
 			// logonError = e;
 		}
 	}
-
-	
 
 	async function getScenarios() {
 		const resultList = await pb.collection('scenario').getList(1, 50);
@@ -97,7 +101,7 @@
 				<progress />
 			{:then rawScenarios}
 				{#await formatScenario(rawScenarios)}
-				<progress />
+					<progress />
 				{:then scenarios}
 					<Carousel>
 						{#each scenarios as scenario}
@@ -106,12 +110,12 @@
 								<h2>{scenario.contents?.overview?.name || ''}</h2>
 								<h5>{scenario.contents?.name || ''} {scenario.contents?.source || ''}</h5>
 								<hr />
-								<h4>PURPOSE</h4>
+								<h4>Purpose</h4>
 								<p>{scenario.contents?.overview?.purpose || ''}</p>
-								<h4>SCOPE</h4>
+								<h4>Scope</h4>
 								<p>{scenario.contents?.overview?.scope || ''}</p>
 								<hr />
-								<h4>OBJECTIVES</h4>
+								<h4>Objectives</h4>
 								<ul>
 									{#each scenario.contents?.overview.objectives || [] as objective}
 										<li>
@@ -120,7 +124,7 @@
 									{/each}
 								</ul>
 								<hr />
-								<h4>MODULES</h4>
+								<h4>Modules</h4>
 								<ul>
 									{#each Object.entries(scenario.contents?.modules || []) as [name, module]}
 										<em>
@@ -144,9 +148,11 @@
 			{/await}
 		</article>
 
-		<Modal bind:showModal>
-			<AddEmail {gameData} />
-		</Modal>
+		{#if showModal}
+			<Modal bind:showModal>
+				<AddEmail {gameData} />
+			</Modal>
+		{/if}
 
 		<GamesList />
 

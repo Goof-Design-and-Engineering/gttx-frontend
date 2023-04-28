@@ -25,6 +25,7 @@
 			<h2>For jumping right back into the action</h2>
 		</hgroup>
 	</header>
+
 		{#await recentgames()}
 			<!-- <li aria-busy="true">Loading your recent games...</li> -->
 			<center>
@@ -47,7 +48,7 @@
 					<!-- promise was fulfilled -->
 				</Carousel>
 			{:else}
-				<h2>You don't have any recent games!</h2>
+				<p>You don't have any recent games!</p>
 			{/if}
 		{:catch error}
 			{error}
