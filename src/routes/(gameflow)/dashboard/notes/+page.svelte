@@ -7,9 +7,16 @@
 {#await $currentRole then role}
 	{#if role == 'facilitator'}
 		<NotesFac />
-	{:else if role == 'observer' || role == 'participant'}
+	{:else if role == "participant" || role == "observer"}
 		<NotesDefault />
 	{:else}
-		<progressbar />
+		<center>
+			<br />
+			<hgroup>
+				<h1 aria-busy="true">Loading...</h1>
+				<h2>Give it a second...</h2>
+			</hgroup>
+			<br />
+		</center>
 	{/if}
 {/await}
