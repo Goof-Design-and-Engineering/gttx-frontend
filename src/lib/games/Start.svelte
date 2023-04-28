@@ -1,14 +1,19 @@
 <script>
 	import { onMount } from 'svelte';
-	import { currentRole, currentUser, pb, getCurrentOrganizationRecord, formatScenario } from '$lib/pocketbase';
+	import {
+		currentRole,
+		currentUser,
+		pb,
+		getCurrentOrganizationRecord,
+		formatScenario,
+		RoomID
+	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
 	// import InviteModalContent from '$lib/games/InviteModalContent.svelte';
 	import GamesList from './GamesList.svelte';
 
 	const form = useForm();
-
-	import Switch from '$lib/util/Switch.svelte';
 
 	import Carousel from 'svelte-carousel';
 
@@ -26,20 +31,19 @@
 	var scenarioChosen = '';
 	var message2send = '';
 
-	var inputs = [];
 
 	async function submitinvitecode() {
 		try {
 			isFailure = false;
-			goto(`/dashboard/notes?roomid=${invitecode}`);
+			RoomID.set(invitecode);
+			console.log("SET ROOMID TO ", $RoomID)
+			goto(`/dashboard/notes`);
 			// throw redirect(307, '/account');
 		} catch (e) {
 			console.log('Invite Code Failure!');
 			// logonError = e;
 		}
 	}
-
-	
 
 	async function getScenarios() {
 		const resultList = await pb.collection('scenario').getList(1, 50);
@@ -97,7 +101,7 @@
 				<progress />
 			{:then rawScenarios}
 				{#await formatScenario(rawScenarios)}
-				<progress />
+					<progress />
 				{:then scenarios}
 					<Carousel>
 						{#each scenarios as scenario}

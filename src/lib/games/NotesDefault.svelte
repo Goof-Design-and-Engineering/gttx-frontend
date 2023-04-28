@@ -1,14 +1,13 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { currentUser, getCurrentOrganizationRecord, pb } from '$lib/pocketbase';
+	import { currentUser, RoomID, pb } from '$lib/pocketbase';
 	import { page } from '$app/stores';
 	import CurrentQuestion from './CurrentQuestion.svelte';
 
 	let response = '';
 	let scenarioObject;
-	const url = $page.url;
-	export let roomID = url.searchParams.get('roomid') || 'FAILURE';
+	export let roomID = $RoomID;
 	let success = '';
 	let roomChange;
 	let noteChange;
@@ -20,6 +19,7 @@
 	}
 
 	onMount(async () => {
+		console.log('LOOKING FOR ', $RoomID);
 		roomChange = await pb.collection('room').subscribe(roomID, async function (e) {
 			// console.log(e.record);
 			metaQuestion = await getQuestion();
@@ -49,33 +49,22 @@
 		noteChange?.();
 	});
 
-	async function getQuestionCreateSubscription() {
-		return getQuestion();
-	}
-
-	async function getQuestionForSubscription(m, q) {
-		const result = await pb.collection('room').getOne(roomID);
-		return scenarioObject.modules[m].questions[q];
-	}
-
 	async function loadScenario() {
-		if (roomID == '') {
-			leave();
-		}
 		try {
 			const result = await pb.collection('room').getOne(
-				roomID,
+				$RoomID,
 				{
 					expand: 'scenarios'
 				},
 				{ $cancelKey: 'scenario' }
 			);
+
+			scenarioObject = result.expand.scenarios.contents;
 		} catch (e) {
 			alert(e);
 			goto('/dashboard');
 		}
 		// console.log(result);
-		scenarioObject = result.expand.scenarios.contents;
 	}
 
 	async function getQuestion() {
@@ -92,8 +81,8 @@
 	async function submitNote() {
 		const result = await pb.collection('room').getOne(roomID);
 
-		console.log($currentUser.id);
-		console.log($currentUser.org);
+		// console.log($currentUser.id);
+		// console.log($currentUser.org);
 
 		const data = {
 			user: $currentUser.id,

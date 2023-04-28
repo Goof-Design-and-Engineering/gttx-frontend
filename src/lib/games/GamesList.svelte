@@ -1,11 +1,19 @@
 <script>
-	import { currentUser, pb } from '../pocketbase';
+	import { currentUser, pb, RoomID } from '../pocketbase';
 	import Carousel from 'svelte-carousel';
+	import { goto } from '$app/navigation';
 
-	import NotesDefault from './NotesDefault.svelte';
+	// import NotesDefault from './NotesDefault.svelte';
 	import NotesFac from './NotesFac.svelte';
 
 	let compact = true;
+
+	function setRoomID(id) {
+		console.log($RoomID);
+		RoomID.set(id);
+		console.log($RoomID);
+		goto("/dashboard/notes")
+	}
 
 	async function recentgames() {
 		// you can also fetch all records at once via getFullList
@@ -25,31 +33,32 @@
 			<h2>For jumping right back into the action</h2>
 		</hgroup>
 	</header>
-		{#await recentgames()}
-			<!-- <li aria-busy="true">Loading your recent games...</li> -->
-			<center>
-				<br/>
-				<hgroup>
-					<h1 aria-busy="true">Loading your recent games...</h1>
-					<h2>Give it a second...</h2>
-				</hgroup>
-			</center>
-		{:then games}
-			{#if games.length != 0}
-				<Carousel>
-					{#each games as game}
+	{#await recentgames()}
+		<!-- <li aria-busy="true">Loading your recent games...</li> -->
+		<center>
+			<br />
+			<hgroup>
+				<h1 aria-busy="true">Loading your recent games...</h1>
+				<h2>Give it a second...</h2>
+			</hgroup>
+		</center>
+	{:then games}
+		{#if games.length != 0}
+			<Carousel>
+				{#each games as game}
 					<hgroup>
-							<h2>{game.name == "" ? game.name  : game.id}</h2>
-							<NotesFac bind:roomID={game.id} bind:compactView={compact} />
-                            <a href="/dashboard/notes?roomid={game.id}" target="_blank" rel="noreferrer"> Open in a new tab instead</a>
+						<h2>{game.name == '' ? game.name : game.id}</h2>
+						<NotesFac bind:roomID={game.id} bind:compactView={compact} />
+						<button on:click={() => setRoomID(game.id)}> CLICK ME TO SET ROOM ID </button>
+						<!-- <a href="/dashboard/notes?roomid={game.id}" > Open in a new tab instead</a> -->
 					</hgroup>
-					{/each}
-					<!-- promise was fulfilled -->
-				</Carousel>
-			{:else}
-				<h2>You don't have any recent games!</h2>
-			{/if}
-		{:catch error}
-			{error}
-		{/await}
+				{/each}
+				<!-- promise was fulfilled -->
+			</Carousel>
+		{:else}
+			<h2>You don't have any recent games!</h2>
+		{/if}
+	{:catch error}
+		{error}
+	{/await}
 </article>

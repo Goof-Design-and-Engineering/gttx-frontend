@@ -7,6 +7,7 @@
 		currentOrganization,
 		currentProfilePic,
 		pb,
+		RoomID,
 		getCurrentOrganizationRecord,
 		formatScenario
 	} from '$lib/pocketbase';
@@ -21,7 +22,7 @@
 	let scenarioObject;
 	let modules = [];
 	const url = $page.url;
-	export let roomID = url.searchParams.get('roomid') || '';
+	export let roomID = $RoomID;
 	export let compactView = false;
 	let newModule = '';
 	let errorThrown = '';
@@ -45,11 +46,7 @@
 	let roomChange;
 
 	onMount(async () => {
-
-		if (roomID == ''){
-			alert("NO ROOM ID SET")
-			goto("/dashboard")
-		} 
+		
 
 		roomChange = await pb.collection('room').subscribe(roomID, async function (e) {
 			console.log(e.record.module);
@@ -110,10 +107,6 @@
 	}
 
 	async function loadScenario() {
-		if (roomID == ''){
-			goto('/dashboard')
-		}
-
 		const result = await pb.collection('room').getOne(roomID, {
 			expand: 'scenarios'
 		});
@@ -351,7 +344,7 @@
 					<progress />
 				</article>
 			{:else}
-				<CurrentQuestion bind:question bind:scenarioObject bind:roomID />
+				<CurrentQuestion bind:question />
 			{/if}
 
 			<button on:click={toggleVisible} class="secondary"> Show Scenario Information </button>
