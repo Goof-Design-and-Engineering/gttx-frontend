@@ -2,14 +2,22 @@
 /* @import url("https://www.unpkg.com/browse/bootstrap-icons@1.10.3/bootstrap-icons.css"); */
 
 :root {
-    --primary: #6B8E3E !important;
-    --primary-hover: #8BB455 !important;
-    --primary-focus: #8BB45550 !important;
+    --primary: #A937CC !important;
+    --primary-hover: #D445FF !important;
+    --primary-focus: #b83cdef0 !important;
     --primary-inverse: #FFF;
     /* --primary: #e14e4e !important;
     --primary-hover: #af4e4e !important;
     --primary-focus: rgba(230, 19, 19, 0.25) !important;
     --primary-inverse: #FFF; */
+}
+
+[data-theme=dark],
+:root:not([data-theme=light]) {
+  --background-color: #19081F !important;
+  --card-background-color: #452C4D !important;
+  --form-element-background-color: #35223b !important;
+  --card-sectionning-background-color: #54365e !important;
 }
 
 footer {

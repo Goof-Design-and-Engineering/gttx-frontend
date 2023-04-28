@@ -64,9 +64,9 @@
 				use:validators={[required, email]}
 			/>
 			<HintGroup for="email">
-				<Hint on="required">This is a mandatory field</Hint>
+				<Hint on="required"><i><center>This is a mandatory field</center></i><br></Hint>
 				<Hint on="email" hideWhenRequired class="login-hint"
-					><i><center>Email is not valid</center></i></Hint
+					><i><center>Email is not valid</center></i><br></Hint
 				>
 			</HintGroup>
 
@@ -79,7 +79,7 @@
 				bind:value={password}
 				use:validators={[required]}
 			/>
-			<Hint for="password" on="required"><i><center>This is a mandatory field</center></i></Hint>
+			<Hint for="password" on="required"><i><center>This is a mandatory field</center></i><br></Hint>
 
 			<button id="login_button" disabled={!$form.valid} on:click={login} aria-busy={loading}>Login</button>
 		</form>
@@ -89,30 +89,5 @@
 				<!-- <p style="color: #B24C4C;">Failed to authenticate! <em data-tooltip={logonError}>(View Login Error)</em></p> -->
 			</center>
 		{/if}
-		<center><p><s>Or login with:</s></p></center>
-		<div class="grid">
-			<a
-				role="button"
-				class="oauth-button secondary"
-				id="google-oauth"
-				data-tooltip="Login with Google"><i class="bi bi-google" /></a
-			>
-			<a
-				aria-disabled=true
-				role="button"
-				class="oauth-button secondary"
-				id="discord-oauth"
-				data-tooltip="Login with Discord"><i class="bi bi-discord" /></a
-			>
-			<a
-				role="button"
-				class="oauth-button secondary"
-				id="github-oauth"
-				data-tooltip="Login with GitHub"><i class="bi bi-github" /></a
-			>
-		</div>
-
-		<hr />
-		<button id="signup_button" on:click={signup}> Signup </button>
 	{/if}
 {/await}
