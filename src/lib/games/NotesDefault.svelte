@@ -1,5 +1,6 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { currentUser, getCurrentOrganizationRecord, pb } from '$lib/pocketbase';
 	import { page } from '$app/stores';
 	import CurrentQuestion from './CurrentQuestion.svelte';
@@ -7,12 +8,16 @@
 	let response = '';
 	let scenarioObject;
 	const url = $page.url;
-	export let roomID = url.searchParams.get('roomid') || '';
+	export let roomID = url.searchParams.get('roomid') || 'FAILURE';
 	let success = '';
 	let roomChange;
 	let noteChange;
 	let metaQuestion = '';
 	let responses = [];
+
+	function leave() {
+		goto('/dashboard');
+	}
 
 	onMount(async () => {
 		roomChange = await pb.collection('room').subscribe(roomID, async function (e) {
@@ -54,14 +59,21 @@
 	}
 
 	async function loadScenario() {
-		// TODO hardocded room - set with currentUser
-		const result = await pb.collection('room').getOne(
-			roomID,
-			{
-				expand: 'scenarios'
-			},
-			{ $cancelKey: 'scenario' }
-		);
+		if (roomID == '') {
+			leave();
+		}
+		try {
+			const result = await pb.collection('room').getOne(
+				roomID,
+				{
+					expand: 'scenarios'
+				},
+				{ $cancelKey: 'scenario' }
+			);
+		} catch (e) {
+			alert(e);
+			goto('/dashboard');
+		}
 		// console.log(result);
 		scenarioObject = result.expand.scenarios.contents;
 	}
@@ -111,7 +123,6 @@
 		const resultList = await pb.collection('notes').getList(1, 50, {
 			filter: filterMagic
 		});
-
 
 		return resultList.items;
 	}
