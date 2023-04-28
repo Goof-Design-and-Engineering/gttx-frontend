@@ -1,13 +1,36 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { currentUser, getCurrentOrganizationRecord, pb } from '$lib/pocketbase';
+	import { page } from '$app/stores';
+	import CurrentQuestion from './CurrentQuestion.svelte';
 
 	let response = '';
 	let scenarioObject;
-	export let roomID = 'yir2twyh4ws5697';
+	const url = $page.url;
+	export let roomID = url.searchParams.get('roomid') || '';
 	let success = '';
+	let roomChange;
+	let noteChange;
+	let metaQuestion = '';
+	let responses = [];
 
-	onMount(() => {
+	onMount(async () => {
+		roomChange = await pb.collection('room').subscribe(roomID, async function (e) {
+			// console.log(e.record);
+			metaQuestion = await getQuestion();
+			// if (e.record.question != currQ) {
+			// 	const result = await getQuestionForSubscription(e.record.module, e.record.question);
+			// 	// currQ = "test";
+			// 	metaQuestion = result || '';
+			// }
+		});
+
+		noteChange = await pb.collection('notes').subscribe('*', async function (e) {
+			responses = await loadResponses();
+		});
+
+		responses = await loadResponses();
+
 		if (!$currentUser) {
 			goto('/login');
 		}
@@ -16,11 +39,29 @@
 		}
 	});
 
+	onDestroy(async () => {
+		roomChange?.();
+		noteChange?.();
+	});
+
+	async function getQuestionCreateSubscription() {
+		return getQuestion();
+	}
+
+	async function getQuestionForSubscription(m, q) {
+		const result = await pb.collection('room').getOne(roomID);
+		return scenarioObject.modules[m].questions[q];
+	}
+
 	async function loadScenario() {
 		// TODO hardocded room - set with currentUser
-		const result = await pb.collection('room').getOne(roomID, {
-			expand: 'scenarios'
-		});
+		const result = await pb.collection('room').getOne(
+			roomID,
+			{
+				expand: 'scenarios'
+			},
+			{ $cancelKey: 'scenario' }
+		);
 		// console.log(result);
 		scenarioObject = result.expand.scenarios.contents;
 	}
@@ -56,6 +97,7 @@
 		} else {
 			console.log(result);
 		}
+		// reloadResponses = true;
 	}
 
 	async function loadResponses() {
@@ -70,7 +112,6 @@
 			filter: filterMagic
 		});
 
-		console.log(resultList);
 
 		return resultList.items;
 	}
@@ -86,7 +127,11 @@
 		<p id="curr_question">
 			{#await getQuestion() then question}
 				<!-- promise was fulfilled -->
-				{question}
+				{#if metaQuestion != ''}
+					{metaQuestion}
+				{:else}
+					{question}
+				{/if}
 			{/await}
 		</p>
 
@@ -98,6 +143,8 @@
 			<textarea bind:value={response} name="notes" id="notes" cols="50" rows="4" />
 		</label>
 
+		<input type="hidden" id="roomid" name="roomid" value={roomID} />
+
 		<!-- Button -->
 		<button type="submit" id="submit_answer" on:click={submitNote}>Submit</button>
 	</form>
@@ -107,10 +154,10 @@
 
 <hr />
 <h2>PREVIOUS NOTES</h2>
-{#await loadResponses() then responses}
+{#await responses then responsesRaw}
 	<!-- promise was fulfilled -->
 	<li>
-		{#each responses as response}
+		{#each responsesRaw as response}
 			<!-- content here -->
 			<h3>
 				{response.question}

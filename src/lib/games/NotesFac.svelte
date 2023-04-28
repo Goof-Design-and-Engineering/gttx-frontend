@@ -19,7 +19,8 @@
 
 	let scenarioObject;
 	let modules = [];
-	export let roomID = 'yir2twyh4ws5697';
+	const url = $page.url;
+	export let roomID = url.searchParams.get('roomid') || '';
 	export let compactView = false;
 	let newModule = '';
 	let errorThrown = '';
@@ -31,18 +32,27 @@
 	let prevEnabled = false;
 	let nextEnabled = true;
 
+	let prevLoading = false;
+	let nextLoading = false;
+
 	let newTab = false;
 
 	let newRoomName = '';
 
 	let currOrg;
 
+	let roomChange;
+
 	onMount(async () => {
-		const url = $page.url;
-		let urlRoomID = url.searchParams.get('roomid') || '';
-		if (urlRoomID != '') {
-			roomID = urlRoomID;
-		}
+
+		roomChange = await pb.collection('room').subscribe(roomID, async function (e) {
+			console.log(e.record.module);
+			// if (e.record.question != currQ) {
+			// 	const result = await getQuestionForSubscription(e.record.module, e.record.question);
+			// 	// currQ = "test";
+			// 	metaQuestion = result || '';
+			// }
+		});
 
 		// docx
 		let exportDOCX = await exportNotes('docx');
@@ -118,9 +128,10 @@
 		// if (scenarioObject == null) {
 		// 	loadScenario();
 		// }
+		nextEnabled = false;
+		prevEnabled = false;
+		nextLoading = true;
 		const result = await pb.collection('room').getOne(roomID);
-
-		prevEnabled = true;
 
 		let maxLength = scenarioObject.modules[result.module].questions.length;
 
@@ -132,19 +143,23 @@
 			const result2 = await pb.collection('room').update(roomID, data);
 
 			await getQuestion();
+			nextEnabled = true;
 		} else {
 			errorThrown = 'no questions left';
 			nextEnabled = false;
 		}
+		prevEnabled = true;
+		nextLoading = false;
 	}
 
 	async function decrementQuestion() {
 		// if (scenarioObject == null) {
 		// 	loadScenario();
 		// }
+		prevLoading = true;
+		prevEnabled = false;
+		nextEnabled = false;
 		const result = await pb.collection('room').getOne(roomID);
-
-		nextEnabled = true;
 
 		if (result.question > 1) {
 			const data = {
@@ -154,10 +169,14 @@
 			const result2 = await pb.collection('room').update(roomID, data);
 
 			await getQuestion();
+
+			prevEnabled = true;
 		} else {
 			errorThrown = 'no questions left';
 			prevEnabled = false;
 		}
+		nextEnabled = true;
+		prevLoading = false;
 	}
 
 	async function changeModule() {
@@ -290,7 +309,7 @@
 				</hgroup>
 				<br />
 			</center>
-		{:then value}
+		{:then _}
 			<!-- getQuestion() was fulfilled -->
 
 			<header>
@@ -309,12 +328,21 @@
 						{/each}
 					</select>
 					<hr />
-					<button on:click={decrementQuestion} disabled={!prevEnabled}>Prev. Question</button>
-					<button on:click={incrementQuestion} disabled={!nextEnabled}>Next Question</button>
+					<button on:click={decrementQuestion} aria-busy={prevLoading} disabled={!prevEnabled}>Prev. Question</button>
+					<button on:click={incrementQuestion} aria-busy={nextLoading} disabled={!nextEnabled}>Next Question</button>
 				</div>
 			{/if}
 
-			<CurrentQuestion bind:question />
+			{#if prevLoading || nextLoading}
+				<article>
+					<header>
+						<b>Current Question</b>
+					</header>
+					<progress />
+				</article>
+			{:else}
+				<CurrentQuestion bind:question bind:scenarioObject bind:roomID />
+			{/if}
 
 			<button on:click={toggleVisible} class="secondary"> Show Scenario Information </button>
 
@@ -387,7 +415,7 @@
 					role="button"
 					class="contrast outline"
 					on:click={async (e) => {
-						await rawPDF;
+						await rawPDF();
 					}}
 					href="#">Export PDF</a
 				>

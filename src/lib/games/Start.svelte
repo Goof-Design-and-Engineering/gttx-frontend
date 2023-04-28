@@ -96,7 +96,9 @@
 			{#await getScenarios()}
 				<progress />
 			{:then rawScenarios}
-				{#await formatScenario(rawScenarios) then scenarios}
+				{#await formatScenario(rawScenarios)}
+				<progress />
+				{:then scenarios}
 					<Carousel>
 						{#each scenarios as scenario}
 							<details>
