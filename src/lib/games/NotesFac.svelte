@@ -415,7 +415,7 @@
 					role="button"
 					class="contrast outline"
 					on:click={async (e) => {
-						await rawPDF;
+						await rawPDF();
 					}}
 					href="#">Export PDF</a
 				>
