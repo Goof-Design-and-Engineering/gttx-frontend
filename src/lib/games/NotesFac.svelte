@@ -22,7 +22,7 @@
 	let scenarioObject;
 	let modules = [];
 	const url = $page.url;
-	export let roomID = $RoomID;
+	// export let roomID = $RoomID;
 	export let compactView = false;
 	let newModule = '';
 	let errorThrown = '';
@@ -48,7 +48,7 @@
 	onMount(async () => {
 		
 
-		roomChange = await pb.collection('room').subscribe(roomID, async function (e) {
+		roomChange = await pb.collection('room').subscribe($currentUser.roomid, async function (e) {
 			console.log(e.record.module);
 			// if (e.record.question != currQ) {
 			// 	const result = await getQuestionForSubscription(e.record.module, e.record.question);
@@ -89,7 +89,7 @@
 		// 	loadScenario();
 		// }
 
-		const result = await pb.collection('room').getOne(roomID);
+		const result = await pb.collection('room').getOne($currentUser.roomid);
 
 		question = scenarioObject.modules[result.module].questions[result.question] || '';
 	}
@@ -107,7 +107,7 @@
 	}
 
 	async function loadScenario() {
-		const result = await pb.collection('room').getOne(roomID, {
+		const result = await pb.collection('room').getOne($currentUser.roomid, {
 			expand: 'scenarios'
 		});
 		console.log(result);
@@ -134,7 +134,7 @@
 		nextEnabled = false;
 		prevEnabled = false;
 		nextLoading = true;
-		const result = await pb.collection('room').getOne(roomID);
+		const result = await pb.collection('room').getOne($currentUser.roomid);
 
 		let maxLength = scenarioObject.modules[result.module].questions.length;
 
@@ -143,7 +143,7 @@
 				question: result.question + 1
 			};
 
-			const result2 = await pb.collection('room').update(roomID, data);
+			const result2 = await pb.collection('room').update($currentUser.roomid, data);
 
 			await getQuestion();
 			nextEnabled = true;
@@ -162,14 +162,14 @@
 		prevLoading = true;
 		prevEnabled = false;
 		nextEnabled = false;
-		const result = await pb.collection('room').getOne(roomID);
+		const result = await pb.collection('room').getOne($currentUser.roomid);
 
 		if (result.question > 1) {
 			const data = {
 				question: result.question - 1
 			};
 
-			const result2 = await pb.collection('room').update(roomID, data);
+			const result2 = await pb.collection('room').update($currentUser.roomid, data);
 
 			await getQuestion();
 
@@ -183,13 +183,13 @@
 	}
 
 	async function changeModule() {
-		const result = await pb.collection('room').getOne(roomID);
+		const result = await pb.collection('room').getOne($currentUser.roomid);
 
 		const data = {
 			module: newModule
 		};
 
-		const result2 = await pb.collection('room').update(roomID, data);
+		const result2 = await pb.collection('room').update($currentUser.roomid, data);
 	}
 
 	// takes in one dimensional arrays and returns a string
@@ -231,7 +231,7 @@
 	}
 
 	async function exportNotes(format) {
-		let filterMagic = `(org='${$currentUser.org}' && room='${roomID}')`;
+		let filterMagic = `(org='${$currentUser.org}' && room='${$currentUser.roomid}')`;
 		const resultList = await pb.collection('notes').getList(1, 50, {
 			filter: filterMagic,
 			expand: 'user'
@@ -285,7 +285,7 @@
 	}
 
 	async function patchRoomName() {
-		const result = pb.collection('room').update(roomID, { name: newRoomName || '' });
+		const result = pb.collection('room').update($currentUser.roomid, { name: newRoomName || '' });
 		alert('Changed to ' + newRoomName + ' under way!');
 		return result;
 	}

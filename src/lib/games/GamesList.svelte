@@ -8,10 +8,14 @@
 
 	let compact = true;
 
-	function setRoomID(id) {
-		console.log($RoomID);
-		RoomID.set(id);
-		console.log($RoomID);
+	async function setRoomID(id) {
+		// console.log($RoomID);
+		// RoomID.set(id);
+		// console.log($RoomID);
+		const data = {
+			"roomid" : id
+		}
+		const record = await pb.collection('users').update($currentUser.id, data);
 		goto("/dashboard/notes")
 	}
 
@@ -48,7 +52,7 @@
 				{#each games as game}
 					<hgroup>
 						<h2>{game.name == '' ? game.name : game.id}</h2>
-						<NotesFac bind:roomID={game.id} bind:compactView={compact} />
+						<NotesFac bind:compactView={compact} />
 						<button on:click={() => setRoomID(game.id)}> CLICK ME TO SET ROOM ID </button>
 						<!-- <a href="/dashboard/notes?roomid={game.id}" > Open in a new tab instead</a> -->
 					</hgroup>
