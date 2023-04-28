@@ -81,7 +81,7 @@
 			/>
 			<Hint for="password" on="required"><i><center>This is a mandatory field</center></i></Hint>
 
-			<button disabled={!$form.valid} on:click={login} aria-busy={loading}>Login</button>
+			<button id="login_button" disabled={!$form.valid} on:click={login} aria-busy={loading}>Login</button>
 		</form>
 		{#if logonError}
 			<center>
