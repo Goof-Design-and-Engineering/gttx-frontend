@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import {
 		currentRole,
 		currentUser,
@@ -44,6 +45,11 @@
 	let roomChange;
 
 	onMount(async () => {
+
+		if (roomID == ''){
+			alert("NO ROOM ID SET")
+			goto("/dashboard")
+		} 
 
 		roomChange = await pb.collection('room').subscribe(roomID, async function (e) {
 			console.log(e.record.module);
@@ -104,6 +110,10 @@
 	}
 
 	async function loadScenario() {
+		if (roomID == ''){
+			goto('/dashboard')
+		}
+
 		const result = await pb.collection('room').getOne(roomID, {
 			expand: 'scenarios'
 		});
