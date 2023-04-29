@@ -195,7 +195,7 @@
 				<Hint on="required">This is a mandatory field</Hint>
 			</HintGroup>
 
-			<button disabled={!$form.valid} on:click={submitinvitecode}>Join</button>
+			<button id="invite_button" disabled={!$form.valid} on:click={submitinvitecode}>Join</button>
 		</form>
 	{:else if ['facilitator', 'participant', 'observer'].includes(user?.role)}
 		<hgroup>
