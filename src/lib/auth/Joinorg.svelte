@@ -128,7 +128,7 @@
 		<hr><br/>
 		<div class="grid">
 			<button on:click={createorg}>Create an org instead</button>
-			<button on:click={signout} class="secondary">Nevermind, sign out</button>
+			<button on:click={signout} class="contrast">Nevermind, sign out</button>
 		</div>
 	</form>
 {/await}

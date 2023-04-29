@@ -9,7 +9,7 @@
 	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 
-	let organizationName = "None";
+	let organizationName = 'None';
 
 	async function signout() {
 		pb.authStore.clear();
@@ -44,7 +44,7 @@
 
 {#await getOrgName()}
 	<center>
-		<br/>
+		<br />
 		<hgroup>
 			<h1 aria-busy="true">Loading...</h1>
 			<h2>Give it a second...</h2>
@@ -83,34 +83,57 @@
 		</div>
 		<hr />
 		<br />
-		<div class="grid">
-			<div>
-				Name
-				<input style="border: 1px solid var(--primary); border-radius: 1px;" type="text" value={$currentUser.username} readonly />
+		<article>
+			<div class="grid">
+				<div>
+					Name
+					<input
+						style="border: 1px solid var(--primary); border-radius: 1px;"
+						type="text"
+						value={$currentUser.username}
+						readonly
+					/>
+				</div>
+				<div>
+					Email
+					<input
+						style="border: 1px solid var(--primary); border-radius: 1px;"
+						type="text"
+						value={$currentUser.email}
+						readonly
+					/>
+				</div>
 			</div>
-			<div>
-				Email
-				<input style="border: 1px solid var(--primary); border-radius: 1px;" type="text" value={$currentUser.email} readonly />
-			</div>
-		</div>
 		{#if $currentOrganization}
 			<div class="grid">
 				<div>
 					Organization
-					<input style="border: 1px solid var(--primary); border-radius: 1px;" type="text" value={organizationName} readonly />
+					<input
+						style="border: 1px solid var(--primary); border-radius: 1px;"
+						type="text"
+						value={organizationName}
+						readonly
+					/>
 				</div>
 				<div>
 					Role
-					<input style="border: 1px solid var(--primary); border-radius: 1px;" type="text" value={$currentUser.role} readonly />
+					<input
+						style="border: 1px solid var(--primary); border-radius: 1px;"
+						type="text"
+						value={$currentUser.role}
+						readonly
+					/>
 				</div>
 			</div>
 		{/if}
-		<!-- </article> -->
+		</article>
 		<br />
 		<div class="grid">
 			<button on:click={editsettings}> Edit Account</button>
 			<button on:click={changepass}> Change Password</button>
-			<button on:click={signout} class="secondary outline"> Sign Out</button>
+			<button on:click={signout} class="contrast outline"> Sign Out</button>
 		</div>
 	{/if}
+{:catch error}
+	<p>Uh oh, something went wrong. Please try refreshing the page!</p>
 {/await}
