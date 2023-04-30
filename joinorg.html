@@ -21,7 +21,10 @@
 		<link rel="modulepreload" href="./_app/immutable/chunks/pocketbase.72444d17.js">
 		<link rel="modulepreload" href="./_app/immutable/entry/_layout.ts.984db11e.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/_layout.da46b06b.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.47af8c72.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/(www)-joinorg-page.svelte.4f5a9e1b.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/HintGroup.f6fc9942.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/validators.5c902cd4.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/navigation.3f61a3fc.js">
 </head>
 
 <body data-sveltekit-preload-data="hover">
@@ -39,8 +42,19 @@
 					<ul role="listbox" style="text-align: center;"><li><a href="/login">Login</a></li>
 					<li><a href="/signup">Signup</a></li></ul></details>
 		</ul></nav>
-<article><hgroup><h1>Welcome to gttx.</h1>
-    <h2>The premier goofy tabletop exercise platform.</h2></hgroup></article>
+<article><body>
+
+
+	<h1 class="page-name-header">Join an org</h1>
+	<form method="POST"><div class="grid"><div><label for="invitecode">Invite key</label>
+				<input type="username" name="invitecode" id="invitecode" placeholder="Your code (should be a mix of letters and numbers)">
+				</div></div>
+
+		<button >Join the organization!</button>
+		<hr><br>
+		<div class="grid"><button>Create an org instead</button>
+			<button class="contrast">Nevermind, sign out</button></div></form>
+</body></article>
 
 
 			
@@ -59,7 +73,7 @@
 						import("./_app/immutable/entry/app.f1209c48.js")
 					]).then(([kit, app]) => {
 						kit.start(app, __sveltekit_10ntha0.element, {
-							node_ids: [0, 2],
+							node_ids: [0, 16],
 							data,
 							form: null,
 							error: null

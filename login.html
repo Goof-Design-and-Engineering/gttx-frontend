@@ -10,6 +10,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta http-equiv="content-security-policy" content="">
 		<link href="./_app/immutable/assets/_layout.9db126c3.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/_page.09042a1d.css" rel="stylesheet">
 		<link rel="modulepreload" href="./_app/immutable/entry/start.113507ca.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/index.2c23944b.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.eab23952.js">
@@ -21,7 +22,10 @@
 		<link rel="modulepreload" href="./_app/immutable/chunks/pocketbase.72444d17.js">
 		<link rel="modulepreload" href="./_app/immutable/entry/_layout.ts.984db11e.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/_layout.da46b06b.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.47af8c72.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/(www)-login-page.svelte.ec9a2d4d.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/HintGroup.f6fc9942.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/validators.5c902cd4.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/navigation.3f61a3fc.js">
 </head>
 
 <body data-sveltekit-preload-data="hover">
@@ -39,8 +43,24 @@
 					<ul role="listbox" style="text-align: center;"><li><a href="/login">Login</a></li>
 					<li><a href="/signup">Signup</a></li></ul></details>
 		</ul></nav>
-<article><hgroup><h1>Welcome to gttx.</h1>
-    <h2>The premier goofy tabletop exercise platform.</h2></hgroup></article>
+<article><body>
+
+
+	<h1 class="page-name-header">Login</h1>
+		<form><label for="email">Email Address</label>
+			<input type="email" name="email" id="email" placeholder="goof@goofle.com" value="">
+			
+				
+
+			<label for="password">Password</label>
+			<input type="password" name="password" id="password" placeholder="Password" value="">
+			
+
+			<button id="login_button"  aria-busy="false">Login</button></form>
+		
+</body>
+
+<pre></pre></article>
 
 
 			
@@ -59,7 +79,7 @@
 						import("./_app/immutable/entry/app.f1209c48.js")
 					]).then(([kit, app]) => {
 						kit.start(app, __sveltekit_10ntha0.element, {
-							node_ids: [0, 2],
+							node_ids: [0, 17],
 							data,
 							form: null,
 							error: null
