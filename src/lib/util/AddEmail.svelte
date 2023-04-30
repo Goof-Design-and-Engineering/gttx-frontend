@@ -84,9 +84,11 @@
 	{#if createGameSwitch}
 		{#await creategame()}
 			<!-- creategame is pending -->
+			Waiting...
 			<progress />
 		{:then result}
 			<!-- creategame was fulfilled -->
+			YOYOYOYOYO
 			{result.id}
 			{goto("/dashboard/notes?roomid="+result.id)}
 		{:catch error}

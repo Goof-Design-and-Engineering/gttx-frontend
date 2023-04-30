@@ -85,7 +85,7 @@
 		} catch (error) {
 			console.log(error);
 		} finally {
-			// goto('/dashboard/notes');
+			goto('/dashboard/notes');
 		}
 		return record;
 	}
@@ -105,10 +105,27 @@
 {#if $currentRole == 'facilitator'}
 	{#if scenarioChosen == true && emailsPicked == true}
 		{#await createGame()}
-			<progressbar />
+			<center>
+				<br/>
+				<hgroup>
+					<h1 aria-busy="true">Creating your room...</h1>
+					<h2>Give it a second...</h2>
+				</hgroup>
+				<br/>
+			</center>
 		{:then game}
 			<!-- promise was fulfilled -->
-			{game.id}
+			<hgroup>
+				<h1>Success! Your room has been created!</h1>
+				<h2>Get your colleagues together for the exercise.</h2>
+			</hgroup>
+			<div class="grid">
+				<button data-tooltip={game.id} class="secondary" on:click={() => navigator.clipboard.writeText(game.id)}>
+					Click here to copy the room code to your clipboard.
+				</button>
+				<button on:click={() => setGame(game.id)}>Click here to enter the gameroom</button>
+			</div>
+			<!-- {game.id} -->
 			<!-- {#await setGame(game.id) catch error}
 					{error}
 				{/await} -->
@@ -125,7 +142,7 @@
 
 	<pre />
 {:else if $currentRole == 'observer' || $currentRole == 'participant'}
-	<br />
+	<!-- <br /> -->
 	<article>
 		<RecentGames />
 	</article>

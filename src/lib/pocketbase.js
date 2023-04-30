@@ -72,8 +72,6 @@ export function formatScenario(scenarios) {
     return newScenarios;
 }
 
-
-
 export async function getScenarios() {
     const resultList = await pb.collection('scenario').getFullList(1, 50);
     return resultList;
