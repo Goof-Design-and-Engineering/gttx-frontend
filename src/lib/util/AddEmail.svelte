@@ -1,6 +1,6 @@
 <script>
 	import { useForm, validators, email, required } from 'svelte-use-form';
-	import { getCurrentOrganizationRecord, pb } from '$lib/pocketbase';
+	import { getCurrentOrganizationRecord, pb, currentUser } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	const form = useForm();
 

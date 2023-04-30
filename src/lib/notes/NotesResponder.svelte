@@ -82,12 +82,20 @@
 </form>
 
 <hr />
-<h2>PREVIOUS NOTES</h2>
+<hgroup>
+	<h2>Previous Notes</h2>
+	<h3>Notes previously submitted by you for this scenario.</h3>
+</hgroup>
 {#await responses then responsesRaw}
-	<!-- promise was fulfilled -->
+	<!-- <summary role="button"> -->
+		<!-- <hgroup style=""> -->
+			<!-- <b style="font-size:xx-large">Previous Notes</b> -->
+			<!-- <h3 style="color:var(--contrast)">Notes previously submitted by you for this scenario.</h3> -->
+		<!-- </hgroup> -->
+	<!-- </summary> -->
 	{#each responsesRaw as response, index}
 		<details>
-			<summary role="button">
+			<summary role="button" class="secondary">
 				Response {index} - {response.question}
 			</summary>
 			<div class="scenario-box">
