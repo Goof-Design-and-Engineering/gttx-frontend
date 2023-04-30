@@ -2,14 +2,7 @@
 /* @import url("https://www.unpkg.com/browse/bootstrap-icons@1.10.3/bootstrap-icons.css"); */
 
 :root {
-    --primary: #6B8E3E !important;
-    --primary-hover: #8BB455 !important;
-    --primary-focus: #8BB45550 !important;
-    --primary-inverse: #FFF;
-    /* --primary: #e14e4e !important;
-    --primary-hover: #af4e4e !important;
-    --primary-focus: rgba(230, 19, 19, 0.25) !important;
-    --primary-inverse: #FFF; */
+    --primary: #d81b60;
 }
 
 footer {
