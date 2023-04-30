@@ -138,7 +138,7 @@
 
 		let maxLength = scenarioObject.modules[result.module].questions.length;
 
-		if (result.question < maxLength) {
+		if (result.question < (maxLength - 1)) {
 			const data = {
 				question: result.question + 1
 			};
@@ -146,7 +146,10 @@
 			const result2 = await pb.collection('room').update($currentUser.roomid, data);
 
 			await getQuestion();
-			nextEnabled = true;
+			if (result2.question != (maxLength - 1))
+			{
+				nextEnabled = true;
+			}
 		} else {
 			errorThrown = 'no questions left';
 			nextEnabled = false;
@@ -173,7 +176,10 @@
 
 			await getQuestion();
 
-			prevEnabled = true;
+			if (result2.question > 1)
+			{
+				prevEnabled = true;
+			}
 		} else {
 			errorThrown = 'no questions left';
 			prevEnabled = false;

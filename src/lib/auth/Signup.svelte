@@ -70,7 +70,7 @@
 				use:validators={[required]}
 			/>
 			<HintGroup for="username">
-				<Hint on="required">This is a mandatory field</Hint>
+				<Hint on="required"><i><center>This is a mandatory field</center></i><br></Hint>
 			</HintGroup>
 		</div>
 
@@ -85,8 +85,8 @@
 				use:validators={[required, email]}
 			/>
 			<HintGroup for="email">
-				<Hint on="required">This is a mandatory field</Hint>
-				<Hint on="email" hideWhenRequired><i><center>Email is not valid</center></i></Hint>
+				<Hint on="required"><i><center>This is a mandatory field</center></i><br></Hint>
+				<Hint on="email" hideWhenRequired><i><center>Email is not valid</center></i><br></Hint>
 			</HintGroup>
 		</div>
 	</div>
@@ -100,7 +100,7 @@
 		bind:value={password}
 		use:validators={[required]}
 	/>
-	<Hint for="password" on="required">This is a mandatory field</Hint>
+	<Hint for="password" on="required"><i><center>This is a mandatory field</center></i><br></Hint>
 
 	<!-- Checkboxes -->
 	<fieldset>
@@ -124,17 +124,3 @@
 	  </center>
   	{/if}
 </form>
-
-<center><p><s>Or create an account with:</s></p></center>
-
-<div class="grid">
-	<a role="button" class="oauth-button secondary" id="google-oauth" data-tooltip="Signup with Google"
-		><i class="bi bi-google" /></a
-	>
-	<a role="button" class="oauth-button secondary" id="discord-oauth" data-tooltip="Signup with Discord"
-		><i class="bi bi-discord" /></a
-	>
-	<a role="button" class="oauth-button secondary" id="github-oauth" data-tooltip="Signup with GitHub"
-		><i class="bi bi-github" /></a
-	>
-</div>

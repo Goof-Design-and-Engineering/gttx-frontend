@@ -6,7 +6,6 @@
 		pb,
 		getCurrentOrganizationRecord,
 		formatScenario,
-		RoomID
 	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
@@ -16,6 +15,13 @@
 	const form = useForm();
 
 	import Carousel from 'svelte-carousel';
+	let currentPage = 0;
+	let currScenario;
+	let showScenarioToggle = false;
+
+	function showScenario() {
+		showScenarioToggle = !showScenarioToggle;
+	}
 
 	import Modal from '$lib/Modal.svelte';
 	import AddEmail from '../util/AddEmail.svelte';
@@ -31,6 +37,11 @@
 	var scenarioChosen = '';
 	var message2send = '';
 
+
+	function setPage(number) {
+		currentPage = number;
+		console.log(number);
+	}
 
 	async function submitinvitecode() {
 		try {
@@ -49,6 +60,12 @@
 		const resultList = await pb.collection('scenario').getList(1, 50);
 		console.log(resultList);
 		return resultList.items;
+	}
+
+	function fetchScenario(scenario) {
+		console.log(scenario);
+		showScenario = true;
+		return scenario;
 	}
 
 	function setModal(scenario, module) {
@@ -99,58 +116,63 @@
 			</header>
 			{#await getScenarios()}
 				<progress />
-			{:then rawScenarios}
-				{#await formatScenario(rawScenarios)}
-					<progress />
-				{:then scenarios}
-					<Carousel>
-						{#each scenarios as scenario}
-							<details>
-								<summary>{scenario.name}</summary>
-								<h2>{scenario.contents?.overview?.name || ''}</h2>
-								<h5>{scenario.contents?.name || ''} {scenario.contents?.source || ''}</h5>
-								<hr />
-								<h4>PURPOSE</h4>
-								<p>{scenario.contents?.overview?.purpose || ''}</p>
-								<h4>SCOPE</h4>
-								<p>{scenario.contents?.overview?.scope || ''}</p>
-								<hr />
-								<h4>OBJECTIVES</h4>
-								<ul>
-									{#each scenario.contents?.overview.objectives || [] as objective}
-										<li>
-											{objective}
-										</li>
-									{/each}
-								</ul>
-								<hr />
-								<h4>MODULES</h4>
-								<ul>
-									{#each Object.entries(scenario.contents?.modules || []) as [name, module]}
-										<em>
-											{name}
-										</em>
-										<p>{module.description}</p>
-										<button on:click={() => setModal(scenario.id, name)}>
-											Choose this scenario and module</button
-										>
-									{/each}
-								</ul>
-							</details>
-						{/each}
-					</Carousel>
-				{:catch error}
-					{error}
-				{/await}
+
+			{:then scenarios}
+				<Carousel on:pageChange={(event) => setPage(event.detail)}>
+					{#each scenarios as _}
+						<details>
+							<summary on:click={showScenario}>{scenarios[currentPage].name}</summary>
+							{#if showScenarioToggle}
+								{#await fetchScenario(scenarios[currentPage])}
+									<progress />
+								{:then scenario}
+									<h2>{scenario.contents?.overview?.name || ''}</h2>
+									<h5>{scenario.contents?.name || ''} {scenario.contents?.source || ''}</h5>
+									<hr />
+									<h4>Purpose</h4>
+									<p>{scenario.contents?.overview?.purpose || ''}</p>
+									<h4>Scope</h4>
+									<p>{scenario.contents?.overview?.scope || ''}</p>
+									<hr />
+									<h4>Objectives</h4>
+									<ul>
+										{#each scenario.contents?.overview.objectives || [] as objective}
+											<li>
+												{objective}
+											</li>
+										{/each}
+									</ul>
+									<hr />
+									<h4>Modules</h4>
+									<ul>
+										{#each Object.entries(scenario.contents?.modules || []) as [name, module]}
+											<em>
+												{name}
+											</em>
+											<p>{module.description}</p>
+											<button on:click={() => setModal(scenario.id, name)}>
+												Choose this scenario and module</button
+											>
+										{/each}
+									</ul>
+								{:catch error}
+									{error}
+								{/await}
+							{/if}
+						</details>
+					{/each}
+				</Carousel>
+
 			{:catch error}
-				<!-- promise was rejected -->
 				{error}
 			{/await}
 		</article>
 
-		<Modal bind:showModal>
-			<AddEmail {gameData} />
-		</Modal>
+		{#if showModal}
+			<Modal bind:showModal>
+				<AddEmail {gameData} />
+			</Modal>
+		{/if}
 
 		<GamesList />
 
@@ -174,7 +196,7 @@
 				<Hint on="required">This is a mandatory field</Hint>
 			</HintGroup>
 
-			<button disabled={!$form.valid} on:click={submitinvitecode}>Join</button>
+			<button id="invite_button" disabled={!$form.valid} on:click={submitinvitecode}>Join</button>
 		</form>
 	{:else if ['facilitator', 'participant', 'observer'].includes(user?.role)}
 		<hgroup>
