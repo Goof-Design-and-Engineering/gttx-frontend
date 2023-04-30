@@ -11,6 +11,9 @@
 		getCurrentOrganizationRecord,
 		currentRole
 	} from '../../../lib/pocketbase';
+
+	import { goto } from '$app/navigation';
+	
 	let scenarioChosen = false;
 	let emailsPicked = false;
 
@@ -25,6 +28,12 @@
 
 	onMount(async () => {
 		orgRaw = await getCurrentOrganizationRecord();
+		if (!$currentUser) {
+			goto('/login');
+		}
+		if (!$currentUser.org) {
+			goto('/createorg');
+		}
 	});
 
 	async function createGame() {
@@ -70,6 +79,7 @@
 	}
 
 	async function setGame(id) {
+		console.log('SET ID TO ', id);
 		try {
 			const record = await pb.collection('users').update($currentUser.id, { roomid: id });
 		} catch (error) {
@@ -93,35 +103,36 @@
 </script>
 
 {#if $currentRole == 'facilitator'}
-	<body>
-		<article>
-			{#if scenarioChosen == true && emailsPicked == true}
-				{#await createGame()}
-					<progressbar />
-				{:then game}
-					<!-- promise was fulfilled -->
-					{game.id}
-					<!-- {#await setGame(game.id) catch error}
+	<article>
+		{#if scenarioChosen == true && emailsPicked == true}
+			{#await createGame()}
+				<progressbar />
+			{:then game}
+				<!-- promise was fulfilled -->
+				{game.id}
+				<!-- {#await setGame(game.id) catch error}
 						{error}
 					{/await} -->
-				{:catch error}
-					{error}
-				{/await}
-			{:else if scenarioChosen == false}
-				<Scenarios bind:scenarioChosen bind:scenarioID bind:moduleID />
-				<br />
-				<article>
-					<RecentGames />
-				</article>
-			{:else}
-				<EmailPicker bind:emails bind:usersIDs bind:emailsPicked />
-			{/if}
-		</article>
-	</body>
+			{:catch error}
+				{error}
+			{/await}
+		{:else if scenarioChosen == false}
+			<Scenarios bind:scenarioChosen bind:scenarioID bind:moduleID />
+		{:else}
+			<EmailPicker bind:emails bind:usersIDs bind:emailsPicked />
+		{/if}
+	</article>
+
+	<article>
+		<RecentGames />
+	</article>
 
 	<pre />
 {:else if $currentRole == 'oberver' || $currentRole == 'participant'}
-	<h3>Oops</h3>
+	<br />
+	<article>
+		<RecentGames />
+	</article>
 {:else}
 	<progressbar />
 {/if}

@@ -14,8 +14,8 @@
 
 	async function setGame(id) {
 		try {
-			console.log('boom');
-			// const record = await pb.collection('users').update($currentUser.id, { roomid: id });
+			// console.log('boom');
+			const record = await pb.collection('users').update($currentUser.id, { roomid: id });
 		} catch (error) {
 			console.log(error);
 		} finally {
@@ -36,7 +36,7 @@
 		<li>
 			<ul>
 				<!-- <a href="" on:click={setGame(game.id)}> INVITE CODE = {game.id} </a> -->
-				<a href=""> INVITE CODE = {game.id} </a>
+				<a on:click={() => setGame(game.id)}> INVITE CODE = {game.id} </a>
 			</ul>
 		</li>
 	{/each}

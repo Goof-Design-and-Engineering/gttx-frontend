@@ -9,6 +9,7 @@ export const currentRole = writable(pb.authStore.model?.role);
 export const currentOrganization = writable(pb.authStore.model?.org);
 export const currentProfilePic = writable(pb.authStore.model?.avatar);
 export const RoomID = writable('');
+// export const scenarioObject = {};
 // export const notesRaw = pb.collection("notes").getList(1,50,{});
 // export const notes = writeable(pb.collection("notes").getList(1,50,{}).resolve().items());
 
@@ -77,3 +78,4 @@ export async function getScenarios() {
     const resultList = await pb.collection('scenario').getFullList(1, 50);
     return resultList;
 }
+
