@@ -12,6 +12,11 @@
 	let members = [];
 	let rolechangeErr = '';
 
+	// invite codes
+	let participantCode = '';
+	let facilitatorCode = '';
+	let observerCode = '';
+
 	// Modal stuff
 	let showModal = false;
 	let memberToRemove;
@@ -60,6 +65,10 @@
 
 		// store organization name
 		organizationName = result.name;
+
+		participantCode = result.participant_code;
+		facilitatorCode = result.facilitator_code;
+		observerCode = result.observer_code;
 
 		// subscribe to *all* changes made to the current organization
 		organizationEvent = await pb
@@ -153,10 +162,18 @@
 	{:then}
 		<header>
 			<hgroup>
-				<h1>{organizationName}</h1>
+				<h1>{organizationName || 'Organization Name'}</h1>
 				<h2>Time for a change?</h2>
 			</hgroup>
 		</header>
+
+		<details open>
+			<summary>Invite Codes</summary>
+			<p id="p_code">Participant: {participantCode}</p>
+			<p id="o_code">Observer: {observerCode}</p>
+			<p id="f_code">Facilitator: {facilitatorCode}</p>
+		</details>
+
 		{#each members as member, index (member.id)}
 			<div>
 				{#if member.id == $currentUser.id}
@@ -207,9 +224,11 @@
 		<article>
 			<h3>Woah there!</h3>
 			<p>
-				Are you sure that you want to remove <b>{memberToRemove.username}</b> from your organization?
+				Are you sure that you want to remove <b>{memberToRemove.username}</b> from your
+				organization?
 				<br /><br />
-				If you change your mind, you'll have to send <b>{memberToRemove.username}</b> another invite.
+				If you change your mind, you'll have to send <b>{memberToRemove.username}</b> another
+				invite.
 				<br /><br />
 				<b style="color: red;">This action can not be undone!</b>
 			</p>
