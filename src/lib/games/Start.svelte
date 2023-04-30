@@ -5,7 +5,7 @@
 		currentUser,
 		pb,
 		getCurrentOrganizationRecord,
-		formatScenario
+		formatScenario,
 	} from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	import { useForm, validators, HintGroup, Hint, email, required } from 'svelte-use-form';
@@ -13,8 +13,6 @@
 	import GamesList from './GamesList.svelte';
 
 	const form = useForm();
-
-	import Switch from '$lib/util/Switch.svelte';
 
 	import Carousel from 'svelte-carousel';
 	let currentPage = 0;
@@ -39,7 +37,6 @@
 	var scenarioChosen = '';
 	var message2send = '';
 
-	var inputs = [];
 
 	function setPage(number) {
 		currentPage = number;
@@ -49,7 +46,9 @@
 	async function submitinvitecode() {
 		try {
 			isFailure = false;
-			goto(`/dashboard/notes?roomid=${invitecode}`);
+			RoomID.set(invitecode);
+			console.log("SET ROOMID TO ", $RoomID)
+			goto(`/dashboard/notes`);
 			// throw redirect(307, '/account');
 		} catch (e) {
 			console.log('Invite Code Failure!');
@@ -117,6 +116,7 @@
 			</header>
 			{#await getScenarios()}
 				<progress />
+
 			{:then scenarios}
 				<Carousel on:pageChange={(event) => setPage(event.detail)}>
 					{#each scenarios as _}
@@ -162,6 +162,7 @@
 						</details>
 					{/each}
 				</Carousel>
+
 			{:catch error}
 				{error}
 			{/await}

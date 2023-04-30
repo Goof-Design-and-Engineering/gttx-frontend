@@ -1,14 +1,13 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { currentUser, getCurrentOrganizationRecord, pb } from '$lib/pocketbase';
+	import { currentUser, RoomID, pb } from '$lib/pocketbase';
 	import { page } from '$app/stores';
 	import CurrentQuestion from './CurrentQuestion.svelte';
 
 	let response = '';
 	let scenarioObject;
-	const url = $page.url;
-	export let roomID = url.searchParams.get('roomid') || 'FAILURE';
+	// export let roomID = $currentUser.roomid;
 	let success = '';
 	let roomChange;
 	let noteChange;
@@ -20,7 +19,8 @@
 	}
 
 	onMount(async () => {
-		roomChange = await pb.collection('room').subscribe(roomID, async function (e) {
+		console.log('LOOKING FOR ', $RoomID);
+		roomChange = await pb.collection('room').subscribe($currentUser.roomid, async function (e) {
 			// console.log(e.record);
 			metaQuestion = await getQuestion();
 			// if (e.record.question != currQ) {
@@ -49,33 +49,22 @@
 		noteChange?.();
 	});
 
-	async function getQuestionCreateSubscription() {
-		return getQuestion();
-	}
-
-	async function getQuestionForSubscription(m, q) {
-		const result = await pb.collection('room').getOne(roomID);
-		return scenarioObject.modules[m].questions[q];
-	}
-
 	async function loadScenario() {
-		if (roomID == '') {
-			leave();
-		}
 		try {
 			const result = await pb.collection('room').getOne(
-				roomID,
+				$RoomID,
 				{
 					expand: 'scenarios'
 				},
 				{ $cancelKey: 'scenario' }
 			);
+
+			scenarioObject = result.expand.scenarios.contents;
 		} catch (e) {
 			alert(e);
 			goto('/dashboard');
 		}
 		// console.log(result);
-		scenarioObject = result.expand.scenarios.contents;
 	}
 
 	async function getQuestion() {
@@ -84,23 +73,23 @@
 			loadScenario();
 		}
 
-		const result = await pb.collection('room').getOne(roomID);
+		const result = await pb.collection('room').getOne($currentUser.roomid);
 
 		return scenarioObject.modules[result.module].questions[result.question];
 	}
 
 	async function submitNote() {
-		const result = await pb.collection('room').getOne(roomID);
+		const result = await pb.collection('room').getOne($currentUser.roomid);
 
-		console.log($currentUser.id);
-		console.log($currentUser.org);
+		// console.log($currentUser.id);
+		// console.log($currentUser.org);
 
 		const data = {
 			user: $currentUser.id,
 			org: $currentUser.org,
 			question: scenarioObject.modules[result.module].questions[result.question],
 			content: response,
-			room: roomID
+			room: $currentUser.roomid
 		};
 
 		const result2 = await pb.collection('notes').create(data);
@@ -113,9 +102,9 @@
 	}
 
 	async function loadResponses() {
-		// const result = await pb.collection('room').getOne(roomID);
+		// const result = await pb.collection('room').getOne($currentUser.roomid);
 
-		// const result = await pb.collection('room').getOne(roomID);
+		// const result = await pb.collection('room').getOne($currentUser.roomid);
 		// let currQ = scenarioObject.modules[result.module].questions[result.question];
 		// console.log(currQ);
 		let filterMagic = `(org='${$currentUser.org}' && user='${$currentUser.id}')`;
@@ -154,7 +143,7 @@
 			<textarea bind:value={response} name="notes" id="notes" cols="50" rows="4" />
 		</label>
 
-		<input type="hidden" id="roomid" name="roomid" value={roomID} />
+		<input type="hidden" id="roomid" name="roomid" value={$currentUser.roomid} />
 
 		<!-- Button -->
 		<button type="submit" id="submit_answer" on:click={submitNote}>Submit</button>
