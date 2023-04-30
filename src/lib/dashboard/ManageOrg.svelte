@@ -168,10 +168,19 @@
 		</header>
 
 		<details open>
-			<summary>Invite Codes</summary>
-			<p id="p_code">Participant: {participantCode}</p>
-			<p id="o_code">Observer: {observerCode}</p>
-			<p id="f_code">Facilitator: {facilitatorCode}</p>
+			<!-- svelte-ignore a11y-no-redundant-roles -->
+			<summary role="button" class="secondary">Invite Codes</summary>
+			<ul>
+				<li>
+					<p id="p_code"><b>Participant</b>: {participantCode}</p>
+				</li>
+				<li>
+					<p id="o_code"><b>Observer</b>: {observerCode}</p>
+				</li>
+				<li>
+					<p id="f_code"><b>Facilitator</b>: {facilitatorCode}</p>
+				</li>
+			</ul>
 		</details>
 
 		{#each members as member, index (member.id)}
@@ -214,7 +223,7 @@
 
 		<footer>
 			<br />
-			<button class="outline">Save Changes</button>
+			<button>Save Changes</button>
 		</footer>
 	{/await}
 </article>

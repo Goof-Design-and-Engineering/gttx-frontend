@@ -105,7 +105,7 @@
 				{:then scenarios}
 					<Carousel>
 						{#each scenarios as scenario}
-							<details>
+							<details role="button">
 								<summary>{scenario.name}</summary>
 								<h2>{scenario.contents?.overview?.name || ''}</h2>
 								<h5>{scenario.contents?.name || ''} {scenario.contents?.source || ''}</h5>

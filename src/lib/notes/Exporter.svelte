@@ -7,6 +7,7 @@
     export let docxDownload = '';
     export let htmlDownload = '';
     let newTab;
+	let exportingBusy = false;
 
 	onMount(async () => {
 		// docx
@@ -84,6 +85,7 @@
 	}
 
 	export async function rawPDF() {
+		exportingBusy = true;
 		let exportHTML = await exportNotes('html');
 		const htmlBlob = new Blob([exportHTML], { type: 'application/octet-stream' });
 		htmlDownload = URL.createObjectURL(htmlBlob);
@@ -110,6 +112,7 @@
 			width: 170, //target width in the PDF document
 			windowWidth: 650 //window width in CSS pixels
 		});
+		exportingBusy = false;
 	}
 </script>
 
@@ -119,7 +122,7 @@
     </div>
     <div>
         <label style="text-align: right;">
-            <input type="checkbox" bind:checked={newTab} />
+            <input type="checkbox" bind:checked={newTab}/>
             Open in a new tab
         </label>
     </div>
@@ -132,6 +135,7 @@
     <a
         role="button"
         class="contrast outline"
+		aria-busy={exportingBusy}
         on:click={async (e) => {
             await rawPDF();
         }}

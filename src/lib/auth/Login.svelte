@@ -89,7 +89,7 @@
 				<!-- <p style="color: #B24C4C;">Failed to authenticate! <em data-tooltip={logonError}>(View Login Error)</em></p> -->
 			</center>
 		{/if}
-		<center><p><s>Or login with:</s></p></center>
+		<!-- <center><p><s>Or login with:</s></p></center>
 		<div class="grid">
 			<a
 				role="button"
@@ -110,8 +110,7 @@
 				id="github-oauth"
 				data-tooltip="Login with GitHub"><i class="bi bi-github" /></a
 			>
-		</div>
-
+		</div> -->
 		<hr />
 		<button id="signup_button" on:click={signup}> Signup </button>
 	{/if}

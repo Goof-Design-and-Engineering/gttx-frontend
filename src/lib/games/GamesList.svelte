@@ -60,7 +60,10 @@
 				<!-- promise was fulfilled -->
 			</Carousel>
 		{:else}
+		<hgroup>
 			<h2>You don't have any recent games!</h2>
+			<h3>Select a scenario to start a new game!</h3>
+		</hgroup>
 		{/if}
 	{:catch error}
 		{error}

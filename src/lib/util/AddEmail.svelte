@@ -84,7 +84,7 @@
 	{#if createGameSwitch}
 		{#await creategame()}
 			<!-- creategame is pending -->
-			<progressbar />
+			<progress />
 		{:then result}
 			<!-- creategame was fulfilled -->
 			{result.id}

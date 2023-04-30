@@ -103,32 +103,28 @@
 </script>
 
 {#if $currentRole == 'facilitator'}
-	<article>
-		{#if scenarioChosen == true && emailsPicked == true}
-			{#await createGame()}
-				<progressbar />
-			{:then game}
-				<!-- promise was fulfilled -->
-				{game.id}
-				<!-- {#await setGame(game.id) catch error}
-						{error}
-					{/await} -->
-			{:catch error}
-				{error}
-			{/await}
-		{:else if scenarioChosen == false}
-			<Scenarios bind:scenarioChosen bind:scenarioID bind:moduleID />
-		{:else}
-			<EmailPicker bind:emails bind:usersIDs bind:emailsPicked />
-		{/if}
-	</article>
-
-	<article>
-		<RecentGames />
-	</article>
+	{#if scenarioChosen == true && emailsPicked == true}
+		{#await createGame()}
+			<progressbar />
+		{:then game}
+			<!-- promise was fulfilled -->
+			{game.id}
+			<!-- {#await setGame(game.id) catch error}
+					{error}
+				{/await} -->
+		{:catch error}
+			{error}
+		{/await}
+	{:else if scenarioChosen == false}
+		<Scenarios bind:scenarioChosen bind:scenarioID bind:moduleID />
+	{:else}
+		<EmailPicker bind:emails bind:usersIDs bind:emailsPicked />
+	{/if}
+	<hr>
+	<RecentGames />
 
 	<pre />
-{:else if $currentRole == 'oberver' || $currentRole == 'participant'}
+{:else if $currentRole == 'observer' || $currentRole == 'participant'}
 	<br />
 	<article>
 		<RecentGames />

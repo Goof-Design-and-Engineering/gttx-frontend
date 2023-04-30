@@ -25,21 +25,34 @@
 	}
 </script>
 
-<h1>Recent Games</h1>
+<hgroup>
+	<h1>Recent Games</h1>
+	<h2>Check out your previous exercises!</h2>
+</hgroup>
 
 {#await recentgames()}
 	<!-- recentgames() is pending -->
-	<progressbar />
+	<!-- <progressbar /> -->
+	<center>
+		<br />
+		<hgroup>
+			<h1 aria-busy="true">Loading your recent games...</h1>
+			<h2>Give it a second...</h2>
+		</hgroup>
+	</center>
 {:then games}
 	<!-- recentgames() was fulfilled -->
-	{#each games as game}
-		<li>
-			<ul>
-				<!-- <a href="" on:click={setGame(game.id)}> INVITE CODE = {game.id} </a> -->
-				<a on:click={() => setGame(game.id)}> INVITE CODE = {game.id} </a>
-			</ul>
-		</li>
-	{/each}
+	<div class="grid scrollable-grid">
+		{#each games as game}
+			<!-- <a href="" on:click={setGame(game.id)}> INVITE CODE = {game.id} </a> -->
+			<!-- <a on:click={() => setGame(game.id)}> INVITE CODE = {game.id} </a> -->
+			{#if game.name}
+				<button on:click={() => setGame(game.id)}>{game.name}, {game.created.split(" ")[0]}</button>
+			{:else}
+				<button on:click={() => setGame(game.id)}>{game.id}, {game.created.split(" ")[0]}</button>
+			{/if}
+		{/each}
+	</div>
 {:catch error}
 	<!-- recentgames() was rejected -->
 	{error}

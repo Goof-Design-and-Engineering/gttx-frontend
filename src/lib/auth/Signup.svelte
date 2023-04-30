@@ -125,7 +125,7 @@
   	{/if}
 </form>
 
-<center><p><s>Or create an account with:</s></p></center>
+<!-- <center><p><s>Or create an account with:</s></p></center>
 
 <div class="grid">
 	<a role="button" class="oauth-button secondary" id="google-oauth" data-tooltip="Signup with Google"
@@ -137,4 +137,4 @@
 	<a role="button" class="oauth-button secondary" id="github-oauth" data-tooltip="Signup with GitHub"
 		><i class="bi bi-github" /></a
 	>
-</div>
+</div> -->

@@ -32,6 +32,27 @@ footer {
     /* lololololololol */
 }
 
+.scenario-summary-header {
+    color: var(--primary) !important;
+}
+
+.scrollable-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    border: 4px solid var(--primary-focus);
+    border-radius: 0%;
+    padding: 2% 2% 1% 1%;
+    max-height: 400px;
+    overflow:scroll;
+    overflow-x:hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.scenario-box {
+    border: 4px solid var(--primary-focus);
+    border-radius: 0%;
+    padding: 3%;
+}
+
 .oauth-button {
     margin-bottom: 10px;
     opacity: 0.85;

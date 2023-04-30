@@ -1,50 +1,68 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { useForm } from 'svelte-use-form';
 	import { currentUser, pb } from '$lib/pocketbase';
 	export let scenarioObject = {};
 	export let responses = {};
 	export let currentQuestion = {};
+	const form = useForm();
 
 	let success = '';
 	let response = '';
+	let submitBusy = false;
 
 	async function submitNote() {
-		const result = await pb.collection('room').getOne($currentUser.roomid);
+		submitBusy = true;
+		if (response[0])
+		{
+			const result = await pb.collection('room').getOne($currentUser.roomid);
 
-		// console.log($currentUser.id);
-		// console.log($currentUser.org);
+			// console.log($currentUser.id);
+			// console.log($currentUser.org);
 
-		const data = {
-			user: $currentUser.id,
-			org: $currentUser.org,
-			question: scenarioObject.modules[result.module].questions[result.question],
-			content: response,
-			room: $currentUser.roomid
-		};
+			const data = {
+				user: $currentUser.id,
+				org: $currentUser.org,
+				question: scenarioObject.modules[result.module].questions[result.question],
+				content: response,
+				room: $currentUser.roomid
+			};
 
-		const result2 = await pb.collection('notes').create(data);
-		if (result2 != Object) {
-			success = 'PREVIOUS MESSAGE WAS SENT PROPER';
-		} else {
-			console.log(result);
+			const result2 = await pb.collection('notes').create(data);
+			if (result2 != Object) {
+				success = 'PREVIOUS MESSAGE WAS SENT PROPER';
+				response = "";
+			} else {
+				console.log(result);
+			}
 		}
+		submitBusy = false;
 		// reloadResponses = true;
 	}
 </script>
 
-<h1>NOTES RESPONDER</h1>
+<hgroup>
+	<h1>Notes Response - {$currentUser.role.replace(/^[a-z]/, function(m){ return m.toUpperCase() })	}</h1>
+	<h2>Room ID: {$currentUser.roomid}</h2>
+</hgroup>
 
-<form>
+<form use:form on:submit|preventDefault>
 	<!-- Grid -->
-	<h2>Request for comment</h2>
+	<hr/>
+	<hgroup>
+		<h2>Request for comment</h2>
+		<h3>Type your response to the question below.</h3>
+	</hgroup>
 
 	<p id="curr_question">
 		{#await currentQuestion}
-			<progressbar />
+			<!-- svelte-ignore a11y-invalid-attribute -->
+			<a href="#" aria-busy="true">Loading current question...</a>
 		{:then question}
 			{#if (question == '')}
-				<progressbar />
+				<!-- svelte-ignore a11y-invalid-attribute -->
+				<a href="#" aria-busy="true">Loading current question...</a>
 			{:else}
 				<!-- else content here -->
 				<!-- promise was fulfilled -->
@@ -60,7 +78,7 @@
 	<input type="hidden" id="roomid" name="roomid" value={$currentUser.roomid} />
 
 	<!-- Button -->
-	<button type="submit" id="submit_answer" on:click={submitNote}>Submit</button>
+	<button type="submit" id="submit_answer" aria-busy={submitBusy} disabled={submitBusy} on:click={submitNote}>Submit</button>
 </form>
 
 <hr />
@@ -69,14 +87,13 @@
 	<!-- promise was fulfilled -->
 	{#each responsesRaw as response, index}
 		<details>
-			<summary>Response {index}</summary>
-			<!-- content here -->
-			<h3>
-				{response.question}
-			</h3>
-			<p>
-				{response.content}
-			</p>
+			<summary role="button">
+				Response {index} - {response.question}
+			</summary>
+			<div class="scenario-box">
+				{response.content}<br/><hr>
+				<em>Submitted at {response.created}</em>
+			</div>				
 		</details>
 	{/each}
 {:catch error}
