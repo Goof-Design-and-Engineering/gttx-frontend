@@ -48,11 +48,11 @@
 				{#each games as game}
 					<!-- <a href="" on:click={setGame(game.id)}> INVITE CODE = {game.id} </a> -->
 					<!-- <a on:click={() => setGame(game.id)}> INVITE CODE = {game.id} </a> -->
-					{#if game.name}
-						<button on:click={() => setGame(game.id)}>{game.name}, {game.created.split(" ")[0]}</button>
-					{:else}
-						<button on:click={() => setGame(game.id)}>{game.id}, {game.created.split(" ")[0]}</button>
-					{/if}
+					<!-- {#if game.name}
+						<button id={game.id} on:click={() => setGame(game.id)}>{game.name}, {game.created.split(" ")[0]}</button>
+					{:else} -->
+					<button id={game.id} on:click={() => setGame(game.id)}>{game.id}, {game.created.split(" ")[0]}</button>
+					<!-- {/if} -->
 				{/each}
 			</div>
 		{:else if $currentUser?.role == "facilitator"}
