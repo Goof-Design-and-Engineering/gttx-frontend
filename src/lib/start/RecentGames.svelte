@@ -43,7 +43,7 @@
 	</center>
 {:then games}
 	<!-- recentgames() was fulfilled -->
-		<!-- {#if games} -->
+		{#if games[0]}
 			<div class="grid scrollable-grid">
 				{#each games as game}
 					<!-- <a href="" on:click={setGame(game.id)}> INVITE CODE = {game.id} </a> -->
@@ -55,15 +55,17 @@
 					{/if}
 				{/each}
 			</div>
-		<!-- {:else} -->
+		{:else if $currentUser?.role == "facilitator"}
 		<!-- <div class="scenario-box" style="padding-bottom: 1.5%"> -->
-			<!-- <input style="border: 2px solid var(--primary); border-radius: 5px; text-align: center;" type="text" value="Looks like you don't have any recent games. Ask your facilitator for more information." readonly> -->
+			<input style="border: 2px solid var(--primary); border-radius: 5px; text-align: center;" type="text" value="Looks like you don't have any recent games. Choose a scenario above to start one!" readonly>
 			<!-- <hgroup>
 				<h1>Looks like you don't have any recent games</h1>
 				<h2>Consider asking your facilitator to add you to one!</h2>
 			</hgroup> -->
 		<!-- </div> -->
-		<!-- {/if} -->
+		{:else}
+			<input style="border: 2px solid var(--primary); border-radius: 5px; text-align: center;" type="text" value="Looks like you don't have any recent games. Ask your facilitator for more information." readonly>
+		{/if}
 {:catch error}
 	<!-- recentgames() was rejected -->
 	{error}
