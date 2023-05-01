@@ -31,6 +31,7 @@ footer {
 }
 
 .scrollable-grid {
+    background-color: var(--form-element-background-color) !important;
     grid-template-columns: repeat(2, 1fr) !important;
     border: 4px solid var(--primary-focus);
     border-radius: 0%;
@@ -42,6 +43,7 @@ footer {
 }
 
 .scenario-box {
+    background-color: var(--form-element-background-color) !important;
     border: 4px solid var(--primary-focus);
     border-radius: 0%;
     padding: 3%;
