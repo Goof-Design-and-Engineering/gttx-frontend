@@ -50,12 +50,14 @@
 		{#if games.length != 0}
 			<Carousel>
 				{#each games as game}
+
 					<hgroup>
 						<h2>{game.name == '' ? game.name : game.id}</h2>
 						<NotesFac bind:compactView={compact} />
 						<button on:click={() => setRoomID(game.id)}> CLICK ME TO SET ROOM ID </button>
 						<!-- <a href="/dashboard/notes?roomid={game.id}" > Open in a new tab instead</a> -->
 					</hgroup>
+
 				{/each}
 				<!-- promise was fulfilled -->
 			</Carousel>

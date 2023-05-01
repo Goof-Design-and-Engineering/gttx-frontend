@@ -64,9 +64,9 @@
 				use:validators={[required, email]}
 			/>
 			<HintGroup for="email">
-				<Hint on="required">This is a mandatory field</Hint>
+				<Hint on="required"><i><center>This is a mandatory field</center></i><br></Hint>
 				<Hint on="email" hideWhenRequired class="login-hint"
-					><i><center>Email is not valid</center></i></Hint
+					><i><center>Email is not valid</center></i><br></Hint
 				>
 			</HintGroup>
 
@@ -79,7 +79,7 @@
 				bind:value={password}
 				use:validators={[required]}
 			/>
-			<Hint for="password" on="required"><i><center>This is a mandatory field</center></i></Hint>
+			<Hint for="password" on="required"><i><center>This is a mandatory field</center></i><br></Hint>
 
 			<button id="login_button" disabled={!$form.valid} on:click={login} aria-busy={loading}>Login</button>
 		</form>

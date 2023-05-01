@@ -70,7 +70,7 @@
 				use:validators={[required]}
 			/>
 			<HintGroup for="username">
-				<Hint on="required">This is a mandatory field</Hint>
+				<Hint on="required"><i><center>This is a mandatory field</center></i><br></Hint>
 			</HintGroup>
 		</div>
 
@@ -85,8 +85,8 @@
 				use:validators={[required, email]}
 			/>
 			<HintGroup for="email">
-				<Hint on="required">This is a mandatory field</Hint>
-				<Hint on="email" hideWhenRequired><i><center>Email is not valid</center></i></Hint>
+				<Hint on="required"><i><center>This is a mandatory field</center></i><br></Hint>
+				<Hint on="email" hideWhenRequired><i><center>Email is not valid</center></i><br></Hint>
 			</HintGroup>
 		</div>
 	</div>
@@ -100,7 +100,7 @@
 		bind:value={password}
 		use:validators={[required]}
 	/>
-	<Hint for="password" on="required">This is a mandatory field</Hint>
+	<Hint for="password" on="required"><i><center>This is a mandatory field</center></i><br></Hint>
 
 	<!-- Checkboxes -->
 	<fieldset>
