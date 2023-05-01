@@ -1,5 +1,5 @@
 <script>
-	import { pb, currentUser, currentRole, RoomID} from '$lib/pocketbase';
+	import { pb, currentUser, currentRole, RoomID } from '$lib/pocketbase';
 	import NotesManager from '$lib/notes/NotesManager.svelte';
 	import NotesResponder from '$lib/notes/NotesResponder.svelte';
 	import { onMount, onDestroy } from 'svelte';
@@ -54,10 +54,17 @@
 	}
 
 	async function loadResponses() {
-		let filterMagic = `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}')`;
+		let filterMagic =
+			$currentRole == 'facilitator'
+				? `(org='${$currentUser.org}' && room='${$currentUser.roomid}')`
+				: `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}')`
+
+		console.log(filterMagic)
+
 		const resultList = await pb.collection('notes').getList(1, 50, {
 			filter: filterMagic
 		});
+		console.log(resultList.items)
 		return resultList.items;
 	}
 
