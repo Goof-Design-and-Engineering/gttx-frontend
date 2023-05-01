@@ -11,7 +11,7 @@
 
 	onMount(async () => {
 		// docx
-		let exportDOCX = await exportNotes('doc');
+		let exportDOCX = await exportNotes('docx');
 		const docxBlob = new Blob([exportDOCX], { type: 'application/octet-stream' });
 		docxDownload = URL.createObjectURL(docxBlob);
 

@@ -79,7 +79,7 @@
 		{#if role == 'facilitator'}
 			<!-- content here -->
 			<NotesManager bind:scenarioObject bind:currentQuestion bind:responses />
-		{:else if role == 'obverser' || role == 'participant'}
+		{:else if role == 'observer' || role == 'participant'}
 			<!-- else content here -->
 			<NotesResponder bind:scenarioObject bind:currentQuestion bind:responses />
 		{:else}
