@@ -95,6 +95,7 @@
 	<!-- </summary> -->
 	{#each responsesRaw as response, index}
 		<details>
+			<!-- svelte-ignore a11y-no-redundant-roles -->
 			<summary role="button" class="secondary">
 				Response {index} - {response.question}
 			</summary>

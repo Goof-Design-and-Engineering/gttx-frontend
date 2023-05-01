@@ -172,6 +172,7 @@
 			<summary role="button" class="secondary">Invite Codes</summary>
 			<ul>
 				<li>
+					<!-- <p id="p_code"><b>Participant</b>: <em on:click={() => navigator.clipboard.writeText(participantCode)} data-tooltip="Click me to copy to clipboard!">{participantCode}</em></p> -->
 					<p id="p_code"><b>Participant</b>: {participantCode}</p>
 				</li>
 				<li>

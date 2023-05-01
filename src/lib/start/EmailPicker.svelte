@@ -4,7 +4,7 @@
 	import { useForm, validators, email, required } from 'svelte-use-form';
 
 	export let emails = [];
-	export let userIDs = [];
+	export let usersIDs = [];
 	export let emailsPicked = false;
 	const form = useForm();
 
@@ -21,17 +21,17 @@
 
 	async function addMember(member) {
 		// emails = [...emails, member.email];
-		if (userIDs.includes(member.id))
+		if (usersIDs.includes(member.id))
 		{
-			userIDs = userIDs.filter(item => item !== member.id)
+			usersIDs = usersIDs.filter(item => item !== member.id)
 			emails = emails.filter(item => item !== member.email)
 		}
 		else {
-			userIDs = [...userIDs, member.id];
+			usersIDs = [...usersIDs, member.id];
 			emails = [...emails, member.email];
 			emails = emails.filter((item, index) => emails.indexOf(item) === index); 
 		}
-		// console.log(userIDs);
+		// console.log(usersIDs);
 		// console.log(emails);
 	}
 
@@ -83,7 +83,7 @@
 					<!-- <button
 						on:click={() => {
 							emails = [...emails, member.email];
-							userIDs = [...userIDs, member.id];
+							usersIDs = [...usersIDs, member.id];
 							emails = emails.filter((item, index) => emails.indexOf(item) === index);
 						}}
 					>

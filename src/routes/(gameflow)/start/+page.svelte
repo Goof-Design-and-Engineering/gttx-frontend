@@ -36,10 +36,10 @@
 		}
 	});
 
-	async function createGame() {
+	async function createGame(usersIDs) {
 		gameData = {
 			org: $currentUser.org,
-			users: [$currentUser.id],
+			users: usersIDs.concat($currentUser.id),
 			emails: emails,
 			currentUsers: 0,
 			settings: {},
@@ -56,7 +56,7 @@
 
 		let message2send = `
 		<html>
-			<img class="gttx-logo" src="/svg/gttx_white.svg" alt="gttx!" />
+			<img class="gttx-logo" src="https://gttx.app/svg/gttx_white.svg" alt="gttx!" />
 
 			<p>
 			Hello! Welcome to GTTX.
@@ -104,7 +104,7 @@
 
 {#if $currentRole == 'facilitator'}
 	{#if scenarioChosen == true && emailsPicked == true}
-		{#await createGame()}
+		{#await createGame(usersIDs)}
 			<center>
 				<br/>
 				<hgroup>
@@ -143,9 +143,10 @@
 	<pre />
 {:else if $currentRole == 'observer' || $currentRole == 'participant'}
 	<!-- <br /> -->
-	<article>
+	<!-- <article>
 		<RecentGames />
-	</article>
+	</article> -->
+	<RecentGames />
 {:else}
 	<progressbar />
 {/if}

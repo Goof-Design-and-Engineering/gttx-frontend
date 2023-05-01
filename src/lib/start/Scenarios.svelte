@@ -13,13 +13,20 @@
 		scenarios = scenariosRaw;
 	});
 
+	async function notOnMount() {
+		const scenariosRaw = await getScenarios();
+		scenarios = scenariosRaw;
+	}
+
     // takes the scenario id and the module id from the thing and puts it here
 	function selectScenario(s,m) {
         scenarioID = s;
         moduleID = m
 		scenarioChosen = true;
-	}
-    
+		// force user to top of the page
+		document.body.scrollTop = 0;
+  		document.documentElement.scrollTop = 0;
+	}    
 
     $: {
         load = true
@@ -43,10 +50,7 @@
 						<h3>
 							<b>{scenario.contents?.name || ''}</b>
 							{#if scenario.contents?.source != "N/A"}
-								|
-								<a href={scenario.contents?.source || ''}>
-									{scenario.contents?.source || ''}
-								</a>
+								(<a href={scenario.contents?.source || ''} target="_blank" rel="noreferrer"> {scenario.contents?.source || ''}</a>)
 							{/if}
 						</h3>
 					</hgroup>
@@ -89,7 +93,7 @@
 	<center>
 		<br />
 		<hgroup>
-			<h1 aria-busy="true">Loading your recent games...</h1>
+			<h1 aria-busy="true">Loading the scenarios...</h1>
 			<h2>Give it a second...</h2>
 		</hgroup>
 	</center>

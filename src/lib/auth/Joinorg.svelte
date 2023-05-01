@@ -8,6 +8,7 @@
 
 	let invitecode;
 	let signupErr;
+	let buttonBusy = false;
 
 	async function get_organization_role(key) {
 		let invite_codes = ['facilitator_code', 'observer_code', 'participant_code'];
@@ -36,6 +37,7 @@
 
 	async function signup() {
 		try {
+			buttonBusy = true;
 			// call cursed function
 			let org_magic = await get_organization_role(invitecode);
 			if (org_magic.role_name == '' || org_magic.org_name?.id == '') {
@@ -75,9 +77,11 @@
 				await goto('/joinorg');
 			}
 		} catch (err) {
+			buttonBusy = false;
 			signupErr = err;
 			console.log(err);
 		}
+		buttonBusy = false;
 	}
 
 	async function createorg() {
@@ -124,7 +128,7 @@
 			</div>
 		</div>
 
-		<button disabled={!$form.valid} on:click={signup}>Join the organization!</button>
+		<button disabled={!$form.valid || buttonBusy} aria-busy={buttonBusy} on:click={signup}>Join the organization!</button>
 		<hr><br/>
 		<div class="grid">
 			<button on:click={createorg}>Create an org instead</button>
