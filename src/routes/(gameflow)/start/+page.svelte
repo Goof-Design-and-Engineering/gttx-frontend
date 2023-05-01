@@ -36,10 +36,10 @@
 		}
 	});
 
-	async function createGame() {
+	async function createGame(usersIDs) {
 		gameData = {
 			org: $currentUser.org,
-			users: [$currentUser.id],
+			users: usersIDs.concat($currentUser.id),
 			emails: emails,
 			currentUsers: 0,
 			settings: {},
@@ -56,7 +56,7 @@
 
 		let message2send = `
 		<html>
-			<img class="gttx-logo" src="/svg/gttx_white.svg" alt="gttx!" />
+			<img class="gttx-logo" src="https://gttx.app/svg/gttx_white.svg" alt="gttx!" />
 
 			<p>
 			Hello! Welcome to GTTX.
@@ -85,7 +85,7 @@
 		} catch (error) {
 			console.log(error);
 		} finally {
-			// goto('/dashboard/notes');
+			goto('/dashboard/notes');
 		}
 		return record;
 	}
@@ -103,36 +103,50 @@
 </script>
 
 {#if $currentRole == 'facilitator'}
-	<article>
-		{#if scenarioChosen == true && emailsPicked == true}
-			{#await createGame()}
-				<progressbar />
-			{:then game}
-				<!-- promise was fulfilled -->
-				{game.id}
-				<!-- {#await setGame(game.id) catch error}
-						{error}
-					{/await} -->
-			{:catch error}
-				{error}
-			{/await}
-		{:else if scenarioChosen == false}
-			<Scenarios bind:scenarioChosen bind:scenarioID bind:moduleID />
-		{:else}
-			<EmailPicker bind:emails bind:usersIDs bind:emailsPicked />
-		{/if}
-	</article>
-
-	<article>
-		<RecentGames />
-	</article>
+	{#if scenarioChosen == true && emailsPicked == true}
+		{#await createGame(usersIDs)}
+			<center>
+				<br/>
+				<hgroup>
+					<h1 aria-busy="true">Creating your room...</h1>
+					<h2>Give it a second...</h2>
+				</hgroup>
+				<br/>
+			</center>
+		{:then game}
+			<!-- promise was fulfilled -->
+			<hgroup>
+				<h1>Success! Your room has been created!</h1>
+				<h2>Get your colleagues together for the exercise.</h2>
+			</hgroup>
+			<div class="grid">
+				<button data-tooltip={game.id} class="secondary" on:click={() => navigator.clipboard.writeText(game.id)}>
+					Click here to copy the room code to your clipboard.
+				</button>
+				<button on:click={() => setGame(game.id)}>Click here to enter the gameroom</button>
+			</div>
+			<!-- {game.id} -->
+			<!-- {#await setGame(game.id) catch error}
+					{error}
+				{/await} -->
+		{:catch error}
+			{error}
+		{/await}
+	{:else if scenarioChosen == false}
+		<Scenarios bind:scenarioChosen bind:scenarioID bind:moduleID />
+	{:else}
+		<EmailPicker bind:emails bind:usersIDs bind:emailsPicked />
+	{/if}
+	<hr>
+	<RecentGames />
 
 	<pre />
-{:else if $currentRole == 'oberver' || $currentRole == 'participant'}
-	<br />
-	<article>
+{:else if $currentRole == 'observer' || $currentRole == 'participant'}
+	<!-- <br /> -->
+	<!-- <article>
 		<RecentGames />
-	</article>
+	</article> -->
+	<RecentGames />
 {:else}
 	<progressbar />
 {/if}

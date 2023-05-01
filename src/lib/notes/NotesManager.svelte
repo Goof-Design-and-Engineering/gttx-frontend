@@ -5,16 +5,17 @@
 	// import { Expor } from '$lib/notes/export';
 	import Modal from '$lib/Modal.svelte';
 	import Exporter from './Exporter.svelte';
+	import { loop_guard } from 'svelte/internal';
 
 	export let scenarioObject = {};
 	export let responses = {};
 	export let currentQuestion = {};
 
 	// because we *love* global variables
-	let prevLoading;
-	let nextLoading;
-	let prevEnabled;
-	let nextEnabled;
+	let prevLoading = false;
+	let nextLoading = false;
+	let prevEnabled = true;
+	let nextEnabled = true;
 	let errorThrown = '';
 	let showModal;
 	let docxDownload = '';
@@ -32,14 +33,14 @@
 
 		let maxLength = scenarioObject.modules[result.module].questions.length;
 
-		if (result.question < maxLength) {
-			const data = {
-				question: result.question + 1
-			};
-
+		// Remember result.question is base 0, maxLength is base 1
+		if (result.question <= maxLength - 2) {
+			const data = { question: result.question + 1 };
 			const result2 = await pb.collection('room').update($currentUser.roomid, data);
 
-			nextEnabled = true;
+			if (data.question <= maxLength - 2) {
+				nextEnabled = true; 
+			}
 		} else {
 			errorThrown = 'no questions left';
 			nextEnabled = false;
@@ -57,14 +58,12 @@
 		nextEnabled = false;
 		const result = await pb.collection('room').getOne($currentUser.roomid);
 
-		if (result.question > 1) {
-			const data = {
-				question: result.question - 1
-			};
-
+		if (result.question >= 1) {
+			const data = { question: result.question - 1 };
 			const result2 = await pb.collection('room').update($currentUser.roomid, data);
-
-			prevEnabled = true;
+			if (data.question >= 1) {
+				prevEnabled = true; 
+			}
 		} else {
 			errorThrown = 'no questions left';
 			prevEnabled = false;
@@ -74,7 +73,10 @@
 	}
 </script>
 
-<h1>NOTES MANAGER</h1>
+<hgroup>
+	<h1>Notes Manager - Facilitator</h1>
+	<h2>Room ID: {$currentUser.roomid}</h2>
+</hgroup>
 
 {#key errorThrown}
 	{#if errorThrown != ''}
@@ -91,17 +93,28 @@
 
 {#await scenarioObject}
 	<!-- scenarioObject is pending -->
+	<center>
+		<br />
+		<hgroup>
+			<h1 aria-busy="true">Loading the scenario...</h1>
+			<h2>Give it a second...</h2>
+		</hgroup>
+	</center>
 {:then scenario}
 	<!-- scenarioObject was fulfilled -->
-
-	<h2>Current Question</h2>
+	<hr>
+	<hgroup>
+		<h2>Current Question</h2>
+		<h3>This is the current question being shown to your participants and observers.</h3>
+	</hgroup>
 
 	<article>
 		{#await currentQuestion}
-			<progressbar />
+			<progress/>
 		{:then question}
+			<!-- {#if question == '' || prevLoading || nextLoading} // this is not synced so it looks ugly :(-->
 			{#if question == ''}
-				<progressbar />
+				<progress/>
 			{:else}
 				<!-- else content here -->
 				<!-- promise was fulfilled -->
@@ -111,8 +124,8 @@
 	</article>
 
 	<div class="grid">
-		<button on:click={decrementQuestion}>Prev. Question</button>
-		<button on:click={incrementQuestion}>Next Question</button>
+		<button on:click={decrementQuestion} aria-busy={prevLoading} disabled={!prevEnabled}>Prev. Question</button>
+		<button on:click={incrementQuestion} aria-busy={nextLoading} disabled={!nextEnabled}>Next Question</button>
 	</div>
 
 	<button
@@ -162,7 +175,9 @@
 			</article>
 		</Modal>
 		<!-- exporting options -->
-		<Exporter bind:docxDownload bind:htmlDownload />
+		<div class="scenario-box">
+			<Exporter bind:docxDownload bind:htmlDownload />
+		</div>
 	{/if}
 {:catch error}
 	<!-- scenarioObject was rejected -->

@@ -1,6 +1,6 @@
 <script>
 	import { useForm, validators, email, required } from 'svelte-use-form';
-	import { getCurrentOrganizationRecord, pb } from '$lib/pocketbase';
+	import { getCurrentOrganizationRecord, pb, currentUser } from '$lib/pocketbase';
 	import { goto } from '$app/navigation';
 	const form = useForm();
 
@@ -84,9 +84,11 @@
 	{#if createGameSwitch}
 		{#await creategame()}
 			<!-- creategame is pending -->
-			<progressbar />
+			Waiting...
+			<progress />
 		{:then result}
 			<!-- creategame was fulfilled -->
+			YOYOYOYOYO
 			{result.id}
 			{goto("/dashboard/notes?roomid="+result.id)}
 		{:catch error}

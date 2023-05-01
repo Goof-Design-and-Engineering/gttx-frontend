@@ -89,5 +89,29 @@
 				<!-- <p style="color: #B24C4C;">Failed to authenticate! <em data-tooltip={logonError}>(View Login Error)</em></p> -->
 			</center>
 		{/if}
+		<!-- <center><p><s>Or login with:</s></p></center>
+		<div class="grid">
+			<a
+				role="button"
+				class="oauth-button secondary"
+				id="google-oauth"
+				data-tooltip="Login with Google"><i class="bi bi-google" /></a
+			>
+			<a
+				aria-disabled=true
+				role="button"
+				class="oauth-button secondary"
+				id="discord-oauth"
+				data-tooltip="Login with Discord"><i class="bi bi-discord" /></a
+			>
+			<a
+				role="button"
+				class="oauth-button secondary"
+				id="github-oauth"
+				data-tooltip="Login with GitHub"><i class="bi bi-github" /></a
+			>
+		</div> -->
+		<hr />
+		<button id="signup_button" on:click={signup}> Signup </button>
 	{/if}
 {/await}

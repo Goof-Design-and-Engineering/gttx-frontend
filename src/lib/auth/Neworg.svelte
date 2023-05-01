@@ -9,6 +9,7 @@
 	let organization;
 	let secretkey;
 	let signupErr;
+	let signupBusy = false;
 
 	function generateInviteCode(role) {
 		const allowedChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -24,6 +25,7 @@
 	}
 
 	async function signup() {
+		signupBusy = true;
 		try {
 			console.log(generateInviteCode('test'));
 			// create organization data
@@ -42,13 +44,14 @@
 				const newOrg = { org: createdOrg.id };
 				pb.collection('users').update(pb.authStore.model?.id, newOrg);
 			}
-			await goto('/dashboard');
+			goto('/dashboard');
 		} catch (err) {
 			// if there is an error drop it here
 			console.log(err);
 			signupErr = err;
-			await goto('/createorg');
+			goto('/createorg');
 		}
+		signupBusy = false;
 	}
 
 	async function joinorg() {
@@ -110,7 +113,7 @@
 		</div> -->
 	</div>
 
-	<button disabled={!$form.valid} on:click={signup}>Create your organization!</button>
+	<button aria-busy={signupBusy} disabled={!$form.valid} on:click={signup}>Create your organization!</button>
 	<hr><br/>
 	<div class="grid">
 		<button on:click={joinorg}>Join an org instead</button>
