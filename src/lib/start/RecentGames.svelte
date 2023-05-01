@@ -6,7 +6,7 @@
 		// you can also fetch all records at once via getFullList
 		const records = await pb.collection('room').getFullList(200 /* batch size */, {
 			sort: '-created',
-			filter: `org='${$currentUser.org}' && users~'${$currentUser.id}'`
+			filter: `org='${$currentUser.org}' && (users~'${$currentUser.id}' ||  emails~'${$currentUser.email}')`
 			// filter: `org='${$currentUser.org}' && users~'${$currentUser.id}'`
 		});
 

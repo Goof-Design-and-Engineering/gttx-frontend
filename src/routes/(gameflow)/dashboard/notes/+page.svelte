@@ -39,6 +39,8 @@
 
 		currentQuestion = await getQuestion();
 
+		responses = await loadResponses();
+
 		loaded = true;
 	});
 
@@ -71,10 +73,10 @@
 
 {#if !loaded}
 	<!-- content here -->
-	<progressbar />
+	<progress />
 {:else}
-	{#await $currentRole}
-		<progressbar />
+	{#await $currentUser?.role}
+		<progress />
 	{:then role}
 		{#if role == 'facilitator'}
 			<!-- content here -->
@@ -83,9 +85,9 @@
 			<!-- else content here -->
 			<NotesResponder bind:scenarioObject bind:currentQuestion bind:responses />
 		{:else}
-			<progressbar />
+			<progress />
 		{/if}
 		<!-- content here -->
 	{/await}
 	<!-- else content here -->
-{/if}\
+{/if}
