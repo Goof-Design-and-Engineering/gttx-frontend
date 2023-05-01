@@ -8,7 +8,7 @@
 	import { loop_guard } from 'svelte/internal';
 
 	export let scenarioObject = {};
-	export let responses = {};
+	export let responses = [];
 	export let currentQuestion = {};
 
 	// because we *love* global variables
@@ -181,4 +181,33 @@
 	{/if}
 {:catch error}
 	<!-- scenarioObject was rejected -->
+{/await}
+
+
+<hr />
+<hgroup>
+	<h2>Previous Notes</h2>
+	<h3>Notes previously submitted by everyone for this scenario.</h3>
+</hgroup>
+{#await responses then responsesRaw}
+	<!-- <summary role="button"> -->
+		<!-- <hgroup style=""> -->
+			<!-- <b style="font-size:xx-large">Previous Notes</b> -->
+			<!-- <h3 style="color:var(--contrast)">Notes previously submitted by you for this scenario.</h3> -->
+		<!-- </hgroup> -->
+	<!-- </summary> -->
+	{#each responsesRaw as response, index}
+		<details>
+			<!-- svelte-ignore a11y-no-redundant-roles -->
+			<summary role="button" class="secondary">
+				Response {index} - {response.question}
+			</summary>
+			<div class="scenario-box">
+				{response.content}<br/><hr>
+				<em>Submitted at {response.created}</em>
+			</div>				
+		</details>
+	{/each}
+{:catch error}
+	{error}
 {/await}
