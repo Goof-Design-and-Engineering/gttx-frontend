@@ -108,7 +108,7 @@
 		<h3>This is the current question being shown to your participants and observers.</h3>
 	</hgroup>
 
-	<article>
+	<div class="scenario-box" style="margin-bottom: 30px;">
 		{#await currentQuestion}
 			<progress/>
 		{:then question}
@@ -121,7 +121,7 @@
 				{question}
 			{/if}
 		{/await}
-	</article>
+	</div>
 
 	<div class="grid">
 		<button on:click={decrementQuestion} aria-busy={prevLoading} disabled={!prevEnabled}>Prev. Question</button>
