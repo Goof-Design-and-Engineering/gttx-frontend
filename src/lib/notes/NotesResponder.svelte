@@ -63,7 +63,7 @@
 		<center>
 			<!-- svelte-ignore a11y-invalid-attribute -->
 			<a href="#" aria-busy=true>
-				Waiting for scenario to start. contact your facilitator if this is taking too long...
+				Waiting for scenario to start. Contact your facilitator if this is taking too long...
 			</a>
 		</center>
 	</div>
