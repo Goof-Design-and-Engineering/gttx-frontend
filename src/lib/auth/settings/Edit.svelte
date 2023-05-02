@@ -12,6 +12,7 @@
 	const form = useForm();
 	const formData = new FormData();
 
+	var old_username = '';
 	var new_username = '';
 	var new_emailaddr = '';
 	var new_avatar = '';
@@ -49,7 +50,7 @@
 		}
 
 		try {
-			if ($currentUser.role == 'facilitator') {
+			if ($currentUser?.role == 'facilitator' && $currentUser?.org) {
 				await pb.collection('organization').delete($currentOrganization);
 			} else {
 				await pb.collection('users').delete($currentUser.id);
@@ -74,6 +75,7 @@
 		if (!$currentUser) {
 			goto('/login');
 		} else {
+			old_username = $currentUser.username;
 			new_username = $currentUser.username;
 		}
 	});
@@ -96,44 +98,44 @@
 				<h1 style="font-size: 40px;">Edit settings for {$currentUser.username}</h1>
 				<h2>Express yourself!</h2>
 			</hgroup>
-			<article>
-				<label>
-					Username
-					<input
-						type="text"
-						name="new_username"
-						id="new_username"
-						bind:value={new_username}
-						use:validators={[required]}
-					/>
+			<!-- <article> -->
+			<label>
+				Username
+				<input
+					type="text"
+					name="new_username"
+					id="new_username"
+					bind:value={new_username}
+					use:validators={[required]}
+				/>
 
-					Email Address
+				Email Address
+				<input
+					type="text"
+					name="new_emailaddr"
+					id="new_emailaddr"
+					value={$currentUser.email}
+					use:validators={[required]}
+					disabled
+				/>
+
+				<label for="file">
+					Profile Picture
 					<input
-						type="text"
-						name="new_emailaddr"
-						id="new_emailaddr"
-						value={$currentUser.email}
-						use:validators={[required]}
+						type="file"
+						id="pfp"
+						name="pfp"
+						accept="image/*"
+						bind:value={new_avatar}
 						disabled
 					/>
-
-					<label for="file">
-						Profile Picture
-						<input
-							type="file"
-							id="pfp"
-							name="pfp"
-							accept="image/*"
-							bind:value={new_avatar}
-							disabled
-						/>
-					</label>
 				</label>
-			</article>
+			</label>
+			<!-- </article> -->
 			<br />
 			<div class="grid">
 				<button on:click={back} class="secondary"> Back to Settings</button>
-				<button on:click={submit}> Submit</button>
+				<button on:click={submit} disabled={(new_username == old_username)}> Submit</button>
 			</div>
 			<center>
 				<button
