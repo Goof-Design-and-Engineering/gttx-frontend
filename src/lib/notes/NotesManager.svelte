@@ -143,7 +143,7 @@
 	{:then scenario}
 		<!-- scenarioObject was fulfilled -->
 		{#if roomState == "open"}
-			<button on:click={toggleRoomState}>Close the room</button>
+			<button on:click={toggleRoomState} class="secondary">Close the room</button>
 		{:else}
 			<button on:click={toggleRoomState}>Re-open the room</button>
 		{/if}
