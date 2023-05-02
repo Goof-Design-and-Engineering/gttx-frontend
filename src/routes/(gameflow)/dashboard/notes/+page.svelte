@@ -9,11 +9,13 @@
 	// subscriptions to the everchanging notes from pocketbase aka realtime
 	let roomChange;
 	let noteChange;
+	let userChange;
 
 	// scenarioObject to pass around
 	let scenarioObject = {};
 	let currentQuestion = '';
 	let responses = [];
+	let activeUsers = [];
 	let loaded = false;
 	let roomState;
 
@@ -24,6 +26,11 @@
 		if (!$currentUser.org) {
 			goto('/createorg');
 		}
+
+		userChange = await pb.collection('users').subscribe('*', async function (e) {
+			activeUsers = await getActiveUsers();
+			console.log(e);
+		})
 
 		roomChange = await pb.collection('room').subscribe($currentUser.roomid, async function (e) {
 			currentQuestion = await getQuestion();
@@ -43,6 +50,8 @@
 		currentQuestion = await getQuestion();
 
 		roomState = await getRoomState();
+
+		activeUsers = await getActiveUsers();
 
 		responses = await loadResponses();
 
@@ -74,6 +83,20 @@
 		return resultList.items;
 	}
 
+	async function getActiveUsers() {
+		let filterMagic =
+			($currentRole == 'facilitator')
+				? `(org='${$currentUser.org}' && roomid='${$currentUser.roomid}' && id!='${$currentUser.id}')`
+				: `(org='${$currentUser.org}' && roomid='${$currentUser.roomid}')`
+		// console.log(filterMagic)
+
+		const resultList = await pb.collection('users').getList(1, 50, {
+			filter: filterMagic
+		});
+		console.log(resultList.items)
+		return resultList.items;
+	}
+
 	async function getRoomState() {
 		// if not loaded load it
 		const result = await pb.collection('room').getOne($currentUser.roomid);
@@ -85,6 +108,7 @@
 	onDestroy(async () => {
 		roomChange?.();
 		noteChange?.();
+		userChange?.();
 	});
 
 	$: {
@@ -101,12 +125,12 @@
 	{:then role}
 		{#if role == 'facilitator'}
 			<!-- content here -->
-			<NotesManager bind:scenarioObject bind:currentQuestion bind:responses bind:roomState />
+			<NotesManager bind:scenarioObject bind:currentQuestion bind:responses bind:roomState bind:activeUsers />
 		{:else if role == 'participant'}
 			<!-- else content here -->
 			<NotesResponder bind:scenarioObject bind:currentQuestion bind:responses bind:roomState />
 		{:else if role == 'observer'}
-			<NotesViewer bind:scenarioObject bind:currentQuestion bind:responses bind:roomState />
+			<NotesViewer bind:scenarioObject bind:currentQuestion bind:responses bind:roomState bind:activeUsers />
 		{:else}
 			<progress />
 		{/if}

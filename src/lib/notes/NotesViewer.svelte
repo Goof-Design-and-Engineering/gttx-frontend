@@ -6,6 +6,7 @@
 	export let scenarioObject = {};
 	export let responses = {};
 	export let currentQuestion = {};
+	export let activeUsers = {};
 	export let roomState;
 
 	// let success = '';
@@ -65,6 +66,29 @@
 				Waiting for scenario to start. Contact your facilitator if this is taking too long...
 			</a>
 		</center>
+	</div>
+	<div class="scenario-box" style="margin-bottom: 30px;">
+		<hgroup>
+			<h1>The Waiting Room</h1>
+			<h2>These are the users that are currently waiting for the game to start.</h2>
+		</hgroup>
+		{#if activeUsers[0]}
+			<div class="grid scrollable-grid">
+				{#each activeUsers as user}
+					<!-- svelte-ignore a11y-invalid-attribute -->
+					<a href=# class="outline" role="button" style="margin-bottom: var(--spacing)">
+						{user.username} ({user.email})
+					</a>
+				{/each}
+			</div>
+		{:else}
+			<div class="scenario-box" style="margin-bottom: 30px;">
+				<!-- <input class="cursed-fake-button" type="text" value="There are currently no users in the waiting room. It's only you and your thoughts." readonly> -->
+				<center>
+					That's strange. It's only you. There isn't even a facilitator. How did this happen?
+				</center>
+			</div>
+		{/if}
 	</div>
 {:else if roomState == "open" || roomState == "closed"}
 	{#if roomState == "open"}

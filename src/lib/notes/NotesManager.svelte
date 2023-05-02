@@ -10,6 +10,7 @@
 	export let scenarioObject = {};
 	export let responses = {};
 	export let currentQuestion = {};
+	export let activeUsers = [];
 	export let roomState;
 
 	// because we *love* global variables
@@ -129,6 +130,29 @@
 			<h2>Click the button below to start the game at any time.</h2>
 		</hgroup>
 		<button on:click={toggleRoomState}>Start the game!</button>
+	</div>
+	<div class="scenario-box" style="margin-bottom: 30px;">
+		<hgroup>
+			<h1>The Waiting Room</h1>
+			<h2>These are the users that are currently waiting for the game to start.</h2>
+		</hgroup>
+		{#if activeUsers[0]}
+			<div class="grid scrollable-grid">
+				{#each activeUsers as user}
+					<!-- svelte-ignore a11y-invalid-attribute -->
+					<a href=# class="outline" role="button" style="margin-bottom: var(--spacing)">
+						{user.username} ({user.email})
+					</a>
+				{/each}
+			</div>
+		{:else}
+			<div class="scenario-box" style="margin-bottom: 30px;">
+				<!-- <input class="cursed-fake-button" type="text" value="There are currently no users in the waiting room. It's only you and your thoughts." readonly> -->
+				<center>
+					There are currently no users in the waiting room. It's only you and your thoughts.
+				</center>
+			</div>
+		{/if}
 	</div>
 {:else if roomState == "open" || roomState == "closed"}
 	{#await scenarioObject}
