@@ -70,10 +70,6 @@ footer {
     opacity: 1;
 }
 
-.nothing {
-    opacity: inherit;
-}
-
 #google-oauth {
     font-size: larger;
     background-color: #ea4335;
