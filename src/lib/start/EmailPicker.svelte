@@ -12,7 +12,7 @@
 	// let emailsOutOfOrg = [];
 
 	let newEmail = '';
-	let test;
+	let orgMembers;
 	let inOrg = [];
 	let loadedOrg = false;
 
@@ -36,7 +36,7 @@
 	}
 
 	onMount(async () => {
-		test = await pb.collection('organization').getOne($currentUser.org, { expand: 'members' });
+		orgMembers = await pb.collection('organization').getOne($currentUser.org, { expand: 'members' });
 		loadedOrg = true;
 	});
 </script>
@@ -69,11 +69,11 @@
 		<h2>Add from organization</h2>
 		<h3>Get your colleagues in on the action.</h3>
 	</hgroup>
-	{#if loadedOrg && test != {}}
+	{#if loadedOrg && orgMembers != {}}
 		<details role="list">
 			<summary aria-haspopup="listbox">Select Members from Organization</summary>
 			<ul role="listbox">
-				{#each test.expand.members as member}
+				{#each orgMembers.expand.members as member}
 					<li>
 						<label>
 						<input type="checkbox" on:change={addMember(member)} value={member.email}>
