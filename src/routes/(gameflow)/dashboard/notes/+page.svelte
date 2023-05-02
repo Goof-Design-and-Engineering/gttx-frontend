@@ -85,9 +85,9 @@
 
 	async function getActiveUsers() {
 		let filterMagic =
-			($currentRole == 'facilitator')
-				? `(org='${$currentUser.org}' && roomid='${$currentUser.roomid}' && id!='${$currentUser.id}')`
-				: `(org='${$currentUser.org}' && roomid='${$currentUser.roomid}')`
+			($currentRole == 'facilitator' || $currentRole == 'observer' )
+				? `(org='${$currentUser.org}' && roomid='${$currentUser.roomid}' && role!='facilitator')`
+				: ``
 		// console.log(filterMagic)
 
 		const resultList = await pb.collection('users').getList(1, 50, {

@@ -91,6 +91,24 @@
 		{/if}
 	</div>
 {:else if roomState == "open" || roomState == "closed"}
+	<details>
+		<summary class="scenario-summary-header">Current Players in Room</summary>
+		<div class="grid scrollable-grid">
+			{#if activeUsers[0]}
+				{#each activeUsers as user}
+					<!-- svelte-ignore a11y-invalid-attribute -->
+					<a href=# class="outline" role="button" style="margin-bottom: var(--spacing)">
+						{user.username} ({user.email})
+					</a>
+				{/each}
+			{:else}
+				<!-- <input class="cursed-fake-button" type="text" value="There are currently no users in the waiting room. It's only you and your thoughts." readonly> -->
+				<center>
+					There are currently no users in the waiting room. It's only you and your thoughts.
+				</center>
+			{/if}
+		</div>
+	</details>
 	{#if roomState == "open"}
 		{#await scenarioObject}
 			<!-- scenarioObject is pending -->
