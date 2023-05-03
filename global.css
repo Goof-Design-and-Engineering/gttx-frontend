@@ -42,6 +42,10 @@ footer {
     box-shadow: var(--box-shadow);
 }
 
+.user-list-grid {
+    padding: 2% 2% 0% 2% !important;
+}
+
 .scenario-box {
     background-color: var(--form-element-background-color) !important;
     border: 4px solid var(--primary-focus);
