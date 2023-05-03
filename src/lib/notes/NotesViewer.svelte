@@ -80,10 +80,15 @@
 			<h2>These are the users that are currently waiting for the game to start.</h2>
 		</hgroup>
 		{#if activeUsers[0]}
-			<div class="grid scrollable-grid">
+			<div class="grid scrollable-grid user-list-grid">
 				{#each activeUsers as user}
 					<!-- svelte-ignore a11y-invalid-attribute -->
-					<a href="#" class="outline" role="button" style="margin-bottom: var(--spacing)">
+					<a
+						href="#"
+						class="outline {user.role == 'observer' ? 'contrast' : ''}"
+						role="button"
+						style="margin-bottom: var(--spacing)"
+					>
 						{user.username} ({user.email})
 					</a>
 				{/each}
@@ -99,12 +104,17 @@
 	</div>
 {:else if roomState == 'open' || roomState == 'closed'}
 	<details>
-		<summary class="scenario-summary-header">Current Players in Room</summary>
-		<div class="grid scrollable-grid">
+		<summary role="button" class="secondary">Current Players in Room</summary>
+		<div class="grid scrollable-grid user-list-grid">
 			{#if activeUsers[0]}
 				{#each activeUsers as user}
 					<!-- svelte-ignore a11y-invalid-attribute -->
-					<a href="#" class="outline" role="button" style="margin-bottom: var(--spacing)">
+					<a
+						href="#"
+						class="outline {user.role == 'observer' ? 'contrast' : ''}"
+						role="button"
+						style="margin-bottom: var(--spacing)"
+					>
 						{user.username} ({user.email})
 					</a>
 				{/each}

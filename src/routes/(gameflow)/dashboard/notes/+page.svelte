@@ -137,7 +137,13 @@
 			/>
 		{:else if role == 'participant'}
 			<!-- else content here -->
-			<NotesResponder bind:scenarioObject bind:currentQuestion bind:responses bind:roomState />
+			<NotesResponder
+				bind:scenarioObject
+				bind:currentQuestion
+				bind:responses
+				bind:roomState
+				bind:roomName 
+			/>
 		{:else if role == 'observer'}
 			<NotesViewer
 				bind:scenarioObject

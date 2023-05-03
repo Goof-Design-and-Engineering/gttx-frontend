@@ -132,16 +132,7 @@
 				<h1>Success! Your room has been created!</h1>
 				<h2>Get your colleagues together for the exercise.</h2>
 			</hgroup>
-			<div class="grid">
-				<button
-					data-tooltip={game.id}
-					class="secondary"
-					on:click={() => navigator.clipboard.writeText(game.id)}
-				>
-					Click here to copy the room code to your clipboard.
-				</button>
-				<button on:click={() => setGame(game.id)}>Click here to enter the gameroom</button>
-			</div>
+			<button on:click={() => setGame(game.id)}>Click here to enter the gameroom</button>
 			<!-- {game.id} -->
 			<!-- {#await setGame(game.id) catch error}
 					{error}

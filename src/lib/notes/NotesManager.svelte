@@ -116,7 +116,7 @@
 	</div> -->
 </div>
 
-{#key errorThrown}
+<!-- {#key errorThrown}
 	{#if errorThrown != ''}
 		<h1>{errorThrown}</h1>
 		<button
@@ -127,7 +127,7 @@
 			clear error</button
 		>
 	{/if}
-{/key}
+{/key} -->
 
 {#if roomState == undefined}
 	<progress />
@@ -145,10 +145,15 @@
 			<h2>These are the users that are currently waiting for the game to start.</h2>
 		</hgroup>
 		{#if activeUsers[0]}
-			<div class="grid scrollable-grid">
+			<div class="grid scrollable-grid user-list-grid">
 				{#each activeUsers as user}
 					<!-- svelte-ignore a11y-invalid-attribute -->
-					<a href="#" class="outline" role="button" style="margin-bottom: var(--spacing)">
+					<a
+						href="#"
+						class="outline {user.role == 'observer' ? 'contrast' : ''}"
+						role="button"
+						style="margin-bottom: var(--spacing)"
+					>
 						{user.username} ({user.email})
 					</a>
 				{/each}
@@ -175,28 +180,36 @@
 	{:then scenario}
 		<!-- scenarioObject was fulfilled -->
 		{#if roomState == 'open'}
-			<button on:click={toggleRoomState} class="secondary">Close the room</button>
+			<button on:click={toggleRoomState}>Close the room</button>
 		{:else}
-			<button on:click={toggleRoomState}>Re-open the room</button>
+			<button on:click={toggleRoomState} class="secondary">Re-open the room</button>
 		{/if}
 		<hr />
 		<details>
-			<summary class="scenario-summary-header">Current Players in Room</summary>
-			<div class="grid scrollable-grid">
-				{#if activeUsers[0]}
+			<!-- svelte-ignore a11y-no-redundant-roles -->
+			<summary role="button" class="secondary">Current Players in Room</summary>
+			{#if activeUsers[0]}
+				<div class="grid scrollable-grid user-list-grid">
 					{#each activeUsers as user}
 						<!-- svelte-ignore a11y-invalid-attribute -->
-						<a href="#" class="outline" role="button" style="margin-bottom: var(--spacing)">
+						<a
+							href="#"
+							class="outline {user.role == 'observer' ? 'contrast' : ''}"
+							role="button"
+							style="margin-bottom: var(--spacing)"
+						>
 							{user.username} ({user.email})
 						</a>
 					{/each}
-				{:else}
-					<!-- <input class="cursed-fake-button" type="text" value="There are currently no users in the waiting room. It's only you and your thoughts." readonly> -->
-					<center>
-						There are currently no users in the waiting room. It's only you and your thoughts.
-					</center>
-				{/if}
-			</div>
+				</div>
+			{:else}
+				<input
+					class="cursed-fake-button"
+					type="text"
+					value="There are currently no users in the game room. You're all alone."
+					readonly
+				/>
+			{/if}
 		</details>
 		<hr />
 		<hgroup>
