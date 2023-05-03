@@ -83,27 +83,27 @@
 		</div>
 		<hr />
 		<br />
-		<article>
-			<div class="grid">
-				<div>
-					Name
-					<input
-						style="border: 1px solid var(--primary); border-radius: 1px;"
-						type="text"
-						value={$currentUser.username}
-						readonly
-					/>
-				</div>
-				<div>
-					Email
-					<input
-						style="border: 1px solid var(--primary); border-radius: 1px;"
-						type="text"
-						value={$currentUser.email}
-						readonly
-					/>
-				</div>
+		<!-- <article> -->
+		<div class="grid">
+			<div>
+				Name
+				<input
+					style="border: 1px solid var(--primary); border-radius: 1px;"
+					type="text"
+					value={$currentUser.username}
+					readonly
+				/>
 			</div>
+			<div>
+				Email
+				<input
+					style="border: 1px solid var(--primary); border-radius: 1px;"
+					type="text"
+					value={$currentUser.email}
+					readonly
+				/>
+			</div>
+		</div>
 		{#if $currentOrganization}
 			<div class="grid">
 				<div>
@@ -126,7 +126,7 @@
 				</div>
 			</div>
 		{/if}
-		</article>
+		<!-- </article> -->
 		<br />
 		<div class="grid">
 			<button on:click={editsettings}> Edit Account</button>

@@ -132,6 +132,7 @@
     <a role="button" class="contrast outline" href={docxDownload} download="results.docx"
         >Export DOCX</a
     >
+    <!-- svelte-ignore a11y-invalid-attribute -->
     <a
         role="button"
         class="contrast outline"

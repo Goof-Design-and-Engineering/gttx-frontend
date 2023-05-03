@@ -51,7 +51,11 @@
 					<!-- {#if game.name}
 						<button id={game.id} on:click={() => setGame(game.id)}>{game.name}, {game.created.split(" ")[0]}</button>
 					{:else} -->
-					<button id={game.id} on:click={() => setGame(game.id)}>{game.id}, {game.created.split(" ")[0]}</button>
+					<button 
+						class="{((game.state == "waiting" || game.state == "open") && game.state != undefined) ? '' : 'secondary'}"
+						id={game.id} 
+						on:click={() => setGame(game.id)}>{game.id}, {game.created.split(" ")[0]}
+					</button>
 					<!-- {/if} -->
 				{/each}
 			</div>

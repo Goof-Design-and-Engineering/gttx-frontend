@@ -36,12 +36,13 @@
 	}
 
 	async function signup() {
+		signupErr = "";
 		try {
 			buttonBusy = true;
 			// call cursed function
 			let org_magic = await get_organization_role(invitecode);
 			if (org_magic.role_name == '' || org_magic.org_name?.id == '') {
-				signupErr = 'Your code seems to be invlid; try again!';
+				signupErr = 'Your code seems to be invalid; try again!';
 			}
 
 			const data = {
@@ -102,11 +103,11 @@
 	});
 </script>
 
-{#if signupErr}
+<!-- {#if signupErr}
 	<p>
 		{signupErr}
 	</p>
-{/if}
+{/if} -->
 
 {#await currentUser then _}
 	<h1 class="page-name-header">Join an org</h1>
@@ -129,6 +130,11 @@
 		</div>
 
 		<button disabled={!$form.valid || buttonBusy} aria-busy={buttonBusy} on:click={signup}>Join the organization!</button>
+		{#if signupErr}
+			<center>
+				<input style="border: 2px solid red; border-radius: 5px; text-align: center;" type="text" value={signupErr} readonly>
+			</center>
+		{/if}
 		<hr><br/>
 		<div class="grid">
 			<button on:click={createorg}>Create an org instead</button>

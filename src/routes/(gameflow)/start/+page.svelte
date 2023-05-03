@@ -45,7 +45,8 @@
 			settings: {},
 			question: 0,
 			module: moduleID,
-			scenarios: scenarioID
+			scenarios: scenarioID,
+			state: "waiting"
 		};
 
 		const inviteCodes = {

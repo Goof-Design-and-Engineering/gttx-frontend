@@ -49,6 +49,12 @@ footer {
     padding: 3%;
 }
 
+.cursed-fake-button {
+    border: 2px solid var(--primary-contrast);
+    border-radius: 5px;
+    text-align: center;
+}
+
 .oauth-button {
     margin-bottom: 10px;
     opacity: 0.85;

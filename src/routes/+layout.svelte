@@ -13,7 +13,7 @@
 		<!-- <li><a href="/login" role="button">Begin</a></li> -->
 		<!-- <li><button on:click={signout()}> Signout </button></li> -->
 		{#await $currentUser}
-			<progressbar />
+			<progress />
 		{:then user}
 			{#if user}
 				<li><a href="/account" role="button" class="outline">Settings</a></li>
