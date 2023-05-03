@@ -18,6 +18,7 @@
 	let activeUsers = [];
 	let loaded = false;
 	let roomState;
+	let roomName;
 
 	onMount(async () => {
 		if (!$currentUser) {
@@ -30,7 +31,7 @@
 		userChange = await pb.collection('users').subscribe('*', async function (e) {
 			activeUsers = await getActiveUsers();
 			console.log(e);
-		})
+		});
 
 		roomChange = await pb.collection('room').subscribe($currentUser.roomid, async function (e) {
 			currentQuestion = await getQuestion();
@@ -46,6 +47,7 @@
 		const result = await pb.collection('room').getOne($currentUser.roomid, { expand: 'scenarios' });
 
 		scenarioObject = result.expand.scenarios.contents;
+		roomName = result.name || result.id;
 
 		currentQuestion = await getQuestion();
 
@@ -71,29 +73,29 @@
 		// ? is if user is facilitator or observer, grabbing ALL notes
 		// : if if user is not facilitator or observer, therefore we must filter for only their notes
 		let filterMagic =
-			($currentRole == 'facilitator' || $currentRole == 'observer' )
+			$currentRole == 'facilitator' || $currentRole == 'observer'
 				? `(org='${$currentUser.org}' && room='${$currentUser.roomid}')`
-				: `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}')`
+				: `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}')`;
 		// console.log(filterMagic)
 
 		const resultList = await pb.collection('notes').getList(1, 50, {
 			filter: filterMagic
 		});
-		console.log(resultList.items)
+		console.log(resultList.items);
 		return resultList.items;
 	}
 
 	async function getActiveUsers() {
 		let filterMagic =
-			($currentRole == 'facilitator' || $currentRole == 'observer' )
+			$currentRole == 'facilitator' || $currentRole == 'observer'
 				? `(org='${$currentUser.org}' && roomid='${$currentUser.roomid}' && role!='facilitator')`
-				: ``
+				: ``;
 		// console.log(filterMagic)
 
 		const resultList = await pb.collection('users').getList(1, 50, {
 			filter: filterMagic
 		});
-		console.log(resultList.items)
+		console.log(resultList.items);
 		return resultList.items;
 	}
 
@@ -125,12 +127,32 @@
 	{:then role}
 		{#if role == 'facilitator'}
 			<!-- content here -->
-			<NotesManager bind:scenarioObject bind:currentQuestion bind:responses bind:roomState bind:activeUsers />
+			<NotesManager
+				bind:scenarioObject
+				bind:currentQuestion
+				bind:responses
+				bind:roomState
+				bind:activeUsers
+				bind:roomName
+			/>
 		{:else if role == 'participant'}
 			<!-- else content here -->
-			<NotesResponder bind:scenarioObject bind:currentQuestion bind:responses bind:roomState />
+			<NotesResponder
+				bind:scenarioObject
+				bind:currentQuestion
+				bind:responses
+				bind:roomState
+				bind:roomName 
+			/>
 		{:else if role == 'observer'}
-			<NotesViewer bind:scenarioObject bind:currentQuestion bind:responses bind:roomState bind:activeUsers />
+			<NotesViewer
+				bind:scenarioObject
+				bind:currentQuestion
+				bind:responses
+				bind:roomState
+				bind:activeUsers
+				bind:roomName
+			/>
 		{:else}
 			<progress />
 		{/if}

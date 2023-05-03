@@ -21,22 +21,22 @@
 
 	async function addMember(member) {
 		// emails = [...emails, member.email];
-		if (usersIDs.includes(member.id))
-		{
-			usersIDs = usersIDs.filter(item => item !== member.id)
-			emails = emails.filter(item => item !== member.email)
-		}
-		else {
+		if (usersIDs.includes(member.id)) {
+			usersIDs = usersIDs.filter((item) => item !== member.id);
+			emails = emails.filter((item) => item !== member.email);
+		} else {
 			usersIDs = [...usersIDs, member.id];
 			emails = [...emails, member.email];
-			emails = emails.filter((item, index) => emails.indexOf(item) === index); 
+			emails = emails.filter((item, index) => emails.indexOf(item) === index);
 		}
 		// console.log(usersIDs);
 		// console.log(emails);
 	}
 
 	onMount(async () => {
-		orgMembers = await pb.collection('organization').getOne($currentUser.org, { expand: 'members' });
+		orgMembers = await pb
+			.collection('organization')
+			.getOne($currentUser.org, { expand: 'members' });
 		loadedOrg = true;
 	});
 </script>
@@ -61,9 +61,14 @@
 			{/each}
 		{:else}
 			<center>
-				<input style="border: 2px solid var(--primary-contrast); border-radius: 5px; text-align: center;" type="text" value="You have no emails selected right now!" readonly>
+				<input
+					style="border: 2px solid var(--primary-contrast); border-radius: 5px; text-align: center;"
+					type="text"
+					value="You have no emails selected right now!"
+					readonly
+				/>
 			</center>
-		{/if}				
+		{/if}
 	</header>
 	<hgroup>
 		<h2>Add from organization</h2>
@@ -76,7 +81,7 @@
 				{#each orgMembers.expand.members as member}
 					<li>
 						<label>
-						<input type="checkbox" on:change={addMember(member)} value={member.email}>
+							<input type="checkbox" on:change={addMember(member)} value={member.email} />
 							{member.username} ({member.email})
 						</label>
 					</li>
@@ -95,8 +100,9 @@
 	{:else}
 		<progressbar />
 	{/if}
-	
-	<footer><br/>
+
+	<footer>
+		<br />
 		<hgroup>
 			<h2>Invite new people via email</h2>
 			<h3>Let others join in on the exercise.</h3>
@@ -110,11 +116,12 @@
 				bind:value={newEmail}
 				use:validators={[required, email]}
 			/>
-			<button disabled={!$form.valid} 
+			<button
+				disabled={!$form.valid}
 				on:click={() => {
 					emails = [...emails, newEmail];
 					emails = emails.filter((item, index) => emails.indexOf(item) === index);
-					newEmail = "";
+					newEmail = '';
 				}}
 			>
 				Add this email
@@ -124,6 +131,7 @@
 </article>
 
 <button
+	disabled={!emails[0]}
 	on:click={() => {
 		emailsPicked = true;
 	}}
