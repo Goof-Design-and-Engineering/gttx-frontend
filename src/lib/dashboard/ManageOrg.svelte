@@ -21,6 +21,7 @@
 	let showModal = false;
 	let memberToRemove;
 	var password_confirm = '';
+	let loading = false;
 
 	// Select box
 	let selected = [];
@@ -92,10 +93,12 @@
 	}
 
 	async function deleteUser(userid) {
+		loading = true;
 		try {
 			await pb.collection('users').authWithPassword($currentUser.email, password_confirm);
 		} catch (e) {
 			alert('Your password was incorrect!');
+			loading = false;
 			return;
 		}
 
@@ -105,6 +108,7 @@
 			deleting = false;
 			console.log(e);
 			alert('Something went wrong, please try again!');
+			loading = false;
 			return;
 		}
 
@@ -117,6 +121,8 @@
 				return e.id;
 			})
 		});
+		loading = false;
+		showModal = false;
 	}
 
 	async function changeRole(id, index) {
@@ -249,7 +255,8 @@
 					<button
 						data-target="modal-example"
 						on:click={deleteUser(memberToRemove.id)}
-						disabled={!$form.valid}
+						disabled={!$form.valid || loading}
+						aria-busy={loading}
 					>
 						Confirm
 					</button>
