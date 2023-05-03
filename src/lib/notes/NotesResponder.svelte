@@ -7,6 +7,7 @@
 	export let responses = {};
 	export let currentQuestion = {};
 	export let roomState;
+	export let roomName;
 	const form = useForm();
 
 	let success = '';
@@ -45,7 +46,12 @@
 
 <hgroup>
 	<h1>Notes Response - {$currentUser.role.replace(/^[a-z]/, function(m){ return m.toUpperCase() })	}</h1>
-	<h2>Room ID: {$currentUser.roomid}</h2>
+	{#if roomName == undefined}
+		<!-- svelte-ignore a11y-invalid-attribute -->
+		<h2>Room Name: <a href="#" aria-busy="true">Loading...</a></h2>
+	{:else}
+		<h2>Room Name: {roomName || $currentUser.roomid}</h2>
+	{/if}
 </hgroup>
 
 {#if roomState == undefined}

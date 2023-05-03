@@ -12,6 +12,7 @@
 	export let currentQuestion = {};
 	export let activeUsers = [];
 	export let roomState;
+	export let roomName;
 
 	// because we *love* global variables
 	let prevLoading = false;
@@ -27,16 +28,14 @@
 	let htmlDownload = '';
 
 	async function toggleRoomState() {
-		if (roomState == "open") {
-			const data = { state: "closed" };
+		if (roomState == 'open') {
+			const data = { state: 'closed' };
 			const result = await pb.collection('room').update($currentUser.roomid, data);
-		}
-		else if (roomState == "closed" || roomState == "waiting") {
-			const data = { state: "open" };
+		} else if (roomState == 'closed' || roomState == 'waiting') {
+			const data = { state: 'open' };
 			const result = await pb.collection('room').update($currentUser.roomid, data);
-		}
-		else {
-			errorThrown("Oops!");
+		} else {
+			errorThrown('Oops!');
 		}
 	}
 
@@ -57,7 +56,7 @@
 			const result2 = await pb.collection('room').update($currentUser.roomid, data);
 
 			if (data.question <= maxLength - 2) {
-				nextEnabled = true; 
+				nextEnabled = true;
 			}
 		} else {
 			errorThrown = 'no questions left';
@@ -80,7 +79,7 @@
 			const data = { question: result.question - 1 };
 			const result2 = await pb.collection('room').update($currentUser.roomid, data);
 			if (data.question >= 1) {
-				prevEnabled = true; 
+				prevEnabled = true;
 			}
 		} else {
 			errorThrown = 'no questions left';
@@ -93,10 +92,19 @@
 
 <div class="grid">
 	<!-- <div> -->
-		<hgroup>
-			<h1>Notes Manager - {$currentUser.role.replace(/^[a-z]/, function(m){ return m.toUpperCase() })	}</h1>
-			<h2>Room ID: {$currentUser.roomid}</h2>
-		</hgroup>
+	<hgroup>
+		<h1>
+			Notes Manager - {$currentUser.role.replace(/^[a-z]/, function (m) {
+				return m.toUpperCase();
+			})}
+		</h1>
+		{#if roomName == undefined}
+			<!-- svelte-ignore a11y-invalid-attribute -->
+			<h2>Room Name: <a href="#" aria-busy="true">Loading...</a></h2>
+		{:else}
+			<h2>Room Name: {roomName || $currentUser.roomid}</h2>
+		{/if}
+	</hgroup>
 	<!-- </div>
 	<div style="text-align: right">
 		<b>Room State</b>: 
@@ -123,7 +131,7 @@
 
 {#if roomState == undefined}
 	<progress />
-{:else if roomState == "waiting"}
+{:else if roomState == 'waiting'}
 	<div class="scenario-box" style="margin-bottom: 30px;">
 		<hgroup>
 			<h1>The room has not yet started...</h1>
@@ -140,7 +148,7 @@
 			<div class="grid scrollable-grid">
 				{#each activeUsers as user}
 					<!-- svelte-ignore a11y-invalid-attribute -->
-					<a href=# class="outline" role="button" style="margin-bottom: var(--spacing)">
+					<a href="#" class="outline" role="button" style="margin-bottom: var(--spacing)">
 						{user.username} ({user.email})
 					</a>
 				{/each}
@@ -154,7 +162,7 @@
 			</div>
 		{/if}
 	</div>
-{:else if roomState == "open" || roomState == "closed"}
+{:else if roomState == 'open' || roomState == 'closed'}
 	{#await scenarioObject}
 		<!-- scenarioObject is pending -->
 		<center>
@@ -166,19 +174,19 @@
 		</center>
 	{:then scenario}
 		<!-- scenarioObject was fulfilled -->
-		{#if roomState == "open"}
+		{#if roomState == 'open'}
 			<button on:click={toggleRoomState} class="secondary">Close the room</button>
 		{:else}
 			<button on:click={toggleRoomState}>Re-open the room</button>
 		{/if}
-		<hr/>
+		<hr />
 		<details>
 			<summary class="scenario-summary-header">Current Players in Room</summary>
 			<div class="grid scrollable-grid">
 				{#if activeUsers[0]}
 					{#each activeUsers as user}
 						<!-- svelte-ignore a11y-invalid-attribute -->
-						<a href=# class="outline" role="button" style="margin-bottom: var(--spacing)">
+						<a href="#" class="outline" role="button" style="margin-bottom: var(--spacing)">
 							{user.username} ({user.email})
 						</a>
 					{/each}
@@ -190,7 +198,7 @@
 				{/if}
 			</div>
 		</details>
-		<hr>
+		<hr />
 		<hgroup>
 			<h2>Current Question</h2>
 			<h3>This is the current question being shown to your participants and observers.</h3>
@@ -198,11 +206,11 @@
 
 		<div class="scenario-box" style="margin-bottom: 30px;">
 			{#await currentQuestion}
-				<progress/>
+				<progress />
 			{:then question}
 				<!-- {#if question == '' || prevLoading || nextLoading} // this is not synced so it looks ugly :(-->
 				{#if question == ''}
-					<progress/>
+					<progress />
 				{:else}
 					<!-- else content here -->
 					<!-- promise was fulfilled -->
@@ -212,8 +220,16 @@
 		</div>
 
 		<div class="grid">
-			<button on:click={decrementQuestion} aria-busy={prevLoading} disabled={(!prevEnabled) || roomState == "closed"}>Prev. Question</button>
-			<button on:click={incrementQuestion} aria-busy={nextLoading} disabled={(!nextEnabled) || roomState == "closed"}>Next Question</button>
+			<button
+				on:click={decrementQuestion}
+				aria-busy={prevLoading}
+				disabled={!prevEnabled || roomState == 'closed'}>Prev. Question</button
+			>
+			<button
+				on:click={incrementQuestion}
+				aria-busy={nextLoading}
+				disabled={!nextEnabled || roomState == 'closed'}>Next Question</button
+			>
 		</div>
 
 		<button
@@ -278,10 +294,10 @@
 	</hgroup>
 	{#await responses then responsesRaw}
 		<!-- <summary role="button"> -->
-			<!-- <hgroup style=""> -->
-				<!-- <b style="font-size:xx-large">Previous Notes</b> -->
-				<!-- <h3 style="color:var(--contrast)">Notes previously submitted by you for this scenario.</h3> -->
-			<!-- </hgroup> -->
+		<!-- <hgroup style=""> -->
+		<!-- <b style="font-size:xx-large">Previous Notes</b> -->
+		<!-- <h3 style="color:var(--contrast)">Notes previously submitted by you for this scenario.</h3> -->
+		<!-- </hgroup> -->
 		<!-- </summary> -->
 		{#if responsesRaw[0]}
 			{#each responsesRaw as response, index}
@@ -291,7 +307,8 @@
 						Response {index} - {response.question}
 					</summary>
 					<div class="scenario-box">
-						{response.content}<br/><hr>
+						{response.content}<br />
+						<hr />
 						<div class="grid">
 							<div>
 								<em>Submitted at {response.created}</em>
@@ -300,12 +317,17 @@
 								<em>{response.user}</em>
 							</div>
 						</div>
-					</div>				
+					</div>
 				</details>
 			{/each}
 		{:else}
 			<center>
-				<input class="cursed-fake-button" type="text" value="There are currently no responses." readonly>
+				<input
+					class="cursed-fake-button"
+					type="text"
+					value="There are currently no responses."
+					readonly
+				/>
 			</center>
 		{/if}
 	{:catch error}
@@ -317,12 +339,8 @@
 	</script>
 	<div class="scenario-box" style="margin-bottom: 30px;">
 		<hgroup>
-			<h1>
-				You find yourself in a strange place...
-			</h1>
-			<h2>
-				There is no way this should be happened...
-			</h2>
+			<h1>You find yourself in a strange place...</h1>
+			<h2>There is no way this should be happened...</h2>
 		</hgroup>
 		<a role="button" href="/dashboard">Go back?</a>
 	</div>
