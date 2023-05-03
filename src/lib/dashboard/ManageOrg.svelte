@@ -22,6 +22,9 @@
 	let memberToRemove;
 	var password_confirm = '';
 
+	// Select box
+	let selected = [];
+
 	function presentModal(member) {
 		memberToRemove = member;
 		showModal = true;
@@ -54,14 +57,6 @@
 			.getOne($currentUser?.org, { expand: 'members' });
 		// merge member list
 		members = [...members, ...result.expand.members];
-
-		// members = await Promise.all(
-		// 	[...members, ...result.members].map(async (item) => {
-		// 		console.log(item);
-		// 		return await pb.collection('users').getOne(item);
-		// 	})
-		// );
-		// console.log(result.members);
 
 		// store organization name
 		organizationName = result.name;
@@ -124,16 +119,18 @@
 		});
 	}
 
-	async function changeRole(id, role) {
-		// TODO sanitize update here
-		console.log(role);
-		console.log(id);
-		// first update the user
+	async function changeRole(id, index) {
+		// First update the user
+		let role = selected[index];
 		const data = { role: role };
-		const result = await pb.collection('users').update(id, data);
-		rolechangeErr = result;
+		try {
+			const result = await pb.collection('users').update(id, data);
+		} catch (error) {
+			rolechangeErr = error;
+			return
+		}
 
-		// then update the organization members list
+		// Then update the organization members list
 		const result2 = await pb
 			.collection('organization')
 			.getOne($currentUser?.org, { expand: 'members' });
@@ -200,19 +197,19 @@
 						</select>
 						<button class="primary" disabled="true">Remove</button>
 					{:else}
-						<select>
+						<select bind:value={selected[index]} on:change={changeRole(member.id, index)}>
 							{#if member.role == 'facilitator'}
 								<option value="facilitator" selected>Facilitator</option>
 								<option value="participant">Participant</option>
 								<option value="observer">Observer</option>
 							{:else if member.role == 'participant'}
-								<option value="facilitator">Facilitator</option>
 								<option value="participant" selected>Participant</option>
+								<option value="facilitator">Facilitator</option>
 								<option value="observer">Observer</option>
 							{:else}
+								<option value="observer" selected>Observer</option>
 								<option value="facilitator">Facilitator</option>
 								<option value="participant">Participant</option>
-								<option value="observer" selected>Observer</option>
 							{/if}
 						</select>
 						<button class="primary" on:click={presentModal(member)}>Remove</button>
@@ -221,11 +218,6 @@
 			</div>
 			<br />
 		{/each}
-
-		<footer>
-			<br />
-			<button>Save Changes</button>
-		</footer>
 	{/await}
 </article>
 
