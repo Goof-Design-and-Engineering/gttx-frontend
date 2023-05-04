@@ -11,10 +11,8 @@
 	let buttonBusy = false;
 
 	async function get_organization_role(key) {
-		let invite_codes = ['facilitator_code', 'observer_code', 'participant_code'];
-		let invite_roles = ['facilitator', 'observer', 'participant'];
-		// ["facilitator_code","observer_code","participant_code"].forEach(async (element) =>  {
-		// })
+		let invite_codes = ['observer_code', 'participant_code'];
+		let invite_roles = ['observer', 'participant'];
 		let counter = 0;
 		// loop through each and see if it matches anything
 		for (const invite_code of invite_codes) {

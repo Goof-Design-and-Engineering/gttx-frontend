@@ -10,7 +10,8 @@
 		pb,
 		currentUser,
 		getCurrentOrganizationRecord,
-		currentRole
+		currentRole,
+		getScenarioName
 	} from '../../../lib/pocketbase';
 
 	import { goto } from '$app/navigation';
@@ -63,23 +64,26 @@
 
 		const inviteCodes = {
 			observer_code: orgRaw?.observer_code,
-			participant_code: orgRaw?.participant_code,
-			facilitator_code: orgRaw?.facilitator_code
+			participant_code: orgRaw?.participant_code
 		};
+
+		const scenarioName = await getScenarioName(scenarioID);
 
 		let message2send = `
 		<html>
 			<img class="gttx-logo" src="https://gttx.app/svg/gttx_white.svg" alt="gttx!" />
 
 			<p>
-			Hello! Welcome to GTTX.
-			Here is the information to get started:
+			Hello! A member of your organization has invited you to join a tabletop exercise on GTTX!<br/>
+			GTTX is a tabletop exercise platform that allows you to simulate business crisis response scenarios.<br/>
+			Your organization's facilitator has invited you to participate in an exercise: ${scenarioName}.
+			Here are the codes you will need to register for your GTTX organization:<br/><br/>
 
-			observer_code: ${inviteCodes.observer_code}
-			participant_code: ${inviteCodes.participant_code}
-			facilitator_code: ${inviteCodes.facilitator_code}
-			
-			GOTO https://gttx.api/blah to get started!
+			Observer code: ${inviteCodes.observer_code}<br/>
+			Participant code: ${inviteCodes.participant_code}<br/><br/>
+
+			For more information, please consult the organizer of the room: ${currentUser.email}<br/>
+			Once you're ready, go to <a href="https://gttx.app/signup">https://gttx.app</a> to get started today!
 			</p>
 		</html>
 		`;
@@ -143,7 +147,7 @@
 	{:else if scenarioChosen == false}
 		<Scenarios bind:scenarioChosen bind:scenarioID bind:moduleID />
 	{:else}
-		<EmailPicker bind:emails bind:usersIDs bind:emailsPicked />
+		<EmailPicker bind:emails bind:usersIDs bind:emailsPicked bind:scenarioID />
 	{/if}
 	<hr />
 	<RecentGames />

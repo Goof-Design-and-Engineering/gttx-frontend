@@ -104,6 +104,7 @@
 	</div>
 {:else if roomState == 'open' || roomState == 'closed'}
 	<details>
+		<!-- svelte-ignore a11y-no-redundant-roles -->
 		<summary role="button" class="secondary">Current Players in Room</summary>
 		<div class="grid scrollable-grid user-list-grid">
 			{#if activeUsers[0]}

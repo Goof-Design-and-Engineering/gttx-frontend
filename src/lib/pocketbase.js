@@ -77,3 +77,7 @@ export async function getScenarios() {
     return resultList;
 }
 
+export async function getScenarioName(scenarioID) {
+    const result = await pb.collection('scenario').getOne(scenarioID);
+    return result.name;
+}

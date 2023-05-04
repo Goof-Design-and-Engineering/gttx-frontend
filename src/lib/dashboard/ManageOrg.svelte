@@ -14,7 +14,7 @@
 
 	// invite codes
 	let participantCode = '';
-	let facilitatorCode = '';
+	// let facilitatorCode = '';
 	let observerCode = '';
 
 	// Modal stuff
@@ -63,7 +63,7 @@
 		organizationName = result.name;
 
 		participantCode = result.participant_code;
-		facilitatorCode = result.facilitator_code;
+		// facilitatorCode = result.facilitator_code;
 		observerCode = result.observer_code;
 
 		// subscribe to *all* changes made to the current organization
@@ -173,18 +173,18 @@
 		<details open>
 			<!-- svelte-ignore a11y-no-redundant-roles -->
 			<summary role="button" class="secondary">Invite Codes</summary>
-			<ul>
-				<li>
-					<!-- <p id="p_code"><b>Participant</b>: <em on:click={() => navigator.clipboard.writeText(participantCode)} data-tooltip="Click me to copy to clipboard!">{participantCode}</em></p> -->
-					<p id="p_code"><b>Participant</b>: {participantCode}</p>
-				</li>
-				<li>
-					<p id="o_code"><b>Observer</b>: {observerCode}</p>
-				</li>
-				<li>
-					<p id="f_code"><b>Facilitator</b>: {facilitatorCode}</p>
-				</li>
-			</ul>
+			<div class="scenario-box" style="margin-bottom: 30px; padding-bottom: 0;">
+				<ul>
+					<li>
+						<!-- <p id="p_code"><b>Participant</b>: <em on:click={() => navigator.clipboard.writeText(participantCode)} data-tooltip="Click me to copy to clipboard!">{participantCode}</em></p> -->
+						<p id="p_code"><b>Participant</b>: {participantCode}</p>
+					</li>
+					<li>
+						<p id="o_code"><b>Observer</b>: {observerCode}</p>
+					</li>
+				</ul>
+			</div>
+			
 		</details>
 
 		{#each members as member, index (member.id)}

@@ -1,11 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { currentUser, pb } from '../pocketbase';
+	import { currentUser, pb, getScenarioName } from '../pocketbase';
 	import { useForm, validators, email, required } from 'svelte-use-form';
 
 	export let emails = [];
 	export let usersIDs = [];
 	export let emailsPicked = false;
+	export let scenarioID;
 	const form = useForm();
 
 	// let emailsInOrg2 = [];
@@ -15,6 +16,7 @@
 	let orgMembers;
 	let inOrg = [];
 	let loadedOrg = false;
+	let scenarioName;
 
 	let addEmailLoading = false;
 	let inviteLoading = false;
@@ -38,12 +40,18 @@
 			.collection('organization')
 			.getOne($currentUser.org, { expand: 'members' });
 		loadedOrg = true;
+		scenarioName = await getScenarioName(scenarioID);
 	});
 </script>
 
 <hgroup>
 	<h1>Email Picker</h1>
-	<h2>Let's get this party started.</h2>
+	{#if scenarioName == undefined}
+		<!-- svelte-ignore a11y-invalid-attribute -->
+		<h2>Creating room for scenario: <a href="#" aria-busy="true">Loading...</a></h2>
+	{:else}
+		<h2>Creating room for scenario: {scenarioName}</h2>
+	{/if}
 </hgroup>
 
 <article>
@@ -62,7 +70,7 @@
 		{:else}
 			<center>
 				<input
-					style="border: 2px solid var(--primary-contrast); border-radius: 5px; text-align: center;"
+					class="cursed-fake-button"
 					type="text"
 					value="You have no emails selected right now!"
 					readonly
