@@ -21,6 +21,8 @@
 	let nextEnabled = true;
 	let errorThrown = '';
 	let showModal;
+	let maxLength;
+	let questionNum;
 
 	// download variables
 	let docxDownload = '';
@@ -47,11 +49,11 @@
 		prevEnabled = false;
 		nextLoading = true;
 		const result = await pb.collection('room').getOne($currentUser.roomid);
-
-		let maxLength = scenarioObject.modules[result.module].questions.length;
+		maxLength = scenarioObject.modules[result.module].questions.length;
 
 		// Remember result.question is base 0, maxLength is base 1
 		if (result.question <= maxLength - 2) {
+			questionNum = result.question + 1 + 1;
 			const data = { question: result.question + 1 };
 			const result2 = await pb.collection('room').update($currentUser.roomid, data);
 
@@ -59,6 +61,7 @@
 				nextEnabled = true;
 			}
 		} else {
+			questionNum = result.question + 1;
 			errorThrown = 'no questions left';
 			nextEnabled = false;
 		}
@@ -74,19 +77,27 @@
 		prevEnabled = false;
 		nextEnabled = false;
 		const result = await pb.collection('room').getOne($currentUser.roomid);
+		maxLength = scenarioObject.modules[result.module].questions.length;
 
 		if (result.question >= 1) {
+			questionNum = result.question - 1 + 1;
 			const data = { question: result.question - 1 };
 			const result2 = await pb.collection('room').update($currentUser.roomid, data);
 			if (data.question >= 1) {
 				prevEnabled = true;
 			}
 		} else {
+			questionNum = result.question + 1;
 			errorThrown = 'no questions left';
 			prevEnabled = false;
 		}
 		nextEnabled = true;
 		prevLoading = false;
+	}
+
+	async function fetchUserName(userID) {
+		const found = activeUsers.find(activeUser => activeUser.id === userID);
+		return found?.username + " (" + found?.email + ")";
 	}
 </script>
 
@@ -213,7 +224,8 @@
 		</details>
 		<hr />
 		<hgroup>
-			<h2>Current Question</h2>
+			<!-- <h2>Current Question ({questionNum === undefined ? nomReturn[0] : questionNum}/{maxLength === undefined ? nomReturn[1] : maxLength})</h2> -->
+			<h2>Current Question {questionNum === undefined ? "" : "(" + questionNum + "/" + maxLength + ")"}</h2>
 			<h3>This is the current question being shown to your participants and observers.</h3>
 		</hgroup>
 
@@ -327,7 +339,12 @@
 								<em>Submitted at {response.created}</em>
 							</div>
 							<div style="text-align: right">
-								<em>{response.user}</em>
+								{#await fetchUserName(response.user)}
+									<!-- svelte-ignore a11y-invalid-attribute -->
+									<em><a href=# aria-busy=true>Loading...</a></em>
+								{:then responseName}
+									<em>Submitted by {responseName}</em>
+								{/await}
 							</div>
 						</div>
 					</div>
