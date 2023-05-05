@@ -35,7 +35,7 @@
 			await goto('/createorg');
 		} catch (err) {
 			loading = false;
-			console.log(err);
+			//console.log((err);
 			signupErr = err;
 			await goto('/signup');
 		}

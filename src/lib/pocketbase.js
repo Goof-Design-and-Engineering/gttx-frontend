@@ -14,7 +14,7 @@ export const RoomID = writable('');
 // export const notes = writeable(pb.collection("notes").getList(1,50,{}).resolve().items());
 
 pb.authStore.onChange((auth) => {
-    console.log("authstore changed", auth);
+    //console.log(("authstore changed", auth);
     currentUser.set(pb.authStore.model);
     currentRole.set(pb.authStore.model?.role);
     currentOrganization.set(pb.authStore.model?.org);
@@ -56,8 +56,8 @@ export function replaceInJSON(json, oldValues, newValue) {
 export function formatScenario(scenarios) {
     let newScenarios = [];
     for (let scenario of scenarios) {
-        console.log('SCENARIO');
-        console.log(scenario);
+        //console.log(('SCENARIO');
+        //console.log((scenario);
 
         newScenarios.push(
             replaceInJSON(
@@ -67,8 +67,8 @@ export function formatScenario(scenarios) {
             ) || {}
         );
     }
-    console.log('NEW SCENARIO...');
-    console.log(newScenarios);
+    //console.log(('NEW SCENARIO...');
+    //console.log((newScenarios);
     return newScenarios;
 }
 

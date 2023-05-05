@@ -365,7 +365,7 @@
 	{/await}
 {:else}
 	<script>
-		console.log(roomState);
+		//console.log((roomState);
 	</script>
 	<div class="scenario-box" style="margin-bottom: 30px;">
 		<hgroup>

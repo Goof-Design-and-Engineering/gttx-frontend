@@ -24,7 +24,7 @@
 		// ensure no duplicates
 		emailsAll = emailsAll.filter((item, index) => emailsAll.indexOf(item) === index);
 
-		console.log(emailsAll);
+		//console.log((emailsAll);
 	}
 
 	async function emailUsersNotInOrg(org) {
@@ -75,7 +75,7 @@
 
 		// create record
 		const record = await pb.collection('room').create(gameData);
-		console.log(record);
+		//console.log((record);
 		return record;
 	}
 </script>

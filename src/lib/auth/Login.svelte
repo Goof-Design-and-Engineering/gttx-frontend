@@ -22,7 +22,7 @@
 			goto('/dashboard');
 		} catch (e) {
 			loading = false;
-			console.log(pb.authStore.isValid);
+			//console.log((pb.authStore.isValid);
 			logonError = e;
 		}
 	}

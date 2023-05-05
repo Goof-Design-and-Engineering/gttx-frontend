@@ -30,7 +30,7 @@
 			}
 			goto('/account');
 		} catch (e) {
-			console.log(e);
+			//console.log((e);
 			alert('Something went wrong, please try again!');
 		}
 	}
@@ -57,7 +57,7 @@
 			}
 		} catch (e) {
 			deleting = false;
-			console.log(e);
+			//console.log((e);
 			alert('Something went wrong, please try again!');
 		}
 		pb.authStore.clear();

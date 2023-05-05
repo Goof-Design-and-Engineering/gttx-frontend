@@ -96,11 +96,11 @@
 	}
 
 	async function setGame(id) {
-		console.log('SET ID TO ', id);
+		//console.log(('SET ID TO ', id);
 		try {
 			const record = await pb.collection('users').update($currentUser.id, { roomid: id });
 		} catch (error) {
-			console.log(error);
+			//console.log((error);
 		} finally {
 			goto('/dashboard/notes');
 		}
@@ -109,12 +109,12 @@
 
 	$: {
 		if (scenarioChosen) {
-			console.log('scenario has been chosen');
-			console.log(scenarioID, moduleID);
+			//console.log(('scenario has been chosen');
+			//console.log((scenarioID, moduleID);
 		}
 		if (emailsPicked) {
-			console.log('emails have been chosen');
-			console.log(emails);
+			//console.log(('emails have been chosen');
+			//console.log((emails);
 		}
 	}
 </script>

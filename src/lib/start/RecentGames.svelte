@@ -15,10 +15,10 @@
 
 	async function setGame(id) {
 		try {
-			// console.log('boom');
+			// //console.log(('boom');
 			const record = await pb.collection('users').update($currentUser.id, { roomid: id });
 		} catch (error) {
-			console.log(error);
+			//console.log((error);
 		} finally {
 			goto('/dashboard/notes');
 		}

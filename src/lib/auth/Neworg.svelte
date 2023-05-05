@@ -29,7 +29,7 @@
 		signupErr = "";
 		signupBusy = true;
 		try {
-			console.log(generateInviteCode('test'));
+			//console.log((generateInviteCode('test'));
 			// create organization data
 			const data = {
 				name: organization,
@@ -49,7 +49,7 @@
 			orgCreated = true;
 		} catch (err) {
 			// if there is an error drop it here
-			console.log(err);
+			//console.log((err);
 			signupErr = err;
 			organization = "";
 		}

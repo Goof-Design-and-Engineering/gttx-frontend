@@ -70,7 +70,7 @@
 		organizationEvent = await pb
 			.collection('organization')
 			.subscribe($currentUser?.org, async function (e) {
-				console.log(e.record);
+				//console.log((e.record);
 				// on change get the members expanded list
 				const result = await pb
 					.collection('organization')
@@ -84,7 +84,7 @@
 				// members.push(map());
 				// members = await Promise.all(
 				// 	[...members, ...e.members].map(async (item) => {
-				// 		console.log(item);
+				// 		//console.log((item);
 				// 		return await pb.collection('users').getOne(item);
 				// 	})
 				// );
@@ -106,7 +106,7 @@
 			await pb.collection('users').update(userid, { org: '' });
 		} catch (e) {
 			deleting = false;
-			console.log(e);
+			//console.log((e);
 			alert('Something went wrong, please try again!');
 			loading = false;
 			return;
@@ -114,7 +114,7 @@
 
 		// const result = pb.collection('organization').getOne($currentUser?.org);
 		const result = members.filter((m) => m.id !== userid);
-		console.log(result);
+		//console.log((result);
 		// gross javascript that updates the database to point not to the object member but the member ID
 		pb.collection('organization').update($currentUser?.org, {
 			members: result.map((e) => {

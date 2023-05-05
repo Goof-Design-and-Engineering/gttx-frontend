@@ -30,18 +30,18 @@
 
 		userChange = await pb.collection('users').subscribe('*', async function (e) {
 			activeUsers = await getActiveUsers();
-			console.log(e);
+			//console.log((e);
 		});
 
 		roomChange = await pb.collection('room').subscribe($currentUser.roomid, async function (e) {
 			currentQuestion = await getQuestion();
 			roomState = await getRoomState();
-			console.log(e);
+			//console.log((e);
 		});
 
 		noteChange = await pb.collection('notes').subscribe('*', async function (e) {
 			responses = await loadResponses();
-			// console.log(e)
+			// //console.log((e)
 		});
 
 		const result = await pb.collection('room').getOne($currentUser.roomid, { expand: 'scenarios' });
@@ -76,12 +76,12 @@
 			$currentRole == 'facilitator' || $currentRole == 'observer'
 				? `(org='${$currentUser.org}' && room='${$currentUser.roomid}')`
 				: `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}')`;
-		// console.log(filterMagic)
+		// //console.log((filterMagic)
 
 		const resultList = await pb.collection('notes').getList(1, 50, {
 			filter: filterMagic
 		});
-		console.log(resultList.items);
+		//console.log((resultList.items);
 		return resultList.items;
 	}
 
@@ -90,20 +90,20 @@
 			$currentRole == 'facilitator' || $currentRole == 'observer'
 				? `(org='${$currentUser.org}' && roomid='${$currentUser.roomid}' && role!='facilitator')`
 				: ``;
-		// console.log(filterMagic)
+		// //console.log((filterMagic)
 
 		const resultList = await pb.collection('users').getList(1, 50, {
 			filter: filterMagic
 		});
-		console.log(resultList.items);
+		//console.log((resultList.items);
 		return resultList.items;
 	}
 
 	async function getRoomState() {
 		// if not loaded load it
 		const result = await pb.collection('room').getOne($currentUser.roomid);
-		console.log(result);
-		console.log(result.state);
+		//console.log((result);
+		//console.log((result.state);
 		return result.state;
 	}
 

@@ -20,8 +20,8 @@
 		{
 			const result = await pb.collection('room').getOne($currentUser.roomid);
 
-			// console.log($currentUser.id);
-			// console.log($currentUser.org);
+			// //console.log(($currentUser.id);
+			// //console.log(($currentUser.org);
 
 			const data = {
 				user: $currentUser.id,
@@ -36,7 +36,7 @@
 				success = 'PREVIOUS MESSAGE WAS SENT PROPER';
 				response = "";
 			} else {
-				console.log(result);
+				//console.log((result);
 			}
 		}
 		submitBusy = false;
@@ -151,7 +151,7 @@
 	{/await}
 {:else}
 	<script>
-		console.log(roomState);
+		//console.log((roomState);
 	</script>
 	<div class="scenario-box" style="margin-bottom: 30px;">
 		<hgroup>

@@ -54,7 +54,7 @@
 			.then((data) => {
 				return data;
 			});
-		// .then((data) => console.log(data));
+		// .then((data) => //console.log((data));
 
 		return result;
 	}
