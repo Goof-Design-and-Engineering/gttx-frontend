@@ -65,8 +65,16 @@
 		if (scenarioObject == null) {
 			loadScenario();
 		}
+
 		const result = await pb.collection('room').getOne($currentUser.roomid);
-		return scenarioObject.modules[result.module].questions[result.question];
+
+		if (roomState == 'hotwash') {
+			// console.log(scenarioObject.hotwash[result.hwoffset || 0].list)
+			return scenarioObject.hotwash[result.hwoffset || 0].list[result.question];
+		} else {
+			// console.log(scenarioObject.modules[result.module].questions[result.question]);
+			return scenarioObject.modules[result.module].questions[result.question];
+		}
 	}
 
 	async function loadResponses() {
@@ -142,7 +150,7 @@
 				bind:currentQuestion
 				bind:responses
 				bind:roomState
-				bind:roomName 
+				bind:roomName
 			/>
 		{:else if role == 'observer'}
 			<NotesViewer

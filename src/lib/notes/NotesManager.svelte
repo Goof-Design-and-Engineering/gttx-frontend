@@ -49,7 +49,17 @@
 		prevEnabled = false;
 		nextLoading = true;
 		const result = await pb.collection('room').getOne($currentUser.roomid);
-		maxLength = scenarioObject.modules[result.module].questions.length;
+		maxLength =
+			roomState == 'hotwash'
+				? scenarioObject.hotwash[result.hwoffset || 0].list.length
+				: scenarioObject.modules[result.module].questions.length;
+
+		// if (roomState == 'hotwash') {
+		// 	maxLength =
+
+		// } else {
+		// 	maxLength = scenarioObject.modules[result.module].questions.length;
+		// }
 
 		// Remember result.question is base 0, maxLength is base 1
 		if (result.question <= maxLength - 2) {
@@ -77,7 +87,10 @@
 		prevEnabled = false;
 		nextEnabled = false;
 		const result = await pb.collection('room').getOne($currentUser.roomid);
-		maxLength = scenarioObject.modules[result.module].questions.length;
+		maxLength =
+			roomState == 'hotwash'
+				? scenarioObject.hotwash[result.hwoffset || 0].list.length
+				: scenarioObject.modules[result.module].questions.length;
 
 		if (result.question >= 1) {
 			questionNum = result.question - 1 + 1;
@@ -96,8 +109,8 @@
 	}
 
 	async function fetchUserName(userID) {
-		const found = activeUsers.find(activeUser => activeUser.id === userID);
-		return found?.username + " (" + found?.email + ")";
+		const found = activeUsers.find((activeUser) => activeUser.id === userID);
+		return found?.username + ' (' + found?.email + ')';
 	}
 </script>
 
@@ -178,7 +191,7 @@
 			</div>
 		{/if}
 	</div>
-{:else if roomState == 'open' || roomState == 'closed'}
+{:else if roomState == 'open' || roomState == 'closed' || roomState == 'hotwash'}
 	{#await scenarioObject}
 		<!-- scenarioObject is pending -->
 		<center>
@@ -225,7 +238,11 @@
 		<hr />
 		<hgroup>
 			<!-- <h2>Current Question ({questionNum === undefined ? nomReturn[0] : questionNum}/{maxLength === undefined ? nomReturn[1] : maxLength})</h2> -->
-			<h2>Current Question {questionNum === undefined ? "" : "(" + questionNum + "/" + maxLength + ")"}</h2>
+			<h2>
+				Current Question {questionNum === undefined
+					? ''
+					: '(' + questionNum + '/' + maxLength + ')'}
+			</h2>
 			<h3>This is the current question being shown to your participants and observers.</h3>
 		</hgroup>
 
@@ -341,7 +358,7 @@
 							<div style="text-align: right">
 								{#await fetchUserName(response.user)}
 									<!-- svelte-ignore a11y-invalid-attribute -->
-									<em><a href=# aria-busy=true>Loading...</a></em>
+									<em><a href="#" aria-busy="true">Loading...</a></em>
 								{:then responseName}
 									<em>Submitted by {responseName}</em>
 								{/await}

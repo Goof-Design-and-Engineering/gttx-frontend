@@ -17,12 +17,12 @@
 		try {
 			// //console.log(('boom');
 			const record = await pb.collection('users').update($currentUser.id, { roomid: id });
+			// return record;
 		} catch (error) {
 			//console.log((error);
 		} finally {
 			goto('/dashboard/notes');
 		}
-		return record;
 	}
 </script>
 
@@ -57,8 +57,7 @@
 						: 'secondary'}
 					id={game.id}
 					on:click={() => setGame(game.id)}
-					>
-					
+				>
 					{game.name || game.id}, {game.created.split(' ')[0]}
 				</button>
 				<!-- {/if} -->

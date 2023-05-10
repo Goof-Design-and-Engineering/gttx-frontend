@@ -26,7 +26,7 @@
 			const data = {
 				user: $currentUser.id,
 				org: $currentUser.org,
-				question: scenarioObject.modules[result.module].questions[result.question],
+				question: currentQuestion,
 				content: response,
 				room: $currentUser.roomid
 			};
