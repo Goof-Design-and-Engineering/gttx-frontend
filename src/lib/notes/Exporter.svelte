@@ -129,18 +129,19 @@
 </div>
 <hr />
 <div class="grid">
-    <a role="button" class="contrast outline" href={docxDownload} download="results.docx"
-        >Export DOCX</a
+    <a role="button" class="contrast outline" href={docxDownload} download="results.docx" disabled="true"
+        ><s>Export DOCX</s></a
     >
     <!-- svelte-ignore a11y-invalid-attribute -->
     <a
         role="button"
         class="contrast outline"
 		aria-busy={exportingBusy}
+		disabled="true"
         on:click={async (e) => {
             await rawPDF();
         }}
-        href="#">Export PDF</a
+        href="#"><s>Export PDF</s></a
     >
     <a role="button" class="contrast outline" href={htmlDownload} download="results.html">
         Export HTML</a

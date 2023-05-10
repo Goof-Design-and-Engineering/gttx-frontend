@@ -9,6 +9,7 @@
 
 	export let scenarioObject = {};
 	export let responses = {};
+	export let hotwashResponses = {};
 	export let currentQuestion = {};
 	export let activeUsers = [];
 	export let roomState;
@@ -19,6 +20,7 @@
 	let nextLoading = false;
 	let prevEnabled = true;
 	let nextEnabled = true;
+	// let openAllResponses = open;
 	let errorThrown = '';
 	let showModal;
 	let maxLength;
@@ -29,8 +31,17 @@
 	let latexDownload = '';
 	let htmlDownload = '';
 
+	// async function toggleResponses() {
+	// 	if (openAllResponses == "open") {
+	// 		openAllResponses = "";
+	// 	}
+	// 	else {
+	// 		openAllResponses = "open";
+	// 	}
+	// }
+
 	async function toggleRoomState() {
-		if (roomState == 'open') {
+		if (roomState == 'open' || roomState == 'hotwash') {
 			const data = { state: 'closed' };
 			const result = await pb.collection('room').update($currentUser.roomid, data);
 		} else if (roomState == 'closed' || roomState == 'waiting') {
@@ -39,6 +50,21 @@
 		} else {
 			errorThrown('Oops!');
 		}
+	}
+
+	async function toggleHotWash() {
+		if (roomState == 'open') {
+			const data = { state: 'hotwash', question: 0 };
+			const result = await pb.collection('room').update($currentUser.roomid, data);
+			questionNum = undefined;
+		} else if (roomState == 'hotwash') {
+			const data = { state: 'open', question: 0 };
+			const result = await pb.collection('room').update($currentUser.roomid, data);
+			questionNum = undefined;
+		} else {
+			errorThrown('Oops!');
+		}
+
 	}
 
 	async function incrementQuestion() {
@@ -204,9 +230,25 @@
 	{:then scenario}
 		<!-- scenarioObject was fulfilled -->
 		{#if roomState == 'open'}
-			<button on:click={toggleRoomState}>Close the room</button>
+			<div class="grid">
+				<div>
+					<button on:click={toggleRoomState}>Close the room</button>
+				</div>
+				<div>
+					<button on:click={toggleHotWash} class="warning">Move to Hot Wash</button>
+				</div>
+			</div>
+		{:else if roomState == 'hotwash'}
+			<div class="grid">
+				<div>
+					<button on:click={toggleRoomState}>Close the room</button>
+				</div>
+				<div>
+					<button on:click={toggleHotWash} class="secondary">Return to standard questions</button>
+				</div>
+			</div>
 		{:else}
-			<button on:click={toggleRoomState} class="secondary">Re-open the room</button>
+			<button on:click={toggleRoomState} class="warning">Re-open the room</button>
 		{/if}
 		<hr />
 		<details>
@@ -235,18 +277,18 @@
 				/>
 			{/if}
 		</details>
-		<hr />
+		<!-- <hr /> -->
 		<hgroup>
 			<!-- <h2>Current Question ({questionNum === undefined ? nomReturn[0] : questionNum}/{maxLength === undefined ? nomReturn[1] : maxLength})</h2> -->
 			<h2>
-				Current Question {questionNum === undefined
+				Current Question {roomState == 'hotwash' ? '(Hot Wash)' : ''} {questionNum === undefined
 					? ''
-					: '(' + questionNum + '/' + maxLength + ')'}
+					: '[' + questionNum + '/' + maxLength + ']'}
 			</h2>
 			<h3>This is the current question being shown to your participants and observers.</h3>
 		</hgroup>
 
-		<div class="scenario-box" style="margin-bottom: 30px;">
+		<div class={roomState == "hotwash" ? "scenario-box-warning" : "scenario-box"} style="margin-bottom: 30px;">
 			{#await currentQuestion}
 				<progress />
 			{:then question}
@@ -265,11 +307,13 @@
 			<button
 				on:click={decrementQuestion}
 				aria-busy={prevLoading}
+				class={roomState == 'hotwash' ? 'warning' : ""}
 				disabled={!prevEnabled || roomState == 'closed'}>Prev. Question</button
 			>
 			<button
 				on:click={incrementQuestion}
 				aria-busy={nextLoading}
+				class={roomState == 'hotwash' ? 'warning' : ""}
 				disabled={!nextEnabled || roomState == 'closed'}>Next Question</button
 			>
 		</div>
@@ -321,7 +365,7 @@
 				</article>
 			</Modal>
 			<!-- exporting options -->
-			<div class="scenario-box">
+			<div class="scenario-box" style="margin-bottom: 30px">
 				<Exporter bind:docxDownload bind:htmlDownload />
 			</div>
 		{/if}
@@ -343,7 +387,7 @@
 		<!-- </summary> -->
 		{#if responsesRaw[0]}
 			{#each responsesRaw as response, index}
-				<details>
+				<details open>
 					<!-- svelte-ignore a11y-no-redundant-roles -->
 					<summary role="button" class="secondary">
 						Response {index} - {response.question}
@@ -356,12 +400,9 @@
 								<em>Submitted at {response.created}</em>
 							</div>
 							<div style="text-align: right">
-								{#await fetchUserName(response.user)}
-									<!-- svelte-ignore a11y-invalid-attribute -->
-									<em><a href="#" aria-busy="true">Loading...</a></em>
-								{:then responseName}
-									<em>Submitted by {responseName}</em>
-								{/await}
+								{#if response.username && response.email}
+									<em>Submitted by {response?.username} ({response?.email})</em>
+								{/if}
 							</div>
 						</div>
 					</div>
@@ -380,6 +421,48 @@
 	{:catch error}
 		{error}
 	{/await}
+	{#await hotwashResponses then HWresponsesRaw}
+		{#if HWresponsesRaw[0]}
+		<!-- <hr /> -->
+		<hgroup>
+			<h2>Hot Wash Notes</h2>
+			<h3>Notes submitted by everyone for this scenario's Hot Wash.</h3>
+		</hgroup>
+			{#each HWresponsesRaw as response, index}
+				<details open>
+					<!-- svelte-ignore a11y-no-redundant-roles -->
+					<summary role="button" class="warning">
+						Response {index} - {response.question}
+					</summary>
+					<div class="scenario-box-warning">
+						{response.content}<br />
+						<hr />
+						<div class="grid">
+							<div>
+								<em>Submitted at {response.created}</em>
+							</div>
+							<div style="text-align: right">
+								{#if response.username && response.email}
+									<em>Submitted by {response?.username} ({response?.email})</em>
+								{/if}
+							</div>
+						</div>
+					</div>
+				</details>
+			{/each}
+		<!-- {:else}
+			<center>
+				<input
+					class="cursed-fake-button"
+					type="text"
+					value="There are currently no responses."
+					readonly
+				/>
+			</center> -->
+		{/if}
+	{:catch error}
+		{error}
+	{/await}
 {:else}
 	<script>
 		//console.log((roomState);
@@ -387,7 +470,7 @@
 	<div class="scenario-box" style="margin-bottom: 30px;">
 		<hgroup>
 			<h1>You find yourself in a strange place...</h1>
-			<h2>There is no way this should be happened...</h2>
+			<h2>There is no way this should be happened... unless you're trying to access an old game?</h2>
 		</hgroup>
 		<a role="button" href="/dashboard">Go back?</a>
 	</div>

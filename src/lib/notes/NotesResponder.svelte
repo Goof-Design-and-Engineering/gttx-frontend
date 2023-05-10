@@ -3,8 +3,9 @@
 	import { goto } from '$app/navigation';
 	import { useForm } from 'svelte-use-form';
 	import { currentUser, pb } from '$lib/pocketbase';
-	export let scenarioObject = {};
+	export const scenarioObject = {};
 	export let responses = {};
+	export let hotwashResponses = {};
 	export let currentQuestion = {};
 	export let roomState;
 	export let roomName;
@@ -18,7 +19,7 @@
 		submitBusy = true;
 		if (response[0])
 		{
-			const result = await pb.collection('room').getOne($currentUser.roomid);
+			// const result = await pb.collection('room').getOne($currentUser.roomid);
 
 			// //console.log(($currentUser.id);
 			// //console.log(($currentUser.org);
@@ -28,7 +29,10 @@
 				org: $currentUser.org,
 				question: currentQuestion,
 				content: response,
-				room: $currentUser.roomid
+				room: $currentUser.roomid,
+				state: roomState || 'open',
+				email: $currentUser.email,
+				username: $currentUser.username
 			};
 
 			const result2 = await pb.collection('notes').create(data);
@@ -68,12 +72,12 @@
 		</hgroup>
 		<center>
 			<!-- svelte-ignore a11y-invalid-attribute -->
-			<a href="#" aria-busy=true>
+			<a href="#" aria-busy="true">
 				Waiting for scenario to start. Contact your facilitator if this is taking too long...
 			</a>
 		</center>
 	</div>
-{:else if roomState == "open" || roomState == "closed"}
+{:else if roomState == "open" || roomState == "closed" || roomState == "hotwash"} 
 	{#if roomState == "open"}
 		<form use:form on:submit|preventDefault>
 			<!-- Grid -->
@@ -106,6 +110,39 @@
 
 			<!-- Button -->
 			<button type="submit" id="submit_answer" aria-busy={submitBusy} disabled={submitBusy} on:click={submitNote}>Submit</button>
+		</form>
+	{:else if roomState == 'hotwash'}
+		<form use:form on:submit|preventDefault>
+			<!-- Grid -->
+			<hr/>
+			<hgroup>
+				<h2>Request for comment (Hot Wash)</h2>
+				<h3>Type your response to the question below.</h3>
+			</hgroup>	
+			<p id="curr_question">
+				{#await currentQuestion}
+					<!-- svelte-ignore a11y-invalid-attribute -->
+					<a href="#" aria-busy="true">Loading current question...</a>
+				{:then question}
+					{#if (question == '')}
+						<!-- svelte-ignore a11y-invalid-attribute -->
+						<a href="#" aria-busy="true">Loading current question...</a>
+					{:else}
+						<!-- else content here -->
+						<!-- promise was fulfilled -->
+						{question}
+					{/if}
+				{/await}
+			</p>
+	
+			<label for="notes">
+				<textarea bind:value={response} name="notes" id="notes" cols="50" rows="4" />
+			</label>
+	
+			<input type="hidden" id="roomid" name="roomid" value={$currentUser.roomid} />
+	
+			<!-- Button -->
+			<button type="submit" id="submit_answer" class={roomState == 'hotwash' ? 'warning' : ""} aria-busy={submitBusy} disabled={submitBusy} on:click={submitNote}>Submit</button>
 		</form>
 	{:else if roomState == "closed"}
 		<hr/>
@@ -145,6 +182,40 @@
 			<center>
 				<input class="cursed-fake-button" type="text" value="There are currently no responses." readonly>
 			</center>
+		{/if}
+	{:catch error}
+		{error}
+	{/await}
+	{#await hotwashResponses then HWresponsesRaw}
+		{#if HWresponsesRaw[0]}
+			<hgroup>
+				<h2>Hot Wash Notes</h2>
+				<h3>Notes submitted by you for this scenario's Hot Wash.</h3>
+			</hgroup>
+			{#each HWresponsesRaw as response, index}
+				<details>
+					<!-- svelte-ignore a11y-no-redundant-roles -->
+					<summary role="button" class="warning">
+						Response {index} - {response.question}
+					</summary>
+					<div class="scenario-box-warning">
+						{response.content}<br />
+						<hr />
+						<div>
+							<em>Submitted at {response.created}</em>
+						</div>
+					</div>
+				</details>
+			{/each}
+		<!-- {:else}
+			<center>
+				<input
+					class="cursed-fake-button"
+					type="text"
+					value="There are currently no responses."
+					readonly
+				/>
+			</center> -->
 		{/if}
 	{:catch error}
 		{error}

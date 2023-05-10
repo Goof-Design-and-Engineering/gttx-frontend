@@ -15,6 +15,7 @@
 	let scenarioObject = {};
 	let currentQuestion = '';
 	let responses = [];
+	let hotwashResponses = [];
 	let activeUsers = [];
 	let loaded = false;
 	let roomState;
@@ -41,6 +42,7 @@
 
 		noteChange = await pb.collection('notes').subscribe('*', async function (e) {
 			responses = await loadResponses();
+			hotwashResponses = await loadHWResponses();
 			// //console.log((e)
 		});
 
@@ -56,6 +58,7 @@
 		activeUsers = await getActiveUsers();
 
 		responses = await loadResponses();
+		hotwashResponses = await loadHWResponses();
 
 		loaded = true;
 	});
@@ -82,14 +85,30 @@
 		// : if if user is not facilitator or observer, therefore we must filter for only their notes
 		let filterMagic =
 			$currentRole == 'facilitator' || $currentRole == 'observer'
-				? `(org='${$currentUser.org}' && room='${$currentUser.roomid}')`
-				: `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}')`;
+				? `(org='${$currentUser.org}' && room='${$currentUser.roomid}' && state='open')`
+				: `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}' && state='open')`;
 		// //console.log((filterMagic)
 
 		const resultList = await pb.collection('notes').getList(1, 50, {
 			filter: filterMagic
 		});
-		//console.log((resultList.items);
+		// console.log((resultList.items));
+		return resultList.items;
+	}
+
+	async function loadHWResponses() {
+		// ? is if user is facilitator or observer, grabbing ALL notes
+		// : if if user is not facilitator or observer, therefore we must filter for only their notes
+		let filterMagic =
+			$currentRole == 'facilitator' || $currentRole == 'observer'
+				? `(org='${$currentUser.org}' && room='${$currentUser.roomid}' && state='hotwash')`
+				: `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}' && state='hotwash')`;
+		// //console.log((filterMagic)
+
+		const resultList = await pb.collection('notes').getList(1, 50, {
+			filter: filterMagic
+		});
+		// console.log((resultList.items));
 		return resultList.items;
 	}
 
@@ -139,6 +158,7 @@
 				bind:scenarioObject
 				bind:currentQuestion
 				bind:responses
+				bind:hotwashResponses
 				bind:roomState
 				bind:activeUsers
 				bind:roomName
@@ -149,6 +169,7 @@
 				bind:scenarioObject
 				bind:currentQuestion
 				bind:responses
+				bind:hotwashResponses
 				bind:roomState
 				bind:roomName
 			/>
@@ -157,6 +178,7 @@
 				bind:scenarioObject
 				bind:currentQuestion
 				bind:responses
+				bind:hotwashResponses
 				bind:roomState
 				bind:activeUsers
 				bind:roomName

@@ -52,9 +52,14 @@
 						<button id={game.id} on:click={() => setGame(game.id)}>{game.name}, {game.created.split(" ")[0]}</button>
 					{:else} -->
 				<button
-					class={(game.state == 'waiting' || game.state == 'open') && game.state != undefined
-						? ''
-						: 'secondary'}
+					class={
+					(game.state == 'waiting' || game.state == 'open') && game.state != undefined ? ''
+					: (game.state == 'hotwash' && game.state != undefined) ? 'warning'
+					: 'secondary'}
+					disabled={
+						game.state == 'hotwash' && ($currentUser?.roomid != game.id) ? "true"
+						: ""
+					}
 					id={game.id}
 					on:click={() => setGame(game.id)}
 				>
