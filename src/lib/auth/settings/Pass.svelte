@@ -13,13 +13,13 @@
 	const form = useForm();
 
 	async function submit() {
-		console.log(currentUser);
+		//console.log((currentUser);
 		try {
 			loading = true;
 			await pb.collection('users').authWithPassword($currentUser.username, old_password);
 
 			if (new_password == new_password_again && new_password != '') {
-				console.log('Passwords matched, clearing auth and updating password!');
+				//console.log(('Passwords matched, clearing auth and updating password!');
 				try {
 					await pb
 						.collection('users')
@@ -32,7 +32,7 @@
 					goto('/login');
 				} catch (e) {
 					loading = false;
-					console.log(e);
+					//console.log((e);
 					alert('Something went wrong, please try again.');
 				}
 			} else {
@@ -41,7 +41,7 @@
 			}
 		} catch (e) {
 			loading = false;
-			console.log(e);
+			//console.log((e);
 			alert('Your old password was not correct!');
 		}
 	}

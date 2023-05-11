@@ -19,9 +19,9 @@
 	}
 
 	onMount(async () => {
-		console.log('LOOKING FOR ', $RoomID);
+		//console.log(('LOOKING FOR ', $RoomID);
 		roomChange = await pb.collection('room').subscribe($currentUser.roomid, async function (e) {
-			// console.log(e.record);
+			// //console.log((e.record);
 			metaQuestion = await getQuestion();
 			// if (e.record.question != currQ) {
 			// 	const result = await getQuestionForSubscription(e.record.module, e.record.question);
@@ -64,7 +64,7 @@
 			alert(e);
 			goto('/dashboard');
 		}
-		// console.log(result);
+		// //console.log((result);
 	}
 
 	async function getQuestion() {
@@ -81,8 +81,8 @@
 	async function submitNote() {
 		const result = await pb.collection('room').getOne($currentUser.roomid);
 
-		// console.log($currentUser.id);
-		// console.log($currentUser.org);
+		// //console.log(($currentUser.id);
+		// //console.log(($currentUser.org);
 
 		const data = {
 			user: $currentUser.id,
@@ -96,7 +96,7 @@
 		if (result2 != Object) {
 			success = 'PREVIOUS MESSAGE WAS SENT PROPER';
 		} else {
-			console.log(result);
+			//console.log((result);
 		}
 		// reloadResponses = true;
 	}
@@ -106,9 +106,9 @@
 
 		// const result = await pb.collection('room').getOne($currentUser.roomid);
 		// let currQ = scenarioObject.modules[result.module].questions[result.question];
-		// console.log(currQ);
+		// //console.log((currQ);
 		let filterMagic = `(org='${$currentUser.org}' && user='${$currentUser.id}')`;
-		console.log(filterMagic);
+		//console.log((filterMagic);
 		const resultList = await pb.collection('notes').getList(1, 50, {
 			filter: filterMagic
 		});

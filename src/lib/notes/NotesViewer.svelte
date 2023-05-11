@@ -5,6 +5,7 @@
 	import { currentUser, pb } from '$lib/pocketbase';
 	export let scenarioObject = {};
 	export let responses = {};
+	export let hotwashResponses = [];
 	export let currentQuestion = {};
 	export let activeUsers = {};
 	export let roomState;
@@ -20,8 +21,8 @@
 	// 	{
 	// 		const result = await pb.collection('room').getOne($currentUser.roomid);
 
-	// 		// console.log($currentUser.id);
-	// 		// console.log($currentUser.org);
+	// 		// //console.log(($currentUser.id);
+	// 		// //console.log(($currentUser.org);
 
 	// 		const data = {
 	// 			user: $currentUser.id,
@@ -36,7 +37,7 @@
 	// 			success = 'PREVIOUS MESSAGE WAS SENT PROPER';
 	// 			response = "";
 	// 		} else {
-	// 			console.log(result);
+	// 			//console.log((result);
 	// 		}
 	// 	}
 	// 	submitBusy = false;
@@ -89,7 +90,7 @@
 						role="button"
 						style="margin-bottom: var(--spacing)"
 					>
-						{user.username} ({user.email})
+						{user.username} ({user.email}) {user.id == $currentUser.id ? "(you!)" : ""}
 					</a>
 				{/each}
 			</div>
@@ -102,7 +103,7 @@
 			</div>
 		{/if}
 	</div>
-{:else if roomState == 'open' || roomState == 'closed'}
+{:else if roomState == 'open' || roomState == 'closed' || roomState == 'hotwash'}
 	<details>
 		<!-- svelte-ignore a11y-no-redundant-roles -->
 		<summary role="button" class="secondary">Current Players in Room</summary>
@@ -116,7 +117,7 @@
 						role="button"
 						style="margin-bottom: var(--spacing)"
 					>
-						{user.username} ({user.email})
+						{user.username} {user.id == $currentUser.id ? "(you!)" : "(" + user.email + ")"}
 					</a>
 				{/each}
 			{:else}
@@ -127,7 +128,7 @@
 			{/if}
 		</div>
 	</details>
-	{#if roomState == 'open'}
+	{#if roomState == 'open' || roomState == 'hotwash'}
 		{#await scenarioObject}
 			<!-- scenarioObject is pending -->
 			<center>
@@ -139,13 +140,13 @@
 			</center>
 		{:then scenario}
 			<!-- scenarioObject was fulfilled -->
-			<hr />
+			<!-- <hr /> -->
 			<hgroup>
-				<h2>Current Question</h2>
+				<h2>Current Question {roomState == 'hotwash' ? "(Hot Wash)" : ""}</h2>
 				<h3>This is the current question being shown to the participants.</h3>
 			</hgroup>
 
-			<div class="scenario-box" style="margin-bottom: 30px;">
+			<div class={roomState == "hotwash" ? "scenario-box-warning" : "scenario-box"} style="margin-bottom: 30px;">
 				{#await currentQuestion}
 					<progress />
 				{:then question}
@@ -161,7 +162,7 @@
 			</div>
 		{/await}
 	{:else if roomState == 'closed'}
-		<hr />
+		<!-- <hr /> -->
 		<hgroup>
 			<h1>This room has been closed</h1>
 			<h2>However, you can still view all the responses.</h2>
@@ -181,7 +182,7 @@
 		<!-- </summary> -->
 		{#if responsesRaw[0]}
 			{#each responsesRaw as response, index}
-				<details>
+				<details open>
 					<!-- svelte-ignore a11y-no-redundant-roles -->
 					<summary role="button" class="secondary">
 						Response {index} - {response.question}
@@ -213,9 +214,51 @@
 	{:catch error}
 		{error}
 	{/await}
+	{#await hotwashResponses then HWresponsesRaw}
+		{#if HWresponsesRaw[0]}
+		<hr />
+		<hgroup>
+			<h2>Hot Wash Notes</h2>
+			<h3>Notes submitted by everyone for this scenario's Hot Wash.</h3>
+		</hgroup>
+			{#each HWresponsesRaw as response, index}
+				<details open>
+					<!-- svelte-ignore a11y-no-redundant-roles -->
+					<summary role="button" class="warning">
+						Response {index} - {response.question}
+					</summary>
+					<div class="scenario-box-warning">
+						{response.content}<br />
+						<hr />
+						<div class="grid">
+							<div>
+								<em>Submitted at {response.created}</em>
+							</div>
+							<div style="text-align: right">
+								{#if response.username && response.email}
+									<em>Submitted by {response?.username} ({response?.email})</em>
+								{/if}
+							</div>
+						</div>
+					</div>
+				</details>
+			{/each}
+		<!-- {:else}
+			<center>
+				<input
+					class="cursed-fake-button"
+					type="text"
+					value="There are currently no responses."
+					readonly
+				/>
+			</center> -->
+		{/if}
+	{:catch error}
+		{error}
+	{/await}
 {:else}
 	<script>
-		console.log(roomState);
+		//console.log((roomState);
 	</script>
 	<div class="scenario-box" style="margin-bottom: 30px;">
 		<hgroup>

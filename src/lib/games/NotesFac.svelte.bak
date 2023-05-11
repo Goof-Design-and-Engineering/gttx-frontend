@@ -49,7 +49,7 @@
 		
 
 		roomChange = await pb.collection('room').subscribe($currentUser.roomid, async function (e) {
-			console.log(e.record.module);
+			//console.log((e.record.module);
 			// if (e.record.question != currQ) {
 			// 	const result = await getQuestionForSubscription(e.record.module, e.record.question);
 			// 	// currQ = "test";
@@ -79,7 +79,7 @@
 			goto('/createorg');
 		}
 
-		// console.log(result);
+		// //console.log((result);
 		currOrg = await getCurrentOrganizationRecord();
 	});
 
@@ -102,7 +102,7 @@
 
 	async function insertOrg(text) {
 		// org = await getCurrentOrganizationRecord();
-		// console.log(org.name);
+		// //console.log((org.name);
 		return text.replace('(<Organization’s>|<Insert Organization>)', currOrg.name);
 	}
 
@@ -110,7 +110,7 @@
 		const result = await pb.collection('room').getOne($currentUser.roomid, {
 			expand: 'scenarios'
 		});
-		console.log(result);
+		//console.log((result);
 		scenarioObject = result.expand.scenarios.contents;
 
 		// do the inline modification of the code
@@ -231,7 +231,7 @@
 			.then((data) => {
 				return data;
 			});
-		// .then((data) => console.log(data));
+		// .then((data) => //console.log((data));
 
 		return result;
 	}

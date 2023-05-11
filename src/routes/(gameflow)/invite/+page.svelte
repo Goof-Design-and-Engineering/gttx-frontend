@@ -23,11 +23,11 @@
 
 		// members = await Promise.all(
 		// 	[...members, ...result.members].map(async (item) => {
-		// 		console.log(item);
+		// 		//console.log((item);
 		// 		return await pb.collection('users').getOne(item);
 		// 	})
 		// );
-		// console.log(result.members);
+		// //console.log((result.members);
 
 		// store organization name
 		organizationName = result.name;
@@ -36,7 +36,7 @@
 		organizationEvent = await pb
 			.collection('organization')
 			.subscribe($currentUser?.org, async function (e) {
-				console.log(e.record);
+				//console.log((e.record);
 				// on change get the members expanded list
 				const result = await pb
 					.collection('organization')
@@ -50,7 +50,7 @@
 				// members.push(map());
 				// members = await Promise.all(
 				// 	[...members, ...e.members].map(async (item) => {
-				// 		console.log(item);
+				// 		//console.log((item);
 				// 		return await pb.collection('users').getOne(item);
 				// 	})
 				// );
@@ -66,7 +66,7 @@
 	async function deleteUser(userid) {
 		// const result = pb.collection('organization').getOne($currentUser?.org);
 		const result = members.filter((m) => m.id !== userid);
-		console.log(result);
+		//console.log((result);
 		// gross javascript that updates the database to point not to the object member but the member ID
 		pb.collection('organization').update($currentUser?.org, {
 			members: result.map((e) => {
@@ -77,8 +77,8 @@
 
 	async function changeRole(id, role) {
 		// TODO sanitize update here
-		console.log(role);
-		console.log(id);
+		//console.log((role);
+		//console.log((id);
 		// first update the user
 		const data = { role: role };
 		const result = await pb.collection('users').update(id, data);

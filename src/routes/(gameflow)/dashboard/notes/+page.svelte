@@ -15,10 +15,13 @@
 	let scenarioObject = {};
 	let currentQuestion = '';
 	let responses = [];
+	let hotwashResponses = [];
 	let activeUsers = [];
 	let loaded = false;
 	let roomState;
 	let roomName;
+	let refresh;
+	let maxLength;
 
 	onMount(async () => {
 		if (!$currentUser) {
@@ -30,18 +33,24 @@
 
 		userChange = await pb.collection('users').subscribe('*', async function (e) {
 			activeUsers = await getActiveUsers();
-			console.log(e);
+			//console.log((e);
 		});
 
 		roomChange = await pb.collection('room').subscribe($currentUser.roomid, async function (e) {
 			currentQuestion = await getQuestion();
 			roomState = await getRoomState();
-			console.log(e);
+			const result = await pb.collection('room').getOne($currentUser.roomid);
+			maxLength =
+				roomState == 'hotwash'
+					? scenarioObject.hotwash[result.hwoffset || 0].list.length
+					: scenarioObject.modules[result.module].questions.length;
+			//console.log((e);
 		});
 
 		noteChange = await pb.collection('notes').subscribe('*', async function (e) {
 			responses = await loadResponses();
-			// console.log(e)
+			hotwashResponses = await loadHWResponses();
+			// //console.log((e)
 		});
 
 		const result = await pb.collection('room').getOne($currentUser.roomid, { expand: 'scenarios' });
@@ -56,6 +65,7 @@
 		activeUsers = await getActiveUsers();
 
 		responses = await loadResponses();
+		hotwashResponses = await loadHWResponses();
 
 		loaded = true;
 	});
@@ -65,8 +75,16 @@
 		if (scenarioObject == null) {
 			loadScenario();
 		}
+
 		const result = await pb.collection('room').getOne($currentUser.roomid);
-		return scenarioObject.modules[result.module].questions[result.question];
+
+		if (roomState == 'hotwash') {
+			// console.log(scenarioObject.hotwash[result.hwoffset || 0].list)
+			return scenarioObject.hotwash[result.hwoffset || 0].list[result.question];
+		} else {
+			// console.log(scenarioObject.modules[result.module].questions[result.question]);
+			return scenarioObject.modules[result.module].questions[result.question];
+		}
 	}
 
 	async function loadResponses() {
@@ -74,14 +92,30 @@
 		// : if if user is not facilitator or observer, therefore we must filter for only their notes
 		let filterMagic =
 			$currentRole == 'facilitator' || $currentRole == 'observer'
-				? `(org='${$currentUser.org}' && room='${$currentUser.roomid}')`
-				: `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}')`;
-		// console.log(filterMagic)
+				? `(org='${$currentUser.org}' && room='${$currentUser.roomid}' && state='open')`
+				: `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}' && state='open')`;
+		// //console.log((filterMagic)
 
 		const resultList = await pb.collection('notes').getList(1, 50, {
 			filter: filterMagic
 		});
-		console.log(resultList.items);
+		// console.log((resultList.items));
+		return resultList.items;
+	}
+
+	async function loadHWResponses() {
+		// ? is if user is facilitator or observer, grabbing ALL notes
+		// : if if user is not facilitator or observer, therefore we must filter for only their notes
+		let filterMagic =
+			$currentRole == 'facilitator' || $currentRole == 'observer'
+				? `(org='${$currentUser.org}' && room='${$currentUser.roomid}' && state='hotwash')`
+				: `(org='${$currentUser.org}' && user='${$currentUser.id}' && room='${$currentUser.roomid}' && state='hotwash')`;
+		// //console.log((filterMagic)
+
+		const resultList = await pb.collection('notes').getList(1, 50, {
+			filter: filterMagic
+		});
+		// console.log((resultList.items));
 		return resultList.items;
 	}
 
@@ -90,20 +124,20 @@
 			$currentRole == 'facilitator' || $currentRole == 'observer'
 				? `(org='${$currentUser.org}' && roomid='${$currentUser.roomid}' && role!='facilitator')`
 				: ``;
-		// console.log(filterMagic)
+		// //console.log((filterMagic)
 
 		const resultList = await pb.collection('users').getList(1, 50, {
 			filter: filterMagic
 		});
-		console.log(resultList.items);
+		//console.log((resultList.items);
 		return resultList.items;
 	}
 
 	async function getRoomState() {
 		// if not loaded load it
 		const result = await pb.collection('room').getOne($currentUser.roomid);
-		console.log(result);
-		console.log(result.state);
+		//console.log((result);
+		//console.log((result.state);
 		return result.state;
 	}
 
@@ -115,7 +149,12 @@
 
 	$: {
 		loaded = true;
+		// if (refresh) {
+		// 	refreshVals()
+		// }
 	}
+
+	$: refresh;
 </script>
 
 {#if !loaded}
@@ -131,9 +170,11 @@
 				bind:scenarioObject
 				bind:currentQuestion
 				bind:responses
+				bind:hotwashResponses
 				bind:roomState
 				bind:activeUsers
 				bind:roomName
+				bind:maxLength
 			/>
 		{:else if role == 'participant'}
 			<!-- else content here -->
@@ -141,14 +182,16 @@
 				bind:scenarioObject
 				bind:currentQuestion
 				bind:responses
+				bind:hotwashResponses
 				bind:roomState
-				bind:roomName 
+				bind:roomName
 			/>
 		{:else if role == 'observer'}
 			<NotesViewer
 				bind:scenarioObject
 				bind:currentQuestion
 				bind:responses
+				bind:hotwashResponses
 				bind:roomState
 				bind:activeUsers
 				bind:roomName

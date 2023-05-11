@@ -28,7 +28,7 @@
 				}
 				counter++;
 			} finally {
-				console.log('');
+				//console.log(('');
 			}
 		}
 	}
@@ -57,16 +57,16 @@
 				});
 
 				// do the cursed of turning
-				console.log(org_record.members);
+				//console.log((org_record.members);
 
 				// let new_members = org_record.expand.members.push($currentUser);
-				// console.log(new_members);
+				// //console.log((new_members);
 				let new_members = [...org_record.members, $currentUser.id];
-				console.log(new_members);
+				//console.log((new_members);
 
 				const data2 = { name: org_magic.org_name.name, members: new_members };
 
-				console.log(data2);
+				//console.log((data2);
 
 				const record2 = await pb.collection('organization').update(org_magic.org_name?.id, data2);
 
@@ -78,7 +78,7 @@
 		} catch (err) {
 			buttonBusy = false;
 			signupErr = err;
-			console.log(err);
+			//console.log((err);
 		}
 		buttonBusy = false;
 	}

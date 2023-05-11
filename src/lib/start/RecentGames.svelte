@@ -15,14 +15,14 @@
 
 	async function setGame(id) {
 		try {
-			// console.log('boom');
+			// //console.log(('boom');
 			const record = await pb.collection('users').update($currentUser.id, { roomid: id });
+			// return record;
 		} catch (error) {
-			console.log(error);
+			//console.log((error);
 		} finally {
 			goto('/dashboard/notes');
 		}
-		return record;
 	}
 </script>
 
@@ -52,13 +52,17 @@
 						<button id={game.id} on:click={() => setGame(game.id)}>{game.name}, {game.created.split(" ")[0]}</button>
 					{:else} -->
 				<button
-					class={(game.state == 'waiting' || game.state == 'open') && game.state != undefined
-						? ''
-						: 'secondary'}
+					class={
+					(game.state == 'waiting' || game.state == 'open') && game.state != undefined ? ''
+					: (game.state == 'hotwash' && game.state != undefined) ? 'warning'
+					: 'secondary'}
+					disabled={
+						game.state == 'hotwash' && ($currentUser?.roomid != game.id) ? "true"
+						: ""
+					}
 					id={game.id}
 					on:click={() => setGame(game.id)}
-					>
-					
+				>
 					{game.name || game.id}, {game.created.split(' ')[0]}
 				</button>
 				<!-- {/if} -->
