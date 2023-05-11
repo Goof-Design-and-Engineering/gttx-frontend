@@ -2,17 +2,42 @@
 /* @import url("https://www.unpkg.com/browse/bootstrap-icons@1.10.3/bootstrap-icons.css"); */
 
 :root {
-    --primary: #d81b60;
+    /* --primary: #d81b60; */
+    --primary: #6B8E3E !important;
+    --primary-hover: #8BB455 !important;
+    --primary-focus: #8BB45550 !important;
 
+    --warning: #9c1111;
+    --warning-hover: #c31818;
+    --warning-focus: #c3181850;
 }
 
 footer {
     padding-top: 0 !important;
 }
 
+:is(button, input[type=submit], input[type=button], [role=button]).warning,
+input[type=reset] {
+    --background-color: var(--warning);
+    --border-color: var(--warning);
+    --color: var(--secondary-inverse);
+    cursor: pointer;
+}
+:is(button, input[type=submit], input[type=button], [role=button]).warning:is([aria-current], :hover, :active, :focus),
+input[type=reset]:is([aria-current], :hover, :active, :focus) {
+    --background-color: var(--warning-hover);
+    --border-color: var(--warning-hover);
+    --color: var(--secondary-inverse);
+}
+:is(button, input[type=submit], input[type=button], [role=button]).warning:focus,
+input[type=reset]:focus {
+    --box-shadow: var(--button-hover-box-shadow, 0 0 0 rgba(0, 0, 0, 0)),
+        0 0 0 var(--outline-width) var(--secondary-focus);
+}
+
 .gttx-logo {
     margin-bottom: 1%;
-    opacity: 95%;
+    opacity: 90%;
     transition: opacity 0.2s;
 }
 
@@ -49,6 +74,13 @@ footer {
 .scenario-box {
     background-color: var(--form-element-background-color) !important;
     border: 4px solid var(--primary-focus);
+    border-radius: 0%;
+    padding: 3%;
+}
+
+.scenario-box-warning {
+    background-color: var(--form-element-background-color) !important;
+    border: 4px solid var(--warning-focus);
     border-radius: 0%;
     padding: 3%;
 }
