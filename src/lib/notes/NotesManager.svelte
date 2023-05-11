@@ -14,6 +14,8 @@
 	export let activeUsers = [];
 	export let roomState;
 	export let roomName;
+	export let maxLength;
+
 
 	// because we *love* global variables
 	let prevLoading = false;
@@ -23,7 +25,6 @@
 	// let openAllResponses = open;
 	let errorThrown = '';
 	let showModal;
-	let maxLength;
 	let questionNum;
 
 	// download variables
@@ -64,7 +65,20 @@
 		} else {
 			errorThrown('Oops!');
 		}
+	}
 
+	async function changeHotwash(offset) {
+		const result = await pb.collection('room').getOne($currentUser.roomid);
+		if (offset < scenarioObject.hotwash.length) {
+			const data = { hwoffset: offset };
+			const result2 = await pb.collection('room').update($currentUser.roomid, data);
+			// refreshQuestion();
+		} else {
+			errorThrown = 'offset wrong';
+		}
+	}
+	async function refreshQuestion() {
+		
 	}
 
 	async function incrementQuestion() {
@@ -246,6 +260,21 @@
 				<div>
 					<button on:click={toggleHotWash} class="secondary">Return to standard questions</button>
 				</div>
+				<div>
+					<select>
+						<option value="" disabled selected>Select Hotwash</option>
+						<!-- <option>…</option> -->
+						{#each scenarioObject.hotwash as item, index}
+							<!-- content here -->
+							<option
+								value={index}
+								on:click={() => {
+									changeHotwash(index);
+								}}>{item.name}</option
+							>
+						{/each}
+					</select>
+				</div>
 			</div>
 		{:else}
 			<button on:click={toggleRoomState} class="warning">Re-open the room</button>
@@ -281,14 +310,16 @@
 		<hgroup>
 			<!-- <h2>Current Question ({questionNum === undefined ? nomReturn[0] : questionNum}/{maxLength === undefined ? nomReturn[1] : maxLength})</h2> -->
 			<h2>
-				Current Question {roomState == 'hotwash' ? '(Hot Wash)' : ''} {questionNum === undefined
-					? ''
-					: '[' + questionNum + '/' + maxLength + ']'}
+				Current Question {roomState == 'hotwash' ? '(Hot Wash)' : ''}
+				{questionNum === undefined ? '' : '[' + questionNum + '/' + maxLength + ']'}
 			</h2>
 			<h3>This is the current question being shown to your participants and observers.</h3>
 		</hgroup>
 
-		<div class={roomState == "hotwash" ? "scenario-box-warning" : "scenario-box"} style="margin-bottom: 30px;">
+		<div
+			class={roomState == 'hotwash' ? 'scenario-box-warning' : 'scenario-box'}
+			style="margin-bottom: 30px;"
+		>
 			{#await currentQuestion}
 				<progress />
 			{:then question}
@@ -307,13 +338,13 @@
 			<button
 				on:click={decrementQuestion}
 				aria-busy={prevLoading}
-				class={roomState == 'hotwash' ? 'warning' : ""}
+				class={roomState == 'hotwash' ? 'warning' : ''}
 				disabled={!prevEnabled || roomState == 'closed'}>Prev. Question</button
 			>
 			<button
 				on:click={incrementQuestion}
 				aria-busy={nextLoading}
-				class={roomState == 'hotwash' ? 'warning' : ""}
+				class={roomState == 'hotwash' ? 'warning' : ''}
 				disabled={!nextEnabled || roomState == 'closed'}>Next Question</button
 			>
 		</div>
@@ -423,11 +454,11 @@
 	{/await}
 	{#await hotwashResponses then HWresponsesRaw}
 		{#if HWresponsesRaw[0]}
-		<!-- <hr /> -->
-		<hgroup>
-			<h2>Hot Wash Notes</h2>
-			<h3>Notes submitted by everyone for this scenario's Hot Wash.</h3>
-		</hgroup>
+			<!-- <hr /> -->
+			<hgroup>
+				<h2>Hot Wash Notes</h2>
+				<h3>Notes submitted by everyone for this scenario's Hot Wash.</h3>
+			</hgroup>
 			{#each HWresponsesRaw as response, index}
 				<details open>
 					<!-- svelte-ignore a11y-no-redundant-roles -->
@@ -450,7 +481,7 @@
 					</div>
 				</details>
 			{/each}
-		<!-- {:else}
+			<!-- {:else}
 			<center>
 				<input
 					class="cursed-fake-button"
@@ -470,7 +501,9 @@
 	<div class="scenario-box" style="margin-bottom: 30px;">
 		<hgroup>
 			<h1>You find yourself in a strange place...</h1>
-			<h2>There is no way this should be happened... unless you're trying to access an old game?</h2>
+			<h2>
+				There is no way this should be happened... unless you're trying to access an old game?
+			</h2>
 		</hgroup>
 		<a role="button" href="/dashboard">Go back?</a>
 	</div>

@@ -20,6 +20,8 @@
 	let loaded = false;
 	let roomState;
 	let roomName;
+	let refresh;
+	let maxLength;
 
 	onMount(async () => {
 		if (!$currentUser) {
@@ -37,6 +39,11 @@
 		roomChange = await pb.collection('room').subscribe($currentUser.roomid, async function (e) {
 			currentQuestion = await getQuestion();
 			roomState = await getRoomState();
+			const result = await pb.collection('room').getOne($currentUser.roomid);
+			maxLength =
+				roomState == 'hotwash'
+					? scenarioObject.hotwash[result.hwoffset || 0].list.length
+					: scenarioObject.modules[result.module].questions.length;
 			//console.log((e);
 		});
 
@@ -142,7 +149,12 @@
 
 	$: {
 		loaded = true;
+		// if (refresh) {
+		// 	refreshVals()
+		// }
 	}
+
+	$: refresh;
 </script>
 
 {#if !loaded}
@@ -162,6 +174,7 @@
 				bind:roomState
 				bind:activeUsers
 				bind:roomName
+				bind:maxLength
 			/>
 		{:else if role == 'participant'}
 			<!-- else content here -->
